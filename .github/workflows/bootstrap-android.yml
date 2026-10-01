@@ -1,0 +1,57 @@
+name: Bootstrap Android host
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "feat/full-android-v0.2.0"
+    paths:
+      - ".github/workflows/bootstrap-android.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: medix-android-bootstrap
+  cancel-in-progress: true
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Generate Android host
+        run: |
+          flutter create             --org com.brendigo.medix             --project-name medix             --platforms=android             .
+
+      - name: Verify Android host
+        run: |
+          test -f android/app/build.gradle.kts
+          test -f android/app/src/main/AndroidManifest.xml
+          test -f android/app/src/main/kotlin/com/brendigo/medix/medix/MainActivity.kt ||             find android/app/src/main -type f -name MainActivity.kt -print -quit | grep .
+
+      - name: Commit Android host
+        run: |
+          if git diff --quiet -- android; then
+            echo "Android host is already current."
+            exit 0
+          fi
+
+          git config user.name "MediX Build Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add android
+          git commit -m "build: add persistent Android host project"
+
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"
