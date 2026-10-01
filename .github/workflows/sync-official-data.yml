@@ -9,6 +9,7 @@ on:
       - "feat/full-android-v0.2.0"
     paths:
       - "tool/sync_hzzo_catalog.py"
+      - "tool/sync_halmed_prices.py"
       - ".github/workflows/sync-official-data.yml"
 
 permissions:
@@ -20,7 +21,7 @@ concurrency:
 
 jobs:
   sync:
-    name: Build HZZO catalog
+    name: Build official medicine catalogs
     runs-on: ubuntu-latest
 
     steps:
@@ -40,26 +41,37 @@ jobs:
       - name: Synchronize HZZO catalog
         run: python tool/sync_hzzo_catalog.py --minimum-records 1000
 
-      - name: Validate generated catalog
+      - name: Synchronize HALMED 2026 prices
+        run: python tool/sync_halmed_prices.py --minimum-records 1000
+
+      - name: Validate generated catalogs
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          path = Path("assets/data/medications_official.json")
-          data = json.loads(path.read_text(encoding="utf-8"))
-          count = len(data.get("records", []))
-          assert count >= 1000, count
-          print(f"Validated {count} official HZZO records")
+
+          catalogs = {
+              "HZZO": ("assets/data/medications_official.json", 1000),
+              "HALMED": ("assets/data/halmed_prices_2026.json", 1000),
+          }
+          for label, (filename, minimum) in catalogs.items():
+              data = json.loads(Path(filename).read_text(encoding="utf-8"))
+              count = len(data.get("records", []))
+              assert count >= minimum, (label, count)
+              print(f"Validated {label}: {count} records")
           PY
 
-      - name: Commit refreshed catalog
+      - name: Commit refreshed official data
         run: |
-          if git diff --quiet -- assets/data/medications_official.json; then
-            echo "Official catalog is already current."
+          if git diff --quiet --             assets/data/medications_official.json             assets/data/halmed_prices_2026.json; then
+            echo "Official catalogs are already current."
             exit 0
           fi
+
           git config user.name "MediX Data Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add assets/data/medications_official.json
-          git commit -m "data: refresh official HZZO medicine catalog"
+          git add             assets/data/medications_official.json             assets/data/halmed_prices_2026.json
+          git commit -m "data: refresh official medicine catalogs"
+
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin HEAD:"${GITHUB_REF_NAME}"
