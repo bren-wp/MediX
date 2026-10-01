@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../models/therapy_entry.dart';
 import '../../state/medix_state.dart';
+import '../../widgets/medix_page.dart';
 
 class TherapyScreen extends StatelessWidget {
   const TherapyScreen({
@@ -27,25 +28,26 @@ class TherapyScreen extends StatelessWidget {
     return AnimatedBuilder(
       animation: state,
       builder: (context, _) {
-        return Scaffold(
+        return MedixPage(
+          safeArea: false,
           appBar: AppBar(
             title: const Text('Moja terapija'),
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _addTherapy(context),
-            icon: const Icon(Icons.add),
+            icon: const Icon(Icons.add_rounded),
             label: const Text('Dodaj terapiju'),
           ),
-          body: state.therapy.isEmpty
+          child: state.therapy.isEmpty
               ? const _EmptyTherapy()
               : ListView(
-                  padding: const EdgeInsets.fromLTRB(18, 8, 18, 96),
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
                   children: [
                     const _LocalDataNotice(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 14),
                     ...state.therapy.map(
                       (entry) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.only(bottom: 10),
                         child: _TherapyCard(
                           entry: entry,
                           state: state,
@@ -71,30 +73,22 @@ class _EmptyTherapy extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 88,
-              height: 88,
-              decoration: BoxDecoration(
-                color: const Color(0x22168DFF),
-                borderRadius: BorderRadius.circular(28),
-              ),
-              child: const Icon(
-                Icons.event_available_outlined,
-                size: 44,
-                color: MedixColors.cyan,
-              ),
+            const MedixIconBubble(
+              icon: Icons.event_available_outlined,
+              color: MedixColors.cyan,
+              size: 82,
             ),
             const SizedBox(height: 20),
             const Text(
               'Nema spremljene terapije',
               style: TextStyle(
                 fontSize: 23,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w900,
               ),
             ),
             const SizedBox(height: 8),
             const Text(
-              'Dodajte lijek, opis doze i vrijeme uzimanja. Plan je za sada spremljen samo tijekom trenutne sesije aplikacije.',
+              'Dodajte lijek, opis doze i vrijeme uzimanja. Plan se čuva lokalno na uređaju i može koristiti Android podsjetnike.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: MedixColors.textSecondary,
@@ -113,21 +107,19 @@ class _LocalDataNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: const Color(0x2214D8EA),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x4414D8EA)),
-      ),
-      child: const Row(
+    return const MedixSectionCard(
+      accent: MedixColors.cyan,
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.lock_outline, color: MedixColors.cyan),
-          SizedBox(width: 11),
+          MedixIconBubble(
+            icon: Icons.notifications_active_outlined,
+            color: MedixColors.cyan,
+          ),
+          SizedBox(width: 12),
           Expanded(
             child: Text(
-              'MediX ne zahtijeva račun. Trajna lokalna pohrana i OS podsjetnici bit će dodani kao zaseban sloj.',
+              'Terapija ostaje lokalno na uređaju. Android obavijesti i alarm dozvole traže se tek kada korisnik spremi ili aktivira podsjetnik.',
               style: TextStyle(
                 color: MedixColors.textSecondary,
                 height: 1.4,
@@ -156,103 +148,103 @@ class _TherapyCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(22),
-        side: BorderSide(
-          color: entry.isActive
-              ? const Color(0xFF173C61)
-              : const Color(0xFF273546),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                color: const Color(0x22168DFF),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Icon(
-                Icons.medication_outlined,
-                color: entry.isActive
-                    ? MedixColors.cyan
-                    : MedixColors.textSecondary,
-              ),
-            ),
-            const SizedBox(width: 13),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    medication.name,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                    ),
+    return MedixSectionCard(
+      accent: entry.isActive ? MedixColors.primary : MedixColors.textMuted,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MedixIconBubble(
+            icon: Icons.medication_outlined,
+            color: entry.isActive
+                ? MedixColors.cyan
+                : MedixColors.textMuted,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  medication.name,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
                   ),
-                  const SizedBox(height: 3),
-                  Text(
-                    entry.doseDescription,
-                    style: const TextStyle(
-                      color: MedixColors.textSecondary,
-                    ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  entry.doseDescription,
+                  style: const TextStyle(
+                    color: MedixColors.textSecondary,
                   ),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 7,
-                    runSpacing: 7,
-                    children: entry.times
-                        .map(
-                          (time) => Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 9,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0x2214D8EA),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.schedule,
-                                  size: 14,
-                                  color: MedixColors.cyan,
-                                ),
-                                const SizedBox(width: 5),
-                                Text(time),
-                              ],
+                ),
+                const SizedBox(height: 9),
+                Wrap(
+                  spacing: 7,
+                  runSpacing: 7,
+                  children: entry.times
+                      .map(
+                        (time) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 9,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: MedixColors.cyan.withValues(alpha: .10),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: MedixColors.cyan.withValues(alpha: .25),
                             ),
                           ),
-                        )
-                        .toList(),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              children: [
-                Switch(
-                  value: entry.isActive,
-                  onChanged: (_) => state.toggleTherapy(entry.id),
-                ),
-                IconButton(
-                  tooltip: 'Obriši terapiju',
-                  onPressed: () => state.removeTherapy(entry.id),
-                  icon: const Icon(Icons.delete_outline),
-                  color: MedixColors.danger,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.schedule_rounded,
+                                size: 14,
+                                color: MedixColors.cyan,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(time),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          Column(
+            children: [
+              Switch(
+                value: entry.isActive,
+                onChanged: (nextValue) async {
+                  if (nextValue && !entry.isActive) {
+                    final allowed =
+                        await state.requestReminderPermissions();
+                    if (!allowed && context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Terapija je aktivna, ali Android obavijesti nisu odobrene.',
+                          ),
+                        ),
+                      );
+                    }
+                  }
+                  state.toggleTherapy(entry.id);
+                },
+              ),
+              IconButton(
+                tooltip: 'Obriši terapiju',
+                onPressed: () => state.removeTherapy(entry.id),
+                icon: const Icon(Icons.delete_outline),
+                color: MedixColors.danger,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -298,7 +290,9 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
     }
 
     final alreadyExists = times.any(
-      (item) => item.hour == selected.hour && item.minute == selected.minute,
+      (item) =>
+          item.hour == selected.hour &&
+          item.minute == selected.minute,
     );
     if (!alreadyExists) {
       setState(() => times.add(selected));
@@ -312,28 +306,46 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
     );
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (medicationId == null ||
         doseController.text.trim().isEmpty ||
         times.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Odaberite lijek, opišite dozu i dodajte vrijeme.'),
+          content: Text(
+            'Odaberite lijek, opišite dozu i dodajte vrijeme.',
+          ),
         ),
       );
       return;
     }
 
-    final formattedTimes = times
-        .map((time) => _formatTime(context, time))
-        .toList();
+    final messenger = ScaffoldMessenger.of(context);
+    final notificationsAllowed =
+        await widget.state.requestReminderPermissions();
+
+    if (!mounted) return;
+
+    final formattedTimes =
+        times.map((time) => _formatTime(context, time)).toList();
 
     widget.state.addTherapy(
       medicationId: medicationId!,
       doseDescription: doseController.text,
       times: formattedTimes,
     );
+
     Navigator.of(context).pop();
+
+    if (!notificationsAllowed) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Terapija je spremljena, ali Android obavijesti nisu odobrene.',
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -351,7 +363,7 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
               'Dodaj terapiju',
               style: TextStyle(
                 fontSize: 24,
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w900,
               ),
             ),
             const SizedBox(height: 7),
@@ -375,11 +387,13 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
                       value: medication.id,
                       child: Text(
                         '${medication.name} · ${medication.strength}',
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   )
                   .toList(),
-              onChanged: (value) => setState(() => medicationId = value),
+              onChanged: (value) =>
+                  setState(() => medicationId = value),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -396,7 +410,7 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
                 const Expanded(
                   child: Text(
                     'Vrijeme uzimanja',
-                    style: TextStyle(fontWeight: FontWeight.w700),
+                    style: TextStyle(fontWeight: FontWeight.w800),
                   ),
                 ),
                 TextButton.icon(
@@ -411,7 +425,9 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Text(
                   'Još nije dodano vrijeme.',
-                  style: TextStyle(color: MedixColors.textSecondary),
+                  style: TextStyle(
+                    color: MedixColors.textSecondary,
+                  ),
                 ),
               )
             else
@@ -422,7 +438,8 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
                   final time = times[index];
                   return InputChip(
                     label: Text(_formatTime(context, time)),
-                    onDeleted: () => setState(() => times.removeAt(index)),
+                    onDeleted: () =>
+                        setState(() => times.removeAt(index)),
                   );
                 }),
               ),
@@ -431,7 +448,7 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: _save,
-                icon: const Icon(Icons.check),
+                icon: const Icon(Icons.check_rounded),
                 label: const Text('Spremi terapiju'),
               ),
             ),
