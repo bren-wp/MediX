@@ -6,15 +6,18 @@ import '../data/medication_repository.dart';
 import '../models/medication.dart';
 import '../models/therapy_entry.dart';
 import '../services/preferences_store.dart';
+import '../services/notification_service.dart';
 
 class MedixState extends ChangeNotifier {
   MedixState({
     required this.repository,
     this.persistence,
+    this.reminders,
   });
 
   final MedicationRepository repository;
   final MedixPersistence? persistence;
+  final TherapyReminderScheduler? reminders;
 
   final Set<String> _favoriteIds = <String>{};
   final List<String> _recentIds = <String>[];
@@ -55,6 +58,13 @@ class MedixState extends ChangeNotifier {
 
     _onboardingCompleted = stored.onboardingCompleted;
     notifyListeners();
+    _syncReminders();
+  }
+
+  Future<bool> requestReminderPermissions() async {
+    final scheduler = reminders;
+    if (scheduler == null) return false;
+    return scheduler.requestPermissions();
   }
 
   Future<void> completeOnboarding() async {
@@ -153,6 +163,7 @@ class MedixState extends ChangeNotifier {
     );
     notifyListeners();
     _saveTherapy();
+    _syncReminders();
   }
 
   void toggleTherapy(String therapyId) {
@@ -165,6 +176,7 @@ class MedixState extends ChangeNotifier {
     _therapy[index] = current.copyWith(isActive: !current.isActive);
     notifyListeners();
     _saveTherapy();
+    _syncReminders();
   }
 
   void removeTherapy(String therapyId) {
@@ -173,6 +185,19 @@ class MedixState extends ChangeNotifier {
     if (_therapy.length != previousLength) {
       notifyListeners();
       _saveTherapy();
+      _syncReminders();
+    }
+  }
+
+  void _syncReminders() {
+    final scheduler = reminders;
+    if (scheduler != null) {
+      unawaited(
+        scheduler.syncTherapy(
+          therapy: List<TherapyEntry>.unmodifiable(_therapy),
+          medicationById: medicationById,
+        ),
+      );
     }
   }
 

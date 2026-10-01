@@ -6,6 +6,7 @@ import '../data/medication_repository.dart';
 import '../features/home/app_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../services/preferences_store.dart';
+import '../services/notification_service.dart';
 import '../state/medix_state.dart';
 import '../widgets/medix_brand.dart';
 
@@ -37,9 +38,19 @@ class _MedixAppState extends State<MedixApp> {
       repository = MedicationRepository.demo();
     }
 
+    TherapyReminderScheduler? reminders;
+    try {
+      final notificationService = MedixNotificationService();
+      await notificationService.initialize();
+      reminders = notificationService;
+    } catch (_) {
+      reminders = null;
+    }
+
     final loadedState = MedixState(
       repository: repository,
       persistence: MedixPreferences(),
+      reminders: reminders,
     );
     await loadedState.restore();
 
