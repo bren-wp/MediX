@@ -14,8 +14,7 @@ class InteractionsScreen extends StatefulWidget {
   final MedixState state;
 
   @override
-  State<InteractionsScreen> createState() =>
-      _InteractionsScreenState();
+  State<InteractionsScreen> createState() => _InteractionsScreenState();
 }
 
 class _InteractionsScreenState extends State<InteractionsScreen> {
@@ -77,8 +76,7 @@ class _InteractionsScreenState extends State<InteractionsScreen> {
             const _ResultCard(
               icon: Icons.info_outline,
               title: 'Odaberite dva različita lijeka',
-              body:
-                  'Za provjeru su potrebna dva različita zapisa.',
+              body: 'Za provjeru su potrebna dva različita zapisa.',
               accent: MedixColors.warning,
             )
           else if (checked && interaction == null)
@@ -93,8 +91,7 @@ class _InteractionsScreenState extends State<InteractionsScreen> {
             _ResultCard(
               icon: Icons.warning_amber_rounded,
               title: severityTitle(interaction.severity),
-              body:
-                  '${interaction.summary}\n\n${interaction.guidance}',
+              body: '${interaction.summary}\n\n${interaction.guidance}',
               accent: MedixColors.danger,
             ),
           const SizedBox(height: 18),
@@ -136,7 +133,7 @@ class _MedicationDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: const Icon(Icons.medication_outlined),
@@ -174,9 +171,11 @@ class _ResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: accent.withOpacity(0.10),
+        color: accent.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: accent.withOpacity(0.45)),
+        border: Border.all(
+          color: accent.withValues(alpha: 0.45),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
