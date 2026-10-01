@@ -106,8 +106,9 @@ class MedixState extends ChangeNotifier {
   }
 
   void removeTherapy(String therapyId) {
-    final removed = _therapy.removeWhere((entry) => entry.id == therapyId);
-    if (removed > 0) {
+    final previousLength = _therapy.length;
+    _therapy.removeWhere((entry) => entry.id == therapyId);
+    if (_therapy.length != previousLength) {
       notifyListeners();
     }
   }
