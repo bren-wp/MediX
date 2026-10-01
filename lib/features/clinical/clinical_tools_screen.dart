@@ -299,18 +299,18 @@ class _ToolField {
     this.id,
     this.label, {
     this.unit,
-    this.initialValue,
   })  : type = _FieldType.number,
         help = null,
+        initialValue = null,
         options = const [];
 
   const _ToolField.toggle(
     this.id,
-    this.label, {
-    this.help,
-    this.initialValue = false,
-  })  : type = _FieldType.toggle,
+    this.label,
+  )  : type = _FieldType.toggle,
         unit = null,
+        help = null,
+        initialValue = false,
         options = const [];
 
   const _ToolField.choice(
