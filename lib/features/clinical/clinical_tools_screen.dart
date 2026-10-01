@@ -611,8 +611,8 @@ final List<_ToolDefinition> _definitions = [
       var inr = _number(values, 'inr', 'INR');
       var creatinine =
           _number(values, 'creatinine', 'kreatinin');
-      bilirubin = math.max(1, bilirubin);
-      inr = math.max(1, inr);
+      bilirubin = math.max(1.0, bilirubin).toDouble();
+      inr = math.max(1.0, inr).toDouble();
       creatinine = _flag(values, 'dialysis')
           ? 4
           : math.min(4, math.max(1, creatinine));
