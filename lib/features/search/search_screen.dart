@@ -6,6 +6,7 @@ import '../../models/medication.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medication_tile.dart';
 import '../../widgets/medix_page.dart';
+import '../compare/medication_compare_screen.dart';
 import '../medications/medication_detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -117,6 +118,19 @@ class _SearchScreenState extends State<SearchScreen> {
           appBar: AppBar(
             title: const Text('Pretraga lijekova'),
             actions: [
+              IconButton(
+                tooltip: 'Usporedi lijekove',
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => MedicationCompareScreen(
+                        state: widget.state,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.compare_arrows_rounded),
+              ),
               PopupMenuButton<MedicationSort>(
                 tooltip: 'Sortiranje',
                 initialValue: query.sort,
