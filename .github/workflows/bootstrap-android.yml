@@ -58,5 +58,10 @@ jobs:
           git add android
           git commit -m "build: add persistent Android host project"
 
+          # flutter create may touch tracked root files (for example metadata).
+          # Keep only the committed Android host before rebasing onto the
+          # newest branch head.
+          git reset --hard HEAD
+
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin HEAD:"${GITHUB_REF_NAME}"
