@@ -20,7 +20,7 @@ class NewsScreen extends StatelessWidget {
         'Kontraindikacije, nuspojave, interakcije i posebna upozorenja.'
       ),
       (
-        Icons.stethoscope_outlined,
+        Icons.medical_services_outlined,
         'Klinička praksa',
         'Sažeti materijali za brži rad u ambulanti i ljekarni.'
       ),
