@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/medix_theme.dart';
 import '../../models/medication.dart';
+import '../../models/medication_price.dart';
 import '../../state/medix_state.dart';
+import '../../widgets/medix_page.dart';
 
 class MedicationDetailScreen extends StatefulWidget {
   const MedicationDetailScreen({
@@ -19,8 +21,7 @@ class MedicationDetailScreen extends StatefulWidget {
       _MedicationDetailScreenState();
 }
 
-class _MedicationDetailScreenState
-    extends State<MedicationDetailScreen> {
+class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
   @override
   void initState() {
     super.initState();
@@ -36,10 +37,16 @@ class _MedicationDetailScreenState
       builder: (context, _) {
         final favorite = widget.state.isFavorite(medication.id);
 
-        return Scaffold(
+        return MedixPage(
+          safeArea: false,
           appBar: AppBar(
             title: Text(medication.name),
             actions: [
+              IconButton(
+                tooltip: 'Podijeli',
+                onPressed: () {},
+                icon: const Icon(Icons.share_outlined),
+              ),
               IconButton(
                 tooltip: favorite
                     ? 'Ukloni iz favorita'
@@ -54,57 +61,91 @@ class _MedicationDetailScreenState
               ),
             ],
           ),
-          body: ListView(
-            padding: const EdgeInsets.fromLTRB(18, 8, 18, 32),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
             children: [
               _Hero(medication: medication),
-              const SizedBox(height: 16),
-              _Notice(
-                icon: Icons.verified_user_outlined,
-                title: 'Izvor i sigurnost podataka',
-                text:
-                    '${medication.sourceLabel}. Zadnja demo revizija: '
-                    '${medication.lastReviewed.day}.'
-                    '${medication.lastReviewed.month}.'
-                    '${medication.lastReviewed.year}.',
-              ),
-              const SizedBox(height: 16),
-              _Section(
-                icon: Icons.info_outline,
-                title: 'Opis',
-                body: medication.summary,
-              ),
-              _Section(
+              const SizedBox(height: 12),
+              _Badges(medication: medication),
+              const SizedBox(height: 12),
+              _OverviewSection(medication: medication),
+              const SizedBox(height: 12),
+              if (_hasOfficialMetadata(medication)) ...[
+                _MetadataSection(medication: medication),
+                const SizedBox(height: 12),
+              ],
+              if (medication.prices.isNotEmpty) ...[
+                _PriceSection(medication: medication),
+                const SizedBox(height: 12),
+              ],
+              _ExpandableSection(
                 icon: Icons.medical_services_outlined,
-                title: 'Primjena',
+                title: 'Za što se koristi?',
                 bullets: medication.uses,
               ),
-              _Section(
-                icon: Icons.schedule_outlined,
+              _ExpandableSection(
+                icon: Icons.science_outlined,
+                title: 'Kako djeluje?',
+                body: medication.summary,
+              ),
+              _ExpandableSection(
+                icon: Icons.schedule_rounded,
                 title: 'Doziranje',
                 body: medication.dosageGuidance,
+                color: MedixColors.success,
               ),
-              _Section(
-                icon: Icons.monitor_heart_outlined,
+              _ExpandableSection(
+                icon: Icons.favorite_rounded,
                 title: 'Nuspojave',
                 bullets: medication.sideEffects,
+                color: MedixColors.danger,
               ),
-              _Section(
+              _ExpandableSection(
                 icon: Icons.warning_amber_rounded,
                 title: 'Upozorenja',
                 bullets: medication.warnings,
+                color: MedixColors.warning,
               ),
-              const _Notice(
-                icon: Icons.health_and_safety_outlined,
-                title: 'Važna napomena',
-                text:
-                    'MediX je informativni alat i nije zamjena za dijagnozu, propisivanje terapije, službenu uputu o lijeku ili savjet liječnika odnosno ljekarnika.',
+              const SizedBox(height: 4),
+              _SourceCard(medication: medication),
+              const SizedBox(height: 12),
+              const MedixSectionCard(
+                accent: MedixColors.warning,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MedixIconBubble(
+                      icon: Icons.health_and_safety_outlined,
+                      color: MedixColors.warning,
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'MediX je informativni alat. Ne postavlja dijagnozu, ne propisuje terapiju i ne zamjenjuje službenu uputu o lijeku, liječnika ili ljekarnika.',
+                        style: TextStyle(
+                          color: MedixColors.textSecondary,
+                          height: 1.45,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         );
       },
     );
+  }
+
+  bool _hasOfficialMetadata(Medication medication) {
+    return medication.atcCode != null ||
+        medication.authorizationNumber != null ||
+        medication.marketingAuthorizationHolder != null ||
+        medication.manufacturer != null ||
+        medication.route != null ||
+        medication.packageDescription != null ||
+        medication.isOnHzzoList;
   }
 }
 
@@ -115,42 +156,540 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(22),
-        side: const BorderSide(color: Color(0xFF173C61)),
+    return MedixSectionCard(
+      accent: MedixColors.primary,
+      padding: const EdgeInsets.all(18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 148,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF092B45),
+                  Color(0xFF041522),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  right: 20,
+                  top: 24,
+                  child: Transform.rotate(
+                    angle: -.3,
+                    child: Container(
+                      width: 116,
+                      height: 55,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF2F7FC),
+                        borderRadius: BorderRadius.circular(7),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x55000000),
+                            blurRadius: 16,
+                            offset: Offset(0, 7),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            medication.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF0B3B81),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          Text(
+                            medication.strength,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Color(0xFF0B3B81),
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const Positioned(
+                  left: 24,
+                  bottom: 24,
+                  child: Icon(
+                    Icons.medication_rounded,
+                    size: 74,
+                    color: MedixColors.cyan,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            medication.name,
+            style: const TextStyle(
+              fontSize: 27,
+              fontWeight: FontWeight.w900,
+              letterSpacing: -.6,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            medication.subtitle,
+            style: const TextStyle(
+              color: MedixColors.textSecondary,
+              fontSize: 14,
+            ),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(22),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    );
+  }
+}
+
+class _Badges extends StatelessWidget {
+  const _Badges({required this.medication});
+
+  final Medication medication;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 7,
+      runSpacing: 7,
+      children: [
+        _Badge(
+          icon: medication.requiresPrescription
+              ? Icons.description_outlined
+              : Icons.add_circle_outline,
+          label: medication.requiresPrescription
+              ? 'Na recept'
+              : 'Bez recepta',
+          color: medication.requiresPrescription
+              ? MedixColors.primary
+              : MedixColors.success,
+        ),
+        _Badge(
+          icon: Icons.category_outlined,
+          label: medication.category,
+          color: MedixColors.primary,
+        ),
+        if (medication.atcCode != null)
+          _Badge(
+            icon: Icons.tag_rounded,
+            label: 'ATK ${medication.atcCode}',
+            color: MedixColors.cyan,
+          ),
+        if (medication.isOnHzzoList)
+          _Badge(
+            icon: Icons.verified_outlined,
+            label: medication.reimbursementStatus ==
+                    ReimbursementStatus.basic
+                ? 'HZZO Osnovna lista'
+                : 'HZZO Dopunska lista',
+            color: MedixColors.success,
+          ),
+      ],
+    );
+  }
+}
+
+class _Badge extends StatelessWidget {
+  const _Badge({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: .15),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: .35)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OverviewSection extends StatelessWidget {
+  const _OverviewSection({required this.medication});
+
+  final Medication medication;
+
+  @override
+  Widget build(BuildContext context) {
+    return MedixSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Opis lijeka',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 9),
+          Text(
+            medication.summary,
+            style: const TextStyle(
+              color: MedixColors.textSecondary,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 12),
+          _InfoRow(
+            label: 'Djelatna tvar',
+            value: medication.activeIngredient,
+          ),
+          _InfoRow(
+            label: 'Oblik i jačina',
+            value: medication.subtitle,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetadataSection extends StatelessWidget {
+  const _MetadataSection({required this.medication});
+
+  final Medication medication;
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = <(String, String)>[
+      if (medication.atcCode != null) ('ATK šifra', medication.atcCode!),
+      if (medication.authorizationNumber != null)
+        ('Broj odobrenja', medication.authorizationNumber!),
+      if (medication.marketingAuthorizationHolder != null)
+        ('Nositelj odobrenja', medication.marketingAuthorizationHolder!),
+      if (medication.manufacturer != null)
+        ('Proizvođač', medication.manufacturer!),
+      if (medication.route != null)
+        ('Način primjene', medication.route!),
+      if (medication.packageDescription != null)
+        ('Pakiranje', medication.packageDescription!),
+      if (medication.hzzoGuidelineCode != null)
+        ('HZZO smjernica', medication.hzzoGuidelineCode!),
+    ];
+
+    return MedixSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              MedixIconBubble(
+                icon: Icons.fact_check_outlined,
+                color: MedixColors.cyan,
+                size: 38,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Službeni podaci',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...rows.map(
+            (row) => _InfoRow(label: row.$1, value: row.$2),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PriceSection extends StatelessWidget {
+  const _PriceSection({required this.medication});
+
+  final Medication medication;
+
+  @override
+  Widget build(BuildContext context) {
+    return MedixSectionCard(
+      accent: MedixColors.success,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              MedixIconBubble(
+                icon: Icons.euro_rounded,
+                color: MedixColors.success,
+                size: 38,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Cijene i HZZO podaci',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...medication.prices.map(
+            (price) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: MedixColors.backgroundAlt,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: MedixColors.borderSoft),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _priceLabel(price.kind),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          price.formatted,
+                          style: const TextStyle(
+                            color: MedixColors.success,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      'Izvor: ${price.source}',
+                      style: const TextStyle(
+                        color: MedixColors.textSecondary,
+                        fontSize: 10,
+                      ),
+                    ),
+                    Text(
+                      'Vrijedi od ${price.validFrom.day}.${price.validFrom.month}.${price.validFrom.year}.',
+                      style: const TextStyle(
+                        color: MedixColors.textMuted,
+                        fontSize: 10,
+                      ),
+                    ),
+                    if (price.note != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        price.note!,
+                        style: const TextStyle(
+                          color: MedixColors.textSecondary,
+                          fontSize: 10,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const Text(
+            'Doplata HZZO-a, referentna cijena/pokriće, najviša dozvoljena veleprodajna cijena i maloprodajna cijena ljekarne nisu isti podatak. MediX ih zato prikazuje odvojeno.',
+            style: TextStyle(
+              color: MedixColors.textSecondary,
+              fontSize: 11,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _priceLabel(MedicationPriceKind kind) {
+    return switch (kind) {
+      MedicationPriceKind.hzzoCopay => 'HZZO doplata',
+      MedicationPriceKind.hzzoReimbursement => 'HZZO referentni iznos',
+      MedicationPriceKind.maxWholesale =>
+        'Najviša dozvoljena cijena na veliko',
+      MedicationPriceKind.pharmacyRetail => 'Maloprodajna cijena ljekarne',
+    };
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({
+    required this.label,
+    required this.value,
+  });
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 118,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: MedixColors.textMuted,
+                fontSize: 11,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                color: MedixColors.textPrimary,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ExpandableSection extends StatelessWidget {
+  const _ExpandableSection({
+    required this.icon,
+    required this.title,
+    this.body,
+    this.bullets = const [],
+    this.color = MedixColors.cyan,
+  });
+
+  final IconData icon;
+  final String title;
+  final String? body;
+  final List<String> bullets;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          dividerColor: Colors.transparent,
+        ),
+        child: ExpansionTile(
+          collapsedBackgroundColor: MedixColors.surface,
+          backgroundColor: MedixColors.surface,
+          tilePadding: const EdgeInsets.symmetric(horizontal: 14),
+          childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+            side: const BorderSide(color: MedixColors.borderSoft),
+          ),
+          collapsedShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+            side: const BorderSide(color: MedixColors.borderSoft),
+          ),
+          leading: MedixIconBubble(
+            icon: icon,
+            color: color,
+            size: 34,
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
           children: [
-            const Icon(
-              Icons.medication_rounded,
-              size: 62,
-              color: MedixColors.cyan,
-            ),
-            const SizedBox(height: 18),
-            Text(
-              medication.name,
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.7,
+            if (body != null)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  body!,
+                  style: const TextStyle(
+                    color: MedixColors.textSecondary,
+                    height: 1.45,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              medication.subtitle,
-              style: const TextStyle(
-                color: MedixColors.textSecondary,
-                fontSize: 16,
+            ...bullets.map(
+              (bullet) => Padding(
+                padding: const EdgeInsets.only(top: 7),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Icon(
+                        Icons.circle,
+                        size: 5,
+                        color: color,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        bullet,
+                        style: const TextStyle(
+                          color: MedixColors.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              'Djelatna tvar: ${medication.activeIngredient}',
-              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -159,134 +698,51 @@ class _Hero extends StatelessWidget {
   }
 }
 
-class _Section extends StatelessWidget {
-  const _Section({
-    required this.icon,
-    required this.title,
-    this.body,
-    this.bullets = const [],
-  });
+class _SourceCard extends StatelessWidget {
+  const _SourceCard({required this.medication});
 
-  final IconData icon;
-  final String title;
-  final String? body;
-  final List<String> bullets;
+  final Medication medication;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: Color(0xFF173C61)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, color: MedixColors.cyan),
-                  const SizedBox(width: 10),
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 17,
-                    ),
-                  ),
-                ],
-              ),
-              if (body != null) ...[
-                const SizedBox(height: 12),
-                Text(
-                  body!,
-                  style: const TextStyle(
-                    color: MedixColors.textSecondary,
-                    height: 1.45,
-                  ),
-                ),
-              ],
-              if (bullets.isNotEmpty) ...[
-                const SizedBox(height: 10),
-                ...bullets.map(
-                  (bullet) => Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 7),
-                          child: Icon(
-                            Icons.circle,
-                            size: 5,
-                            color: MedixColors.cyan,
-                          ),
-                        ),
-                        const SizedBox(width: 9),
-                        Expanded(
-                          child: Text(
-                            bullet,
-                            style: const TextStyle(
-                              color: MedixColors.textSecondary,
-                              height: 1.4,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Notice extends StatelessWidget {
-  const _Notice({
-    required this.icon,
-    required this.title,
-    required this.text,
-  });
-
-  final IconData icon;
-  final String title;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0x2014D8EA),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0x5514D8EA)),
-      ),
+    return MedixSectionCard(
+      accent: medication.isDemo ? MedixColors.warning : MedixColors.success,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: MedixColors.cyan),
+          MedixIconBubble(
+            icon: medication.isDemo
+                ? Icons.science_outlined
+                : Icons.verified_user_outlined,
+            color: medication.isDemo
+                ? MedixColors.warning
+                : MedixColors.success,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
+                  medication.isDemo
+                      ? 'Razvojni zapis'
+                      : 'Provjereni službeni zapis',
+                  style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  text,
+                  medication.sourceLabel,
                   style: const TextStyle(
                     color: MedixColors.textSecondary,
-                    height: 1.4,
+                    height: 1.35,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Zadnja revizija: ${medication.lastReviewed.day}.${medication.lastReviewed.month}.${medication.lastReviewed.year}.',
+                  style: const TextStyle(
+                    color: MedixColors.textMuted,
+                    fontSize: 10,
                   ),
                 ),
               ],
