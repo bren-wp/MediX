@@ -13,6 +13,7 @@
 - detalj lijeka
 - lokalni favoriti unutar trenutne sesije
 - nedavno pregledani lijekovi
+- Moja terapija: lijek, opis doze, vremena, aktiviranje i brisanje tijekom sesije
 - osnovni demonstracijski modul interakcija
 - oznaka izvora i zadnje revizije podatka
 - CI: `flutter analyze`, `flutter test` i Android debug smoke build
@@ -22,8 +23,8 @@
 Planirano:
 
 - trajna lokalna pohrana favorita
-- moja terapija
-- lokalni podsjetnici
+- trajna lokalna pohrana terapije i favorita
+- lokalni OS podsjetnici
 - kalendar terapije
 - barkod / DataMatrix skeniranje
 - pregled djelatnih tvari
