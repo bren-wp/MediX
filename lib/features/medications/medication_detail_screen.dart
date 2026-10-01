@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/theme/medix_theme.dart';
 import '../../models/medication.dart';
@@ -28,6 +29,41 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
     widget.state.markViewed(widget.medication.id);
   }
 
+  Future<void> _copySummary() async {
+    final medication = widget.medication;
+    final lines = <String>[
+      medication.name,
+      medication.subtitle,
+      'Djelatna tvar: ' + medication.activeIngredient,
+      if (medication.atcCode != null)
+        'ATK: ' + medication.atcCode!,
+      'Izdavanje: ' +
+          (medication.requiresPrescription == true
+              ? 'na recept'
+              : medication.requiresPrescription == false
+                  ? 'bez recepta'
+                  : 'nije navedeno'),
+      if (medication.packageDescription != null)
+        'Pakiranje: ' + medication.packageDescription!,
+      if (medication.hzzoCopay != null)
+        'Doplata: ' + medication.hzzoCopay!.formatted,
+      if (medication.maxWholesalePrice != null)
+        'Veleprodajna cijena: ' +
+            medication.maxWholesalePrice!.formatted,
+    ];
+
+    await Clipboard.setData(
+      ClipboardData(text: lines.join('\n')),
+    );
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Podaci o lijeku kopirani su u međuspremnik.'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final medication = widget.medication;
@@ -43,9 +79,9 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
             title: Text(medication.name),
             actions: [
               IconButton(
-                tooltip: 'Podijeli',
-                onPressed: () {},
-                icon: const Icon(Icons.share_outlined),
+                tooltip: 'Kopiraj sažetak',
+                onPressed: _copySummary,
+                icon: const Icon(Icons.content_copy_rounded),
               ),
               IconButton(
                 tooltip: favorite
