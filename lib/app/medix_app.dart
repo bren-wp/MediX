@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import '../core/theme/medix_theme.dart';
 import '../data/medication_repository.dart';
 import '../features/home/app_shell.dart';
+import '../features/onboarding/onboarding_screen.dart';
+import '../services/preferences_store.dart';
 import '../state/medix_state.dart';
 import '../widgets/medix_brand.dart';
 
@@ -35,12 +37,19 @@ class _MedixAppState extends State<MedixApp> {
       repository = MedicationRepository.demo();
     }
 
+    final loadedState = MedixState(
+      repository: repository,
+      persistence: MedixPreferences(),
+    );
+    await loadedState.restore();
+
     if (!mounted) {
+      loadedState.dispose();
       return;
     }
 
     setState(() {
-      state = MedixState(repository: repository);
+      state = loadedState;
     });
   }
 
@@ -52,13 +61,23 @@ class _MedixAppState extends State<MedixApp> {
 
   @override
   Widget build(BuildContext context) {
+    final currentState = state;
+
     return MaterialApp(
       title: 'MediX',
       debugShowCheckedModeBanner: false,
       theme: MedixTheme.dark(),
-      home: state == null
+      home: currentState == null
           ? const _SplashScreen()
-          : AppShell(state: state!),
+          : AnimatedBuilder(
+              animation: currentState,
+              builder: (context, _) {
+                if (!currentState.onboardingCompleted) {
+                  return OnboardingScreen(state: currentState);
+                }
+                return AppShell(state: currentState);
+              },
+            ),
     );
   }
 }
