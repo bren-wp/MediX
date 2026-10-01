@@ -1,21 +1,71 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import '../data/medication_repository.dart';
 import '../models/medication.dart';
 import '../models/therapy_entry.dart';
+import '../services/preferences_store.dart';
 
 class MedixState extends ChangeNotifier {
-  MedixState({required this.repository});
+  MedixState({
+    required this.repository,
+    this.persistence,
+  });
 
   final MedicationRepository repository;
+  final MedixPersistence? persistence;
 
   final Set<String> _favoriteIds = <String>{};
   final List<String> _recentIds = <String>[];
   final List<TherapyEntry> _therapy = <TherapyEntry>[];
+  bool _onboardingCompleted = false;
 
   Set<String> get favoriteIds => Set.unmodifiable(_favoriteIds);
-
   List<TherapyEntry> get therapy => List.unmodifiable(_therapy);
+  bool get onboardingCompleted => _onboardingCompleted;
+
+  Future<void> restore() async {
+    final storage = persistence;
+    if (storage == null) return;
+
+    final stored = await storage.load();
+    final validMedicationIds =
+        repository.medications.map((item) => item.id).toSet();
+
+    _favoriteIds
+      ..clear()
+      ..addAll(
+        stored.favoriteIds.where(validMedicationIds.contains),
+      );
+
+    _recentIds
+      ..clear()
+      ..addAll(
+        stored.recentIds.where(validMedicationIds.contains).take(8),
+      );
+
+    _therapy
+      ..clear()
+      ..addAll(
+        stored.therapy.where(
+          (entry) => validMedicationIds.contains(entry.medicationId),
+        ),
+      );
+
+    _onboardingCompleted = stored.onboardingCompleted;
+    notifyListeners();
+  }
+
+  Future<void> completeOnboarding() async {
+    if (_onboardingCompleted) return;
+    _onboardingCompleted = true;
+    notifyListeners();
+    final storage = persistence;
+    if (storage != null) {
+      await storage.setOnboardingCompleted(true);
+    }
+  }
 
   List<Medication> get favorites {
     return repository.medications
@@ -53,6 +103,11 @@ class MedixState extends ChangeNotifier {
       _favoriteIds.add(medicationId);
     }
     notifyListeners();
+
+    final storage = persistence;
+    if (storage != null) {
+      unawaited(storage.saveFavorites(_favoriteIds));
+    }
   }
 
   void markViewed(String medicationId) {
@@ -62,6 +117,11 @@ class MedixState extends ChangeNotifier {
       _recentIds.removeLast();
     }
     notifyListeners();
+
+    final storage = persistence;
+    if (storage != null) {
+      unawaited(storage.saveRecent(_recentIds));
+    }
   }
 
   void addTherapy({
@@ -92,6 +152,7 @@ class MedixState extends ChangeNotifier {
       ),
     );
     notifyListeners();
+    _saveTherapy();
   }
 
   void toggleTherapy(String therapyId) {
@@ -103,6 +164,7 @@ class MedixState extends ChangeNotifier {
     final current = _therapy[index];
     _therapy[index] = current.copyWith(isActive: !current.isActive);
     notifyListeners();
+    _saveTherapy();
   }
 
   void removeTherapy(String therapyId) {
@@ -110,6 +172,14 @@ class MedixState extends ChangeNotifier {
     _therapy.removeWhere((entry) => entry.id == therapyId);
     if (_therapy.length != previousLength) {
       notifyListeners();
+      _saveTherapy();
+    }
+  }
+
+  void _saveTherapy() {
+    final storage = persistence;
+    if (storage != null) {
+      unawaited(storage.saveTherapy(_therapy));
     }
   }
 }
