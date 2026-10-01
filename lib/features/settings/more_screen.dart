@@ -7,6 +7,7 @@ import '../../widgets/medix_page.dart';
 import '../interactions/interactions_screen.dart';
 import '../news/news_screen.dart';
 import '../pharmacies/pharmacies_screen.dart';
+import '../prices/price_catalog_screen.dart';
 import '../safety/special_population_screen.dart';
 import '../substitutions/substitutions_screen.dart';
 import '../therapy/calendar_screen.dart';
@@ -98,6 +99,15 @@ class MoreScreen extends StatelessWidget {
               const SpecialPopulationScreen(
                 population: SpecialPopulation.olderAdults,
               ),
+            ),
+          ),
+          _MenuItem(
+            icon: Icons.euro_rounded,
+            title: 'Cjenik lijekova',
+            subtitle: 'HALMED 2026 · najviše cijene na veliko',
+            onTap: () => _push(
+              context,
+              const PriceCatalogScreen(),
             ),
           ),
           _MenuItem(
