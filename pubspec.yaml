@@ -1,7 +1,7 @@
 name: medix
 description: MediX - vodič kroz lijekove bez obvezne prijave ili registracije.
 publish_to: "none"
-version: 0.2.0+2
+version: 0.3.0+3
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -23,3 +23,4 @@ flutter:
   assets:
     - assets/data/medications_official.json
     - assets/data/halmed_prices_2026.json
+    - assets/data/icd10.json
