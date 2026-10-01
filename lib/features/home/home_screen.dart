@@ -7,6 +7,7 @@ import '../../widgets/medication_tile.dart';
 import '../../widgets/medix_brand.dart';
 import '../interactions/interactions_screen.dart';
 import '../medications/medication_detail_screen.dart';
+import '../therapy/therapy_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -109,15 +110,13 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                   _QuickCard(
-                    icon: Icons.notifications_none_rounded,
-                    title: 'Podsjetnici',
-                    subtitle: 'U sljedećoj fazi',
+                    icon: Icons.event_available_outlined,
+                    title: 'Moja terapija',
+                    subtitle: 'Plan i vremena',
                     onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Podsjetnici dolaze u sljedećem razvojnom koraku.',
-                          ),
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => TherapyScreen(state: state),
                         ),
                       );
                     },
