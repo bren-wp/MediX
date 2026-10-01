@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../data/medication_repository.dart';
 import '../models/medication.dart';
+import '../models/therapy_entry.dart';
 
 class MedixState extends ChangeNotifier {
   MedixState({required this.repository});
@@ -10,8 +11,11 @@ class MedixState extends ChangeNotifier {
 
   final Set<String> _favoriteIds = <String>{};
   final List<String> _recentIds = <String>[];
+  final List<TherapyEntry> _therapy = <TherapyEntry>[];
 
   Set<String> get favoriteIds => Set.unmodifiable(_favoriteIds);
+
+  List<TherapyEntry> get therapy => List.unmodifiable(_therapy);
 
   List<Medication> get favorites {
     return repository.medications
@@ -29,6 +33,15 @@ class MedixState extends ChangeNotifier {
         .map((id) => byId[id])
         .whereType<Medication>()
         .toList(growable: false);
+  }
+
+  Medication? medicationById(String id) {
+    for (final medication in repository.medications) {
+      if (medication.id == id) {
+        return medication;
+      }
+    }
+    return null;
   }
 
   bool isFavorite(String medicationId) {
@@ -49,5 +62,53 @@ class MedixState extends ChangeNotifier {
       _recentIds.removeLast();
     }
     notifyListeners();
+  }
+
+  void addTherapy({
+    required String medicationId,
+    required String doseDescription,
+    required List<String> times,
+  }) {
+    final normalizedTimes = times
+        .map((time) => time.trim())
+        .where((time) => time.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
+    if (medicationById(medicationId) == null ||
+        doseDescription.trim().isEmpty ||
+        normalizedTimes.isEmpty) {
+      return;
+    }
+
+    final id = 'therapy-${DateTime.now().microsecondsSinceEpoch}';
+    _therapy.add(
+      TherapyEntry(
+        id: id,
+        medicationId: medicationId,
+        doseDescription: doseDescription.trim(),
+        times: normalizedTimes,
+      ),
+    );
+    notifyListeners();
+  }
+
+  void toggleTherapy(String therapyId) {
+    final index = _therapy.indexWhere((entry) => entry.id == therapyId);
+    if (index == -1) {
+      return;
+    }
+
+    final current = _therapy[index];
+    _therapy[index] = current.copyWith(isActive: !current.isActive);
+    notifyListeners();
+  }
+
+  void removeTherapy(String therapyId) {
+    final removed = _therapy.removeWhere((entry) => entry.id == therapyId);
+    if (removed > 0) {
+      notifyListeners();
+    }
   }
 }
