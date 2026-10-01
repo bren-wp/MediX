@@ -131,7 +131,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   _HomeAction(
-                    icon: Icons.stethoscope_rounded,
+                    icon: Icons.medical_services_outlined,
                     title: 'Bolesti i stanja',
                     color: MedixColors.cyan,
                     onTap: () => _push(
@@ -253,7 +253,7 @@ class HomeScreen extends StatelessWidget {
     const icons = [
       Icons.medication_rounded,
       Icons.health_and_safety_rounded,
-      Icons.gastroenterology_outlined,
+      Icons.local_hospital_outlined,
       Icons.favorite_rounded,
       Icons.spa_outlined,
       Icons.air_rounded,
