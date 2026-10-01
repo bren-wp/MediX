@@ -1,0 +1,103 @@
+name: Publish GitHub Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "pubspec.yaml"
+      - ".github/workflows/publish-github-release.yml"
+      - "docs/release-notes/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: medix-github-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish MediX GitHub release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Read version
+        id: version
+        shell: bash
+        run: |
+          RAW_VERSION="$(awk '/^version:/ {print $2; exit}' pubspec.yaml)"
+          VERSION="${RAW_VERSION%%+*}"
+          if [ -z "$VERSION" ]; then
+            echo "Unable to determine version from pubspec.yaml" >&2
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Publishing MediX v$VERSION"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - name: Build release AAB
+        run: flutter build appbundle --release
+
+      - name: Prepare release assets
+        shell: bash
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk "dist/MediX-v${VERSION}.apk"
+          cp build/app/outputs/bundle/release/app-release.aab "dist/MediX-v${VERSION}.aab"
+          test -s "dist/MediX-v${VERSION}.apk"
+          test -s "dist/MediX-v${VERSION}.aab"
+          sha256sum "dist/MediX-v${VERSION}.apk" "dist/MediX-v${VERSION}.aab" | tee "dist/SHA256SUMS.txt"
+
+      - name: Publish or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+          VERSION: ${{ steps.version.outputs.version }}
+        shell: bash
+        run: |
+          NOTES="docs/release-notes/v${VERSION}.md"
+
+          if [ ! -f "$NOTES" ]; then
+            echo "Missing release notes: $NOTES" >&2
+            exit 1
+          fi
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; refreshing assets and notes."
+            gh release upload "$TAG"               "dist/MediX-v${VERSION}.apk"               "dist/MediX-v${VERSION}.aab"               "dist/SHA256SUMS.txt"               --clobber
+            gh release edit "$TAG"               --title "MediX v${VERSION}"               --notes-file "$NOTES"               --latest
+          else
+            gh release create "$TAG"               "dist/MediX-v${VERSION}.apk"               "dist/MediX-v${VERSION}.aab"               "dist/SHA256SUMS.txt"               --target "$GITHUB_SHA"               --title "MediX v${VERSION}"               --notes-file "$NOTES"               --latest
+          fi
+
+      - name: Verify published release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.tag }}
+        shell: bash
+        run: |
+          gh release view "$TAG" --json tagName,name,isDraft,isPrerelease,url,assets
