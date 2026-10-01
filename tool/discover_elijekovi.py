@@ -51,7 +51,27 @@ def main() -> int:
         "",
     ]
 
-    response = session.get(REGISTERED, timeout=60)
+    try:
+        response = session.get(REGISTERED, timeout=30)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        report.extend(
+            [
+                f"- Requested: `{REGISTERED}`",
+                "- Status: **service not reachable from GitHub-hosted runner**",
+                f"- Technical error: `{type(exc).__name__}: {exc}`",
+                "",
+                "The discovery job intentionally succeeds with this report. "
+                "MediX will not guess or substitute an unofficial clinical "
+                "data source when the official eLijekovi service is unavailable.",
+                "",
+            ]
+        )
+        OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        OUTPUT.write_text("\n".join(report), encoding="utf-8")
+        print(f"Wrote unavailable-service report to {OUTPUT}")
+        return 0
+
     report.extend(
         [
             f"- Requested: `{REGISTERED}`",
@@ -61,7 +81,6 @@ def main() -> int:
             "",
         ]
     )
-    response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
     scripts = []

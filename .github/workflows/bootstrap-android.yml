@@ -33,17 +33,22 @@ jobs:
 
       - name: Generate Android host
         run: |
-          flutter create             --org com.brendigo.medix             --project-name medix             --platforms=android             .
+          flutter create \
+            --org com.brendigo \
+            --project-name medix \
+            --platforms=android \
+            .
 
       - name: Verify Android host
         run: |
           test -f android/app/build.gradle.kts
           test -f android/app/src/main/AndroidManifest.xml
-          test -f android/app/src/main/kotlin/com/brendigo/medix/medix/MainActivity.kt ||             find android/app/src/main -type f -name MainActivity.kt -print -quit | grep .
+          test -f android/app/src/main/kotlin/com/brendigo/medix/MainActivity.kt || \
+            find android/app/src/main -type f -name MainActivity.kt -print -quit | grep .
 
       - name: Commit Android host
         run: |
-          if git diff --quiet -- android; then
+          if [ -z "$(git status --porcelain -- android)" ]; then
             echo "Android host is already current."
             exit 0
           fi

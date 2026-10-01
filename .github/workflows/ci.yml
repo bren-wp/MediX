@@ -55,7 +55,7 @@ jobs:
           cache: true
 
       - name: Generate Android host project
-        run: flutter create --org com.brendigo.medix --project-name medix --platforms=android .
+        run: flutter create --org com.brendigo --project-name medix --platforms=android .
 
       - name: Build debug APK
         run: flutter build apk --debug
