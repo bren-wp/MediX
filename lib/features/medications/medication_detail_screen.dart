@@ -107,8 +107,6 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
                 color: MedixColors.warning,
               ),
               const SizedBox(height: 4),
-              _SourceCard(medication: medication),
-              const SizedBox(height: 12),
               const MedixSectionCard(
                 accent: MedixColors.warning,
                 child: Row(
@@ -273,15 +271,21 @@ class _Badges extends StatelessWidget {
       runSpacing: 7,
       children: [
         _Badge(
-          icon: medication.requiresPrescription
+          icon: medication.requiresPrescription == true
               ? Icons.description_outlined
-              : Icons.add_circle_outline,
-          label: medication.requiresPrescription
+              : medication.requiresPrescription == false
+                  ? Icons.add_circle_outline
+                  : Icons.help_outline_rounded,
+          label: medication.requiresPrescription == true
               ? 'Na recept'
-              : 'Bez recepta',
-          color: medication.requiresPrescription
+              : medication.requiresPrescription == false
+                  ? 'Bez recepta'
+                  : 'Režim izdavanja nije naveden',
+          color: medication.requiresPrescription == true
               ? MedixColors.primary
-              : MedixColors.success,
+              : medication.requiresPrescription == false
+                  ? MedixColors.success
+                  : MedixColors.textSecondary,
         ),
         _Badge(
           icon: Icons.category_outlined,
@@ -299,8 +303,8 @@ class _Badges extends StatelessWidget {
             icon: Icons.verified_outlined,
             label: medication.reimbursementStatus ==
                     ReimbursementStatus.basic
-                ? 'HZZO Osnovna lista'
-                : 'HZZO Dopunska lista',
+                ? 'Osnovna lista'
+                : 'Dopunska lista',
             color: MedixColors.success,
           ),
       ],
@@ -408,7 +412,7 @@ class _MetadataSection extends StatelessWidget {
       if (medication.packageDescription != null)
         ('Pakiranje', medication.packageDescription!),
       if (medication.hzzoGuidelineCode != null)
-        ('HZZO smjernica', medication.hzzoGuidelineCode!),
+        ('Oznaka smjernice', medication.hzzoGuidelineCode!),
     ];
 
     return MedixSectionCard(
@@ -424,7 +428,7 @@ class _MetadataSection extends StatelessWidget {
               ),
               SizedBox(width: 10),
               Text(
-                'Službeni podaci',
+                'Podaci o lijeku',
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w900,
@@ -463,7 +467,7 @@ class _PriceSection extends StatelessWidget {
               ),
               SizedBox(width: 10),
               Text(
-                'Cijene i HZZO podaci',
+                'Cijene i doplate',
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w900,
@@ -508,13 +512,6 @@ class _PriceSection extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      'Izvor: ${price.source}',
-                      style: const TextStyle(
-                        color: MedixColors.textSecondary,
-                        fontSize: 10,
-                      ),
-                    ),
-                    Text(
                       'Vrijedi od ${price.validFrom.day}.${price.validFrom.month}.${price.validFrom.year}.',
                       style: const TextStyle(
                         color: MedixColors.textMuted,
@@ -538,7 +535,7 @@ class _PriceSection extends StatelessWidget {
             ),
           ),
           const Text(
-            'Doplata HZZO-a, referentna cijena/pokriće, najviša dozvoljena veleprodajna cijena i maloprodajna cijena ljekarne nisu isti podatak. MediX ih zato prikazuje odvojeno.',
+            'Doplata, referentni iznos, najviša evidentirana veleprodajna cijena i maloprodajna cijena nisu isti podatak. MediX ih prikazuje odvojeno kada su dostupni.',
             style: TextStyle(
               color: MedixColors.textSecondary,
               fontSize: 11,
@@ -552,8 +549,8 @@ class _PriceSection extends StatelessWidget {
 
   String _priceLabel(MedicationPriceKind kind) {
     return switch (kind) {
-      MedicationPriceKind.hzzoCopay => 'HZZO doplata',
-      MedicationPriceKind.hzzoReimbursement => 'HZZO referentni iznos',
+      MedicationPriceKind.hzzoCopay => 'Doplata',
+      MedicationPriceKind.hzzoReimbursement => 'Referentni iznos',
       MedicationPriceKind.maxWholesale =>
         'Najviša dozvoljena cijena na veliko',
       MedicationPriceKind.pharmacyRetail => 'Maloprodajna cijena ljekarne',
@@ -693,62 +690,6 @@ class _ExpandableSection extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _SourceCard extends StatelessWidget {
-  const _SourceCard({required this.medication});
-
-  final Medication medication;
-
-  @override
-  Widget build(BuildContext context) {
-    return MedixSectionCard(
-      accent: medication.isDemo ? MedixColors.warning : MedixColors.success,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MedixIconBubble(
-            icon: medication.isDemo
-                ? Icons.science_outlined
-                : Icons.verified_user_outlined,
-            color: medication.isDemo
-                ? MedixColors.warning
-                : MedixColors.success,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  medication.isDemo
-                      ? 'Razvojni zapis'
-                      : 'Provjereni službeni zapis',
-                  style: const TextStyle(fontWeight: FontWeight.w900),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  medication.sourceLabel,
-                  style: const TextStyle(
-                    color: MedixColors.textSecondary,
-                    height: 1.35,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'Zadnja revizija: ${medication.lastReviewed.day}.${medication.lastReviewed.month}.${medication.lastReviewed.year}.',
-                  style: const TextStyle(
-                    color: MedixColors.textMuted,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

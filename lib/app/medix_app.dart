@@ -30,10 +30,16 @@ class _MedixAppState extends State<MedixApp> {
     MedicationRepository repository;
 
     try {
-      final raw = await rootBundle.loadString(
+      final reimbursementRaw = await rootBundle.loadString(
         'assets/data/medications_official.json',
       );
-      repository = MedicationRepository.fromOfficialJson(raw);
+      final priceRaw = await rootBundle.loadString(
+        'assets/data/halmed_prices_2026.json',
+      );
+      repository = MedicationRepository.fromBundledCatalogs(
+        reimbursementJson: reimbursementRaw,
+        priceJson: priceRaw,
+      );
     } catch (_) {
       repository = MedicationRepository.demo();
     }

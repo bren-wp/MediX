@@ -68,12 +68,16 @@ class MedicationTile extends StatelessWidget {
                       runSpacing: 7,
                       children: [
                         _InfoChip(
-                          label: medication.requiresPrescription
+                          label: medication.requiresPrescription == true
                               ? 'Na recept'
-                              : 'Bez recepta',
-                          icon: medication.requiresPrescription
+                              : medication.requiresPrescription == false
+                                  ? 'Bez recepta'
+                                  : 'Režim izdavanja nije naveden',
+                          icon: medication.requiresPrescription == true
                               ? Icons.description_outlined
-                              : Icons.add_circle_outline,
+                              : medication.requiresPrescription == false
+                                  ? Icons.add_circle_outline
+                                  : Icons.help_outline_rounded,
                         ),
                         _InfoChip(
                           label: medication.category,

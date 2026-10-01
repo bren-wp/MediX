@@ -16,15 +16,14 @@ class MedicationRepository {
   factory MedicationRepository.fromOfficialJson(String rawJson) {
     final decoded = jsonDecode(rawJson);
     if (decoded is! Map<String, dynamic>) {
-      throw const FormatException('Neispravan format službenog kataloga.');
+      throw const FormatException('Neispravan format kataloga lijekova.');
     }
 
     final source = decoded['source'];
     final sourceMap = source is Map<String, dynamic>
         ? source
         : <String, dynamic>{};
-    final sourceName =
-        sourceMap['name']?.toString() ?? 'Službeni izvor';
+    final sourceName = sourceMap['name']?.toString() ?? 'catalog';
     final sourceUrl = sourceMap['url']?.toString();
     final effectiveDate = DateTime.tryParse(
           sourceMap['effective_date']?.toString() ?? '',
@@ -33,17 +32,15 @@ class MedicationRepository {
 
     final rawRecords = decoded['records'];
     if (rawRecords is! List || rawRecords.isEmpty) {
-      throw const FormatException('Službeni katalog nema zapisa.');
+      throw const FormatException('Katalog lijekova nema zapisa.');
     }
 
     final medications = <Medication>[];
 
     for (final rawRecord in rawRecords) {
-      if (rawRecord is! Map) {
-        continue;
-      }
-
+      if (rawRecord is! Map) continue;
       final record = Map<String, dynamic>.from(rawRecord);
+
       final id = record['id']?.toString().trim() ?? '';
       final name = record['name']?.toString().trim() ?? '';
       final activeIngredient =
@@ -62,8 +59,7 @@ class MedicationRepository {
             kind: MedicationPriceKind.hzzoCopay,
             source: sourceName,
             validFrom: effectiveDate,
-            note:
-                'Doplata za originalno pakiranje prema HZZO zapisu; nije maloprodajna cijena ljekarne.',
+            note: 'Doplata za originalno pakiranje.',
           ),
       ];
 
@@ -88,33 +84,26 @@ class MedicationRepository {
               ? (package?.isNotEmpty == true ? package! : 'nije navedeno')
               : strength,
           form: form == null || form.isEmpty ? 'lijek' : form,
-          category:
-              record['category']?.toString().trim().isNotEmpty == true
-                  ? record['category'].toString().trim()
-                  : 'Ostali lijekovi',
+          category: record['category']?.toString().trim().isNotEmpty == true
+              ? record['category'].toString().trim()
+              : _categoryForAtc(record['atc_code']?.toString()),
           requiresPrescription:
               _requiresPrescription(record['rx_status']?.toString()),
           summary:
-              'Službeni administrativni zapis lijeka iz HZZO kataloga. Kliničke informacije poput indikacija, kontraindikacija, nuspojava i potpunog doziranja moraju biti povezane s regulatornom dokumentacijom konkretnog lijeka.',
+              'Podaci o lijeku i pakiranju dostupni su u lokalnom MediX katalogu. Kliničke sekcije prikazuju se samo kada su sinkronizirane za konkretni proizvod.',
           uses: const [],
           dosageGuidance:
-              'Za doziranje provjerite službenu uputu konkretnog lijeka ili se obratite liječniku odnosno ljekarniku.',
+              'Doziranje treba provjeriti za konkretni lijek i farmaceutski oblik.',
           sideEffects: const [],
-          warnings: const [
-            'Podaci HZZO liste nisu zamjena za službenu uputu o lijeku.',
-          ],
-          sourceLabel: sourceUrl == null
-              ? sourceName
-              : '$sourceName — $sourceUrl',
+          warnings: const [],
+          sourceLabel: sourceName,
           lastReviewed: effectiveDate,
           atcCode: _nullableString(record['atc_code']),
-          marketingAuthorizationHolder:
-              _nullableString(record['holder']),
+          marketingAuthorizationHolder: _nullableString(record['holder']),
           route: _nullableString(record['route']),
           packageDescription: _nullableString(record['package']),
           reimbursementStatus: reimbursementStatus,
-          hzzoGuidelineCode:
-              _nullableString(record['guideline']),
+          hzzoGuidelineCode: _nullableString(record['guideline']),
           prices: prices,
           officialRecordUrl: sourceUrl,
           isDemo: false,
@@ -124,13 +113,150 @@ class MedicationRepository {
 
     if (medications.isEmpty) {
       throw const FormatException(
-        'Službeni katalog ne sadrži valjane zapise.',
+        'Katalog ne sadrži valjane zapise.',
       );
     }
 
     return MedicationRepository(
       medications: medications,
       interactions: const [],
+    );
+  }
+
+  factory MedicationRepository.fromBundledCatalogs({
+    required String reimbursementJson,
+    required String priceJson,
+  }) {
+    final base = MedicationRepository.fromOfficialJson(reimbursementJson);
+    final medications = List<Medication>.from(base.medications);
+
+    final decoded = jsonDecode(priceJson);
+    if (decoded is! Map<String, dynamic>) {
+      return base;
+    }
+
+    final source = decoded['source'];
+    final sourceMap = source is Map<String, dynamic>
+        ? source
+        : <String, dynamic>{};
+    final sourceName = sourceMap['name']?.toString() ?? 'price-catalog';
+    final publishedDate = DateTime.tryParse(
+          sourceMap['published_date']?.toString() ?? '',
+        ) ??
+        DateTime(2026, 6, 18);
+
+    final rawRecords = decoded['records'];
+    if (rawRecords is! List || rawRecords.isEmpty) {
+      return base;
+    }
+
+    final byProduct = <String, int>{};
+    for (var i = 0; i < medications.length; i++) {
+      final item = medications[i];
+      byProduct.putIfAbsent(
+        _productKey(item.name, item.activeIngredient, item.atcCode),
+        () => i,
+      );
+    }
+
+    for (final rawRecord in rawRecords) {
+      if (rawRecord is! Map) continue;
+      final record = Map<String, dynamic>.from(rawRecord);
+
+      final id = record['id']?.toString().trim() ?? '';
+      final name = record['name']?.toString().trim() ?? '';
+      final active =
+          record['active_ingredient']?.toString().trim() ?? '';
+      final atc = _nullableString(record['atc_code']);
+      final package = _nullableString(record['name_and_package']);
+      final price = _asDouble(record['max_wholesale_eur']);
+
+      if (id.isEmpty || name.isEmpty || active.isEmpty) continue;
+
+      final maxPrice = price == null
+          ? null
+          : MedicationPrice(
+              amount: price,
+              currency: 'EUR',
+              kind: MedicationPriceKind.maxWholesale,
+              source: sourceName,
+              validFrom: publishedDate,
+              note: 'Najviša evidentirana cijena za navedeno pakiranje.',
+            );
+
+      final key = _productKey(name, active, atc);
+      final existingIndex = byProduct[key];
+
+      if (existingIndex != null) {
+        final existing = medications[existingIndex];
+        final mergedPrices = <MedicationPrice>[
+          ...existing.prices,
+          if (maxPrice != null &&
+              existing.prices.every(
+                (item) =>
+                    item.kind != MedicationPriceKind.maxWholesale ||
+                    item.amount != maxPrice.amount,
+              ))
+            maxPrice,
+        ];
+
+        medications[existingIndex] = existing.copyWith(
+          authorizationNumber:
+              _nullableString(record['authorization_number']),
+          marketingAuthorizationHolder:
+              existing.marketingAuthorizationHolder ??
+                  _nullableString(record['holder']),
+          packageDescription:
+              existing.packageDescription ?? package,
+          prices: mergedPrices,
+          lastReviewed: existing.lastReviewed.isAfter(publishedDate)
+              ? existing.lastReviewed
+              : publishedDate,
+        );
+        continue;
+      }
+
+      final strength = _extractStrength(package ?? '');
+      medications.add(
+        Medication(
+          id: id,
+          name: name,
+          activeIngredient: active,
+          strength: strength.isEmpty ? 'nije navedeno' : strength,
+          form: _extractForm(package ?? ''),
+          category: _categoryForAtc(atc),
+          requiresPrescription: null,
+          summary:
+              'Registrirani lijek u MediX katalogu. Režim izdavanja i kliničke sekcije prikazuju se kada su dostupni za konkretni zapis.',
+          uses: const [],
+          dosageGuidance:
+              'Doziranje treba provjeriti za konkretni lijek i farmaceutski oblik.',
+          sideEffects: const [],
+          warnings: const [],
+          sourceLabel: sourceName,
+          lastReviewed: publishedDate,
+          atcCode: atc,
+          authorizationNumber:
+              _nullableString(record['authorization_number']),
+          marketingAuthorizationHolder:
+              _nullableString(record['holder']),
+          packageDescription: package,
+          prices: [
+            if (maxPrice != null) maxPrice,
+          ],
+          isDemo: false,
+        ),
+      );
+      byProduct[key] = medications.length - 1;
+    }
+
+    medications.sort(
+      (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+    );
+
+    return MedicationRepository(
+      medications: medications,
+      interactions: base.interactions,
     );
   }
 
@@ -152,11 +278,85 @@ class MedicationRepository {
     return double.tryParse(normalized);
   }
 
-  static bool _requiresPrescription(String? value) {
+  static bool? _requiresPrescription(String? value) {
     final normalized = value?.toUpperCase().trim() ?? '';
-    if (normalized.isEmpty) return false;
-    return normalized.startsWith('R') ||
-        normalized.contains('RECEPT');
+    if (normalized.isEmpty) return null;
+    if (normalized.startsWith('R') || normalized.contains('RECEPT')) {
+      return true;
+    }
+    return false;
+  }
+
+  static String _productKey(
+    String name,
+    String ingredient,
+    String? atc,
+  ) {
+    String normalize(String value) => value
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z0-9čćžšđ]+'), ' ')
+        .trim();
+
+    return [
+      normalize(name),
+      normalize(ingredient),
+      normalize(atc ?? ''),
+    ].join('|');
+  }
+
+  static String _categoryForAtc(String? atc) {
+    final first = (atc ?? '').trim().toUpperCase();
+    if (first.isEmpty) return 'Ostali lijekovi';
+
+    return switch (first[0]) {
+      'A' => 'Probavni sustav i metabolizam',
+      'B' => 'Krv i krvotvorni organi',
+      'C' => 'Srce i krvožilni sustav',
+      'D' => 'Dermatološki lijekovi',
+      'G' => 'Mokraćni i spolni sustav',
+      'H' => 'Hormonski lijekovi',
+      'J' => 'Antiinfektivni lijekovi',
+      'L' => 'Antineoplastici i imunomodulatori',
+      'M' => 'Mišićno-koštani sustav',
+      'N' => 'Živčani sustav',
+      'P' => 'Antiparazitici',
+      'R' => 'Dišni sustav',
+      'S' => 'Osjetila',
+      _ => 'Ostali lijekovi',
+    };
+  }
+
+  static String _extractStrength(String package) {
+    final match = RegExp(
+      r'(\d+(?:[.,]\d+)?\s*(?:mg|g|µg|mcg|ml|mmol|IU|i\.j\.|%)(?:\s*/\s*\d+(?:[.,]\d+)?\s*(?:ml|g))?)',
+      caseSensitive: false,
+    ).firstMatch(package);
+    return match?.group(1)?.trim() ?? '';
+  }
+
+  static String _extractForm(String package) {
+    final lower = package.toLowerCase();
+    const forms = <String>[
+      'tablete',
+      'tableta',
+      'kapsule',
+      'kapsula',
+      'sirup',
+      'oralna otopina',
+      'otopina za injekciju',
+      'otopina za infuziju',
+      'krema',
+      'mast',
+      'gel',
+      'sprej',
+      'kapi',
+      'prašak',
+      'čepići',
+    ];
+    for (final form in forms) {
+      if (lower.contains(form)) return form;
+    }
+    return 'lijek';
   }
 
   factory MedicationRepository.demo() {

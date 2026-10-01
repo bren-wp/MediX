@@ -81,7 +81,7 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
   @override
   Widget build(BuildContext context) {
     return MedixPage(
-      appBar: AppBar(title: const Text('Cjenik lijekova')),
+      appBar: AppBar(title: const Text('Cijene i pakiranja')),
       safeArea: false,
       child: FutureBuilder<_PriceCatalog>(
         future: catalog,
@@ -143,8 +143,8 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        '${data.sourceName}\nObjavljeno: ${data.publishedDate}\n'
-                        'Prikazane cijene su najviše dozvoljene cijene na veliko, ne maloprodajne cijene ljekarni.',
+                        'Ažurirano: ${data.publishedDate}\n'
+                        'Prikazane vrijednosti odnose se na evidentirane cijene pakiranja i nisu nužno maloprodajne cijene ljekarni.',
                         style: const TextStyle(
                           color: MedixColors.textSecondary,
                           height: 1.4,

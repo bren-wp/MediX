@@ -10,8 +10,12 @@ import '../catalog/conditions_screen.dart';
 import '../catalog/ingredients_screen.dart';
 import '../catalog/manufacturers_screen.dart';
 import '../catalog/medication_collection_screen.dart';
+import '../classifications/classifications_screen.dart';
+import '../clinical/clinical_tools_screen.dart';
 import '../categories/categories_screen.dart';
+import '../interactions/interactions_screen.dart';
 import '../medications/medication_detail_screen.dart';
+import '../smart/smart_search_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -109,7 +113,7 @@ class HomeScreen extends StatelessWidget {
                       MedicationCollectionScreen(
                         title: 'Lijekovi na recept',
                         state: state,
-                        filter: (m) => m.requiresPrescription,
+                        filter: (m) => m.requiresPrescription == true,
                         description:
                             'Prikaz lijekova čiji lokalni zapis označava izdavanje na recept.',
                       ),
@@ -124,7 +128,7 @@ class HomeScreen extends StatelessWidget {
                       MedicationCollectionScreen(
                         title: 'Lijekovi bez recepta',
                         state: state,
-                        filter: (m) => !m.requiresPrescription,
+                        filter: (m) => m.requiresPrescription == false,
                         description:
                             'Prikaz lijekova čiji lokalni zapis označava izdavanje bez recepta.',
                       ),
@@ -155,6 +159,65 @@ class HomeScreen extends StatelessWidget {
                     onTap: () => _push(
                       context,
                       ManufacturersScreen(state: state),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 22),
+              const Text(
+                'Brzi stručni alati',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 9),
+              GridView.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                childAspectRatio: 2.1,
+                children: [
+                  _ProfessionalAction(
+                    icon: Icons.auto_awesome_rounded,
+                    title: 'MediX Smart',
+                    subtitle: 'Pametna pretraga',
+                    color: MedixColors.cyan,
+                    onTap: () => _push(
+                      context,
+                      SmartSearchScreen(state: state),
+                    ),
+                  ),
+                  _ProfessionalAction(
+                    icon: Icons.hub_outlined,
+                    title: 'Interakcije',
+                    subtitle: 'Provjera terapije',
+                    color: MedixColors.danger,
+                    onTap: () => _push(
+                      context,
+                      InteractionsScreen(state: state),
+                    ),
+                  ),
+                  _ProfessionalAction(
+                    icon: Icons.calculate_outlined,
+                    title: 'Klinički alati',
+                    subtitle: '9 kalkulatora',
+                    color: MedixColors.primary,
+                    onTap: () => _push(
+                      context,
+                      const ClinicalToolsScreen(),
+                    ),
+                  ),
+                  _ProfessionalAction(
+                    icon: Icons.account_tree_outlined,
+                    title: 'ATK i MKB-10',
+                    subtitle: 'Klasifikacije',
+                    color: MedixColors.purple,
+                    onTap: () => _push(
+                      context,
+                      ClassificationsScreen(state: state),
                     ),
                   ),
                 ],
@@ -350,6 +413,68 @@ class _CategoryCard extends StatelessWidget {
               fontSize: 10,
               fontWeight: FontWeight.w800,
               height: 1.1,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+class _ProfessionalAction extends StatelessWidget {
+  const _ProfessionalAction({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return MedixSectionCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(11),
+      child: Row(
+        children: [
+          MedixIconBubble(
+            icon: icon,
+            color: color,
+            size: 38,
+          ),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: MedixColors.textSecondary,
+                    fontSize: 9,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
