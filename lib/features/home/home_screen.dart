@@ -109,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                       MedicationCollectionScreen(
                         title: 'Lijekovi na recept',
                         state: state,
-                        filter: (m) => m.requiresPrescription,
+                        filter: (m) => m.requiresPrescription == true,
                         description:
                             'Prikaz lijekova čiji lokalni zapis označava izdavanje na recept.',
                       ),
@@ -124,7 +124,7 @@ class HomeScreen extends StatelessWidget {
                       MedicationCollectionScreen(
                         title: 'Lijekovi bez recepta',
                         state: state,
-                        filter: (m) => !m.requiresPrescription,
+                        filter: (m) => m.requiresPrescription == false,
                         description:
                             'Prikaz lijekova čiji lokalni zapis označava izdavanje bez recepta.',
                       ),
