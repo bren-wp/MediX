@@ -477,7 +477,8 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String?>(
-              value: value.atcGroup,
+              key: ValueKey(value.atcGroup),
+              initialValue: value.atcGroup,
               isExpanded: true,
               decoration:
                   const InputDecoration(labelText: 'ATK skupina'),
@@ -506,7 +507,8 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String?>(
-              value: value.form,
+              key: ValueKey(value.form),
+              initialValue: value.form,
               isExpanded: true,
               decoration:
                   const InputDecoration(labelText: 'Farmaceutski oblik'),
@@ -535,7 +537,8 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String?>(
-              value: value.holder,
+              key: ValueKey(value.holder),
+              initialValue: value.holder,
               isExpanded: true,
               decoration: const InputDecoration(
                 labelText: 'Nositelj / proizvođač',
@@ -597,7 +600,8 @@ class _Dropdown<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<T>(
-      value: value,
+      key: ValueKey(value),
+      initialValue: value,
       isExpanded: true,
       decoration: InputDecoration(labelText: label),
       items: items
