@@ -17,6 +17,7 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
+from urllib.parse import parse_qs, urlparse
 
 import requests
 from bs4 import BeautifulSoup, Tag
@@ -24,6 +25,7 @@ from bs4 import BeautifulSoup, Tag
 BASE_URL = "https://hzzo.hr/trazilica-za-lijekove"
 EFFECTIVE_DATE = "2026-10-01"
 MIN_EXPECTED_RECORDS = 1000
+FALLBACK_MAX_PAGES = 1000
 
 LABELS = [
     "ATK šifra",
@@ -195,6 +197,23 @@ def parse_page(html: str) -> list[dict]:
     return records
 
 
+
+def discover_last_page(html: str) -> int | None:
+    """Return the highest zero-based HZZO page number advertised by pagination."""
+    soup = BeautifulSoup(html, "html.parser")
+    pages: list[int] = []
+    for link in soup.find_all("a", href=True):
+        href = link.get("href") or ""
+        query = parse_qs(urlparse(href).query)
+        values = query.get("page")
+        if not values:
+            continue
+        try:
+            pages.append(int(values[0]))
+        except (TypeError, ValueError):
+            continue
+    return max(pages) if pages else None
+
 def fetch_all(max_pages: int, delay: float) -> list[dict]:
     session = requests.Session()
     session.headers.update(
@@ -211,13 +230,44 @@ def fetch_all(max_pages: int, delay: float) -> list[dict]:
     previous_signature: tuple[str, ...] | None = None
     empty_pages = 0
 
-    for page in range(max_pages):
-        response = session.get(
-            BASE_URL,
-            params={"page": page, "query": ""},
-            timeout=45,
-        )
-        response.raise_for_status()
+    first_response = session.get(
+        BASE_URL,
+        params={"page": 0, "query": ""},
+        timeout=45,
+    )
+    first_response.raise_for_status()
+
+    advertised_last_page = discover_last_page(first_response.text)
+    if advertised_last_page is not None:
+        total_pages = advertised_last_page + 1
+        if total_pages > max_pages:
+            raise RuntimeError(
+                f"HZZO advertises {total_pages} pages, above safety cap "
+                f"max_pages={max_pages}."
+            )
+    else:
+        total_pages = max_pages
+
+    print(
+        "pagination="
+        + (
+            f"0..{advertised_last_page}"
+            if advertised_last_page is not None
+            else f"unknown, capped at {max_pages}"
+        ),
+        file=sys.stderr,
+    )
+
+    for page in range(total_pages):
+        if page == 0:
+            response = first_response
+        else:
+            response = session.get(
+                BASE_URL,
+                params={"page": page, "query": ""},
+                timeout=45,
+            )
+            response.raise_for_status()
 
         records = parse_page(response.text)
         signature = tuple(record["id"] for record in records)
@@ -251,9 +301,10 @@ def fetch_all(max_pages: int, delay: float) -> list[dict]:
         if delay > 0:
             time.sleep(delay)
     else:
-        raise RuntimeError(
-            f"Reached max_pages={max_pages} before detecting the end."
-        )
+        if advertised_last_page is None:
+            raise RuntimeError(
+                f"Reached max_pages={max_pages} before detecting the end."
+            )
 
     return sorted(
         by_id.values(),
@@ -297,7 +348,7 @@ def main() -> int:
         default="assets/data/medications_official.json",
         type=Path,
     )
-    parser.add_argument("--max-pages", default=800, type=int)
+    parser.add_argument("--max-pages", default=FALLBACK_MAX_PAGES, type=int)
     parser.add_argument("--delay", default=0.05, type=float)
     parser.add_argument(
         "--minimum-records",
