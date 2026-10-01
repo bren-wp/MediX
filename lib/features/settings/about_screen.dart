@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../widgets/medix_brand.dart';
 import '../../widgets/medix_page.dart';
-import 'sources_screen.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -19,7 +18,7 @@ class AboutScreen extends StatelessWidget {
           const MedixBrand(centered: true),
           const SizedBox(height: 18),
           const Text(
-            'Verzija 0.2.0',
+            'Verzija 0.3.0',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: MedixColors.textSecondary,
@@ -28,35 +27,68 @@ class AboutScreen extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           const MedixSectionCard(
-            child: Text(
-              'MediX je informativna aplikacija za pregled podataka o lijekovima. Ne postavlja dijagnozu, ne propisuje terapiju i ne zamjenjuje službenu uputu, liječnika ili ljekarnika.',
-              style: TextStyle(
-                color: MedixColors.textSecondary,
-                height: 1.45,
-              ),
+            accent: MedixColors.cyan,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Profesionalna baza lijekova za Hrvatsku',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'MediX je namijenjen zdravstvenim djelatnicima, farmaceutima, studentima medicine i zdravstvenih znanosti te korisnicima koji trebaju brz i strukturiran pregled lijekova, pakiranja, cijena, klasifikacija, interakcija i terapije.',
+                  style: TextStyle(
+                    color: MedixColors.textSecondary,
+                    height: 1.45,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 10),
-          MedixSectionCard(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const SourcesScreen(),
-              ),
-            ),
-            child: const Row(
+          const MedixSectionCard(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MedixIconBubble(
-                  icon: Icons.source_outlined,
+                  icon: Icons.verified_user_outlined,
+                  color: MedixColors.success,
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Medicinski sadržaj u aplikaciji služi kao informacijska podrška. Kliničku odluku uvijek treba donijeti zdravstveni stručnjak prema stanju pacijenta i aktualnoj dokumentaciji konkretnog lijeka.',
+                    style: TextStyle(
+                      color: MedixColors.textSecondary,
+                      height: 1.45,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          const MedixSectionCard(
+            child: Row(
+              children: [
+                MedixIconBubble(
+                  icon: Icons.lock_outline_rounded,
                   color: MedixColors.cyan,
                 ),
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Službeni izvori podataka',
-                    style: TextStyle(fontWeight: FontWeight.w800),
+                    'Bez obvezne registracije. Favoriti, terapija i podsjetnici ostaju lokalno na uređaju.',
+                    style: TextStyle(
+                      color: MedixColors.textSecondary,
+                      height: 1.4,
+                    ),
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded),
               ],
             ),
           ),
