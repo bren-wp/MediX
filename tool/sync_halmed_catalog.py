@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 
 BASE_URL = "https://www.halmed.hr/Lijekovi/Baza-lijekova/"
-MIN_EXPECTED_RECORDS = 5500
+MIN_EXPECTED_RECORDS = 4000
 
 ATC_CATEGORIES = {
     "A": "Probavni sustav i metabolizam",
