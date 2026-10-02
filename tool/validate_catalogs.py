@@ -9,7 +9,9 @@ import re
 from collections import Counter
 from pathlib import Path
 
-ATC_RE = re.compile(r"^[A-Z]\d{2}[A-Z]{2}\d{2}$")
+ATC_TOKEN_RE = re.compile(
+    r"^[A-Z](?:\d{2}(?:[A-Z](?:[A-Z](?:\d{2})?)?)?)?)?$"
+)
 LEGAL_ENTITY_RE = re.compile(
     r"(?:^|\s)(?:d\.?\s*o\.?\s*o\.?|d\.?\s*d\.?|j\.?\s*d\.?\s*o\.?\s*o\.?|"
     r"obrt|ustanova|limited|ltd\.?|gmbh|s\.?a\.?|b\.?v\.?)(?:\s|$)",
@@ -35,6 +37,24 @@ def clean(value: object | None) -> str:
 
 def norm(value: object | None) -> str:
     return clean(value).casefold()
+
+
+def atc_tokens(value: object | None) -> list[str]:
+    text = clean(value).upper()
+    if text in {"", "-"}:
+        return []
+    return [
+        part.strip()
+        for part in re.split(r"[;,]", text)
+        if part.strip()
+    ]
+
+
+def is_valid_atc(value: object | None) -> bool:
+    return all(
+        ATC_TOKEN_RE.fullmatch(token) is not None
+        for token in atc_tokens(value)
+    )
 
 
 def validate_halmed(data: dict, minimum: int) -> dict:
@@ -85,7 +105,7 @@ def validate_halmed(data: dict, minimum: int) -> dict:
             invalid_names.append(name)
 
         atc = clean(row.get("atc_code")).upper()
-        if atc and not ATC_RE.fullmatch(atc):
+        if not is_valid_atc(atc):
             invalid_atc.append(atc)
 
         strength = norm(row.get("strength"))
@@ -139,14 +159,18 @@ def validate_halmed(data: dict, minimum: int) -> dict:
             if clean(row.get("active_ingredient"))
         }),
         "atc_codes": len({
-            clean(row.get("atc_code")).upper()
+            token
             for row in records
-            if clean(row.get("atc_code"))
+            for token in atc_tokens(row.get("atc_code"))
         }),
         "rx": rx,
         "otc": otc,
         "unknown_dispensing": unknown,
-        "missing_atc": sum(1 for row in records if not clean(row.get("atc_code"))),
+        "missing_atc": sum(
+            1
+            for row in records
+            if not atc_tokens(row.get("atc_code"))
+        ),
         "missing_package": sum(1 for row in records if not clean(row.get("package"))),
         "rejected_records": int(quality.get("rejected_records", 0) or 0),
         "rejected_reasons": rejected_reasons,

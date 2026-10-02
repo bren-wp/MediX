@@ -554,7 +554,7 @@ class MedicationRepository {
   static bool _looksLikeLegalEntity(String value) {
     final normalized = _normalize(value);
     return RegExp(
-      r'\\b(?:d o o|d d|j d o o|obrt|ustanova|limited|ltd|gmbh|s a|b v)\\b',
+      r'\b(?:d o o|d d|j d o o|obrt|ustanova|limited|ltd|gmbh|s a|b v)\b',
     ).hasMatch(normalized);
   }
 

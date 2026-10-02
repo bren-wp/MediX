@@ -47,7 +47,9 @@ STRENGTH_RE = re.compile(
     r"jedinica)(?:\s*/\s*\d+(?:[.,]\d+)?\s*(?:ml|g))?)",
     re.IGNORECASE,
 )
-ATC_RE = re.compile(r"^[A-Z]\d{2}[A-Z]{2}\d{2}$")
+ATC_TOKEN_RE = re.compile(
+    r"^[A-Z](?:\d{2}(?:[A-Z](?:[A-Z](?:\d{2})?)?)?)?)?$"
+)
 LEGAL_ENTITY_RE = re.compile(
     r"(?:^|\s)(?:d\.?\s*o\.?\s*o\.?|d\.?\s*d\.?|j\.?\s*d\.?\s*o\.?\s*o\.?|"
     r"obrt|ustanova|limited|ltd\.?|gmbh|s\.?a\.?|b\.?v\.?)(?:\s|$)",
@@ -86,8 +88,30 @@ def stable_id(approval: str, name: str) -> str:
     return "halmed-" + hashlib.sha1(basis).hexdigest()[:24]
 
 
+def normalize_atc(value: object | None) -> str:
+    text = clean(value).upper()
+    if text in {"", "-"}:
+        return ""
+    return "; ".join(
+        part.strip()
+        for part in re.split(r"[;,]", text)
+        if part.strip()
+    )
+
+
+def is_valid_atc(value: object | None) -> bool:
+    text = normalize_atc(value)
+    if not text:
+        return True
+    return all(
+        ATC_TOKEN_RE.fullmatch(part.strip()) is not None
+        for part in text.split(";")
+        if part.strip()
+    )
+
+
 def category_for(atc: str) -> str:
-    first = clean(atc)[:1].upper()
+    first = normalize_atc(atc)[:1]
     return ATC_CATEGORIES.get(first, "Neklasificirano")
 
 
@@ -215,7 +239,7 @@ def parse_workbook(
             rejected["revoked_authorization"] += 1
             continue
 
-        atc = value(row, "ATK")
+        atc = normalize_atc(value(row, "ATK"))
         composition = value(row, "Sastav")
         record = {
             "id": stable_id(approval, name),
@@ -292,8 +316,7 @@ def validate(records: list[dict], minimum: int) -> None:
     invalid_atc = [
         clean(record.get("atc_code"))
         for record in records
-        if clean(record.get("atc_code"))
-        and not ATC_RE.fullmatch(clean(record.get("atc_code")).upper())
+        if not is_valid_atc(record.get("atc_code"))
     ]
     if invalid_atc:
         raise RuntimeError(
