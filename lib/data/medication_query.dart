@@ -158,9 +158,9 @@ List<Medication> applyMedicationQuery(
 
     if (normalizedAtc != null &&
         normalizedAtc.isNotEmpty &&
-        !(medication.atcCode ?? '')
-            .toUpperCase()
-            .startsWith(normalizedAtc)) {
+        !_atcTokens(medication.atcCode).any(
+          (code) => code.startsWith(normalizedAtc),
+        )) {
       return false;
     }
 
@@ -369,6 +369,16 @@ double? _primaryPrice(Medication medication) {
 
 int _withNameFallback(int result, int fallback) {
   return result == 0 ? fallback : result;
+}
+
+Iterable<String> _atcTokens(String? value) sync* {
+  final raw = value?.toUpperCase().trim() ?? '';
+  if (raw.isEmpty) return;
+
+  for (final part in raw.split(RegExp(r'[;,]'))) {
+    final code = part.trim();
+    if (code.isNotEmpty) yield code;
+  }
 }
 
 String _normalize(String value) {
