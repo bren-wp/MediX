@@ -10,7 +10,8 @@ from collections import Counter
 from pathlib import Path
 
 ATC_TOKEN_RE = re.compile(
-    r"^[A-Z](?:\d{2}(?:[A-Z](?:[A-Z](?:\d{2})?)?)?)?)?$"
+    r"^(?:[A-Z]|[A-Z]\d{2}|[A-Z]\d{2}[A-Z]|"
+    r"[A-Z]\d{2}[A-Z]{2}|[A-Z]\d{2}[A-Z]{2}\d{2})$"
 )
 LEGAL_ENTITY_RE = re.compile(
     r"(?:^|\s)(?:d\.?\s*o\.?\s*o\.?|d\.?\s*d\.?|j\.?\s*d\.?\s*o\.?\s*o\.?|"
