@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - main
-      - "feat/medix-pro-v0.3.1"
+      - "feat/medix-pro-v*"
     paths:
       - "tool/sync_halmed_catalog.py"
       - "tool/sync_hzzo_catalog.py"

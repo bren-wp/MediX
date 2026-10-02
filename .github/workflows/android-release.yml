@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      - "feat/medix-pro-v0.3.1"
+      - "feat/medix-pro-v*"
     tags:
       - "v*"
 
