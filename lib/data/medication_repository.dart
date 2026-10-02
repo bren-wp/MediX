@@ -123,141 +123,365 @@ class MedicationRepository {
     );
   }
 
-  factory MedicationRepository.fromBundledCatalogs({
-    required String reimbursementJson,
-    required String priceJson,
-  }) {
-    final base = MedicationRepository.fromOfficialJson(reimbursementJson);
-    final medications = List<Medication>.from(base.medications);
-
-    final decoded = jsonDecode(priceJson);
+  factory MedicationRepository.fromHalmedJson(String rawJson) {
+    final decoded = jsonDecode(rawJson);
     if (decoded is! Map<String, dynamic>) {
-      return base;
+      throw const FormatException('Neispravan HALMED katalog lijekova.');
     }
 
     final source = decoded['source'];
     final sourceMap = source is Map<String, dynamic>
         ? source
         : <String, dynamic>{};
-    final sourceName = sourceMap['name']?.toString() ?? 'price-catalog';
-    final publishedDate = DateTime.tryParse(
-          sourceMap['published_date']?.toString() ?? '',
+    final sourceName =
+        sourceMap['name']?.toString() ?? 'HALMED Baza lijekova';
+    final sourceUrl = sourceMap['url']?.toString();
+    final reviewed = DateTime.tryParse(
+          decoded['generated_at']?.toString() ?? '',
         ) ??
-        DateTime(2026, 6, 18);
+        DateTime(2026, 10, 2);
 
     final rawRecords = decoded['records'];
     if (rawRecords is! List || rawRecords.isEmpty) {
-      return base;
+      throw const FormatException('HALMED katalog nema zapisa.');
     }
 
-    final byProduct = <String, int>{};
-    for (var i = 0; i < medications.length; i++) {
-      final item = medications[i];
-      byProduct.putIfAbsent(
-        _productKey(item.name, item.activeIngredient, item.atcCode),
-        () => i,
-      );
-    }
-
+    final medications = <Medication>[];
     for (final rawRecord in rawRecords) {
       if (rawRecord is! Map) continue;
       final record = Map<String, dynamic>.from(rawRecord);
 
       final id = record['id']?.toString().trim() ?? '';
       final name = record['name']?.toString().trim() ?? '';
-      final active =
-          record['active_ingredient']?.toString().trim() ?? '';
-      final atc = _nullableString(record['atc_code']);
-      final package = _nullableString(record['name_and_package']);
-      final price = _asDouble(record['max_wholesale_eur']);
+      final approval =
+          record['authorization_number']?.toString().trim() ?? '';
 
-      if (id.isEmpty || name.isEmpty || active.isEmpty) continue;
-
-      final maxPrice = price == null
-          ? null
-          : MedicationPrice(
-              amount: price,
-              currency: 'EUR',
-              kind: MedicationPriceKind.maxWholesale,
-              source: sourceName,
-              validFrom: publishedDate,
-              note: 'Najviša evidentirana cijena za navedeno pakiranje.',
-            );
-
-      final key = _productKey(name, active, atc);
-      final existingIndex = byProduct[key];
-
-      if (existingIndex != null) {
-        final existing = medications[existingIndex];
-        final mergedPrices = <MedicationPrice>[
-          ...existing.prices,
-          if (maxPrice != null &&
-              existing.prices.every(
-                (item) =>
-                    item.kind != MedicationPriceKind.maxWholesale ||
-                    item.amount != maxPrice.amount,
-              ))
-            maxPrice,
-        ];
-
-        medications[existingIndex] = existing.copyWith(
-          authorizationNumber:
-              _nullableString(record['authorization_number']),
-          marketingAuthorizationHolder:
-              existing.marketingAuthorizationHolder ??
-                  _nullableString(record['holder']),
-          packageDescription:
-              existing.packageDescription ?? package,
-          prices: mergedPrices,
-          lastReviewed: existing.lastReviewed.isAfter(publishedDate)
-              ? existing.lastReviewed
-              : publishedDate,
-        );
+      if (id.isEmpty || name.isEmpty || approval.isEmpty) {
         continue;
       }
 
-      final strength = _extractStrength(package ?? '');
+      final active =
+          record['active_ingredient']?.toString().trim() ?? '';
+      final form = record['form']?.toString().trim() ?? '';
+      final strength = record['strength']?.toString().trim() ?? '';
+      final atc = _nullableString(record['atc_code']);
+
       medications.add(
         Medication(
           id: id,
           name: name,
-          activeIngredient: active,
-          strength: strength.isEmpty ? 'nije navedeno' : strength,
-          form: _extractForm(package ?? ''),
-          category: _categoryForAtc(atc),
-          requiresPrescription: null,
+          activeIngredient:
+              active.isEmpty ? 'nije navedeno' : active,
+          strength:
+              strength.isEmpty ? 'nije navedeno' : strength,
+          form: form.isEmpty ? 'lijek' : form,
+          category:
+              record['category']?.toString().trim().isNotEmpty ==
+                      true
+                  ? record['category'].toString().trim()
+                  : _categoryForAtc(atc),
+          requiresPrescription:
+              _requiresPrescription(record['rx_status']?.toString()),
           summary:
-              'Registrirani lijek u MediX katalogu. Režim izdavanja i kliničke sekcije prikazuju se kada su dostupni za konkretni zapis.',
+              'Podaci o registriranom lijeku i pakiranju dostupni su u lokalnom MediX katalogu.',
           uses: const [],
           dosageGuidance:
-              'Doziranje treba provjeriti za konkretni lijek i farmaceutski oblik.',
+              'Doziranje se mora provjeriti za konkretni lijek, jačinu i farmaceutski oblik.',
           sideEffects: const [],
           warnings: const [],
           sourceLabel: sourceName,
-          lastReviewed: publishedDate,
+          lastReviewed: reviewed,
           atcCode: atc,
-          authorizationNumber:
-              _nullableString(record['authorization_number']),
+          authorizationNumber: approval,
           marketingAuthorizationHolder:
               _nullableString(record['holder']),
-          packageDescription: package,
-          prices: [
-            if (maxPrice != null) maxPrice,
-          ],
+          manufacturer:
+              _nullableString(record['manufacturer']),
+          packageDescription:
+              _nullableString(record['package']),
+          reimbursementStatus: ReimbursementStatus.none,
+          prices: const [],
+          officialRecordUrl:
+              _nullableString(record['official_record_url']) ??
+                  sourceUrl,
+          shortageStatus:
+              _nullableString(record['shortage_status']),
           isDemo: false,
         ),
       );
-      byProduct[key] = medications.length - 1;
+    }
+
+    if (medications.isEmpty) {
+      throw const FormatException(
+        'HALMED katalog ne sadrži valjane lijekove.',
+      );
     }
 
     medications.sort(
-      (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      (a, b) =>
+          a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+    );
+
+    return MedicationRepository(
+      medications: medications,
+      interactions: const [],
+    );
+  }
+
+  factory MedicationRepository.fromBundledCatalogs({
+    required String halmedJson,
+    required String reimbursementJson,
+    required String priceJson,
+  }) {
+    final base = MedicationRepository.fromHalmedJson(halmedJson);
+    final medications = List<Medication>.from(base.medications);
+
+    _mergeReimbursementCatalog(
+      medications,
+      reimbursementJson,
+    );
+    _mergePriceCatalog(
+      medications,
+      priceJson,
+    );
+
+    medications.sort(
+      (a, b) =>
+          a.name.toLowerCase().compareTo(b.name.toLowerCase()),
     );
 
     return MedicationRepository(
       medications: medications,
       interactions: base.interactions,
     );
+  }
+
+  static void _mergeReimbursementCatalog(
+    List<Medication> medications,
+    String rawJson,
+  ) {
+    MedicationRepository reimbursement;
+    try {
+      reimbursement =
+          MedicationRepository.fromOfficialJson(rawJson);
+    } on FormatException {
+      return;
+    }
+
+    for (final incoming in reimbursement.medications) {
+      final index = _findBestMatch(
+        medications,
+        name: incoming.name,
+        activeIngredient: incoming.activeIngredient,
+        atcCode: incoming.atcCode,
+        strengthOrPackage: [
+          incoming.strength,
+          incoming.packageDescription ?? '',
+        ].join(' '),
+        holder: incoming.marketingAuthorizationHolder,
+      );
+      if (index == null) continue;
+
+      final existing = medications[index];
+      final mergedPrices = <MedicationPrice>[
+        ...existing.prices,
+      ];
+      for (final price in incoming.prices) {
+        final duplicate = mergedPrices.any(
+          (item) =>
+              item.kind == price.kind &&
+              item.amount == price.amount,
+        );
+        if (!duplicate) mergedPrices.add(price);
+      }
+
+      medications[index] = existing.copyWith(
+        reimbursementStatus: incoming.reimbursementStatus,
+        hzzoGuidelineCode: incoming.hzzoGuidelineCode,
+        prices: mergedPrices,
+        route: existing.route ?? incoming.route,
+        packageDescription:
+            existing.packageDescription ??
+                incoming.packageDescription,
+        lastReviewed:
+            existing.lastReviewed.isAfter(incoming.lastReviewed)
+                ? existing.lastReviewed
+                : incoming.lastReviewed,
+      );
+    }
+  }
+
+  static void _mergePriceCatalog(
+    List<Medication> medications,
+    String rawJson,
+  ) {
+    final decoded = jsonDecode(rawJson);
+    if (decoded is! Map<String, dynamic>) return;
+
+    final source = decoded['source'];
+    final sourceMap = source is Map<String, dynamic>
+        ? source
+        : <String, dynamic>{};
+    final sourceName =
+        sourceMap['name']?.toString() ?? 'price-catalog';
+    final publishedDate = DateTime.tryParse(
+          sourceMap['published_date']?.toString() ?? '',
+        ) ??
+        DateTime(2026, 6, 18);
+
+    final rawRecords = decoded['records'];
+    if (rawRecords is! List || rawRecords.isEmpty) return;
+
+    for (final rawRecord in rawRecords) {
+      if (rawRecord is! Map) continue;
+      final record = Map<String, dynamic>.from(rawRecord);
+
+      final name = record['name']?.toString().trim() ?? '';
+      final active =
+          record['active_ingredient']?.toString().trim() ?? '';
+      final atc = _nullableString(record['atc_code']);
+      final package =
+          _nullableString(record['name_and_package']) ?? '';
+      final price = _asDouble(record['max_wholesale_eur']);
+
+      if (name.isEmpty || price == null) continue;
+
+      final index = _findBestMatch(
+        medications,
+        name: name,
+        activeIngredient: active,
+        atcCode: atc,
+        strengthOrPackage: package,
+        holder: _nullableString(record['holder']),
+      );
+      if (index == null) {
+        // A secondary source can enrich an existing HALMED medicine,
+        // but it is never allowed to create a medicine identity.
+        continue;
+      }
+
+      final existing = medications[index];
+      final maxPrice = MedicationPrice(
+        amount: price,
+        currency: 'EUR',
+        kind: MedicationPriceKind.maxWholesale,
+        source: sourceName,
+        validFrom: publishedDate,
+        note: 'Najviša evidentirana cijena za navedeno pakiranje.',
+      );
+
+      final mergedPrices = <MedicationPrice>[
+        ...existing.prices,
+        if (existing.prices.every(
+          (item) =>
+              item.kind != MedicationPriceKind.maxWholesale ||
+              item.amount != maxPrice.amount,
+        ))
+          maxPrice,
+      ];
+
+      medications[index] = existing.copyWith(
+        prices: mergedPrices,
+        lastReviewed:
+            existing.lastReviewed.isAfter(publishedDate)
+                ? existing.lastReviewed
+                : publishedDate,
+      );
+    }
+  }
+
+  static int? _findBestMatch(
+    List<Medication> medications, {
+    required String name,
+    required String activeIngredient,
+    required String? atcCode,
+    required String strengthOrPackage,
+    required String? holder,
+  }) {
+    final incomingName = _normalize(name);
+    final incomingActive = _normalize(activeIngredient);
+    final incomingAtc = _normalize(atcCode ?? '');
+    final incomingStrength = _normalize(
+      _extractStrength(strengthOrPackage),
+    );
+    final incomingHolder = _normalize(holder ?? '');
+
+    int? bestIndex;
+    var bestScore = -1;
+    var bestCount = 0;
+
+    for (var i = 0; i < medications.length; i++) {
+      final candidate = medications[i];
+      final candidateAtc = _normalize(candidate.atcCode ?? '');
+
+      if (incomingAtc.isNotEmpty &&
+          candidateAtc.isNotEmpty &&
+          incomingAtc != candidateAtc) {
+        continue;
+      }
+
+      final candidateName = _normalize(candidate.name);
+      final candidateActive =
+          _normalize(candidate.activeIngredient);
+      final candidateHolder = _normalize(
+        candidate.marketingAuthorizationHolder ?? '',
+      );
+      final candidateStrength = _normalize(
+        [
+          candidate.strength,
+          candidate.packageDescription ?? '',
+          candidate.name,
+        ].join(' '),
+      );
+
+      var score = 0;
+
+      if (incomingName.isNotEmpty) {
+        if (candidateName == incomingName) {
+          score += 8;
+        } else if (candidateName.startsWith('$incomingName ') ||
+            incomingName.startsWith('$candidateName ')) {
+          score += 6;
+        } else {
+          continue;
+        }
+      }
+
+      if (incomingAtc.isNotEmpty &&
+          candidateAtc == incomingAtc) {
+        score += 4;
+      }
+
+      if (incomingActive.isNotEmpty &&
+          candidateActive == incomingActive) {
+        score += 4;
+      }
+
+      if (incomingStrength.isNotEmpty &&
+          candidateStrength.contains(incomingStrength)) {
+        score += 3;
+      }
+
+      if (incomingHolder.isNotEmpty &&
+          candidateHolder.isNotEmpty &&
+          (candidateHolder.contains(incomingHolder) ||
+              incomingHolder.contains(candidateHolder))) {
+        score += 1;
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = i;
+        bestCount = 1;
+      } else if (score == bestScore) {
+        bestCount++;
+      }
+    }
+
+    if (bestIndex == null || bestScore < 6 || bestCount != 1) {
+      return null;
+    }
+    return bestIndex;
   }
 
   static String? _nullableString(Object? value) {
@@ -281,10 +505,33 @@ class MedicationRepository {
   static bool? _requiresPrescription(String? value) {
     final normalized = value?.toUpperCase().trim() ?? '';
     if (normalized.isEmpty) return null;
-    if (normalized.startsWith('R') || normalized.contains('RECEPT')) {
+    if (normalized.contains('BEZ RECEPTA') ||
+        normalized == 'BR' ||
+        normalized.startsWith('BR ')) {
+      return false;
+    }
+    if (normalized.contains('NA RECEPT') ||
+        normalized == 'R' ||
+        normalized.startsWith('R/')) {
       return true;
     }
-    return false;
+    if (normalized == 'RS' || normalized.startsWith('RS ')) {
+      return true;
+    }
+    return null;
+  }
+
+  static String _normalize(String value) {
+    return value
+        .toLowerCase()
+        .replaceAll('č', 'c')
+        .replaceAll('ć', 'c')
+        .replaceAll('ž', 'z')
+        .replaceAll('š', 's')
+        .replaceAll('đ', 'd')
+        .replaceAll(RegExp(r'[^a-z0-9%]+'), ' ')
+        .replaceAll(RegExp(r'\\s+'), ' ')
+        .trim();
   }
 
   static String _productKey(
