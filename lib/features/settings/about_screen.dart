@@ -18,7 +18,7 @@ class AboutScreen extends StatelessWidget {
           const MedixBrand(centered: true),
           const SizedBox(height: 18),
           const Text(
-            'Verzija 0.3.0',
+            'Verzija 0.3.1',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: MedixColors.textSecondary,

@@ -22,7 +22,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   static const slides = <_OnboardingSlide>[
     _OnboardingSlide(
-      title: 'Svi lijekovi\\nna jednom mjestu',
+      title: 'Baza lijekova\nna jednom mjestu',
       subtitle:
           'Brza pretraga, detaljan pregled službenih podataka i jasan prikaz cijena i HZZO statusa.',
       icon: Icons.medication_rounded,
@@ -30,7 +30,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       color: MedixColors.cyan,
     ),
     _OnboardingSlide(
-      title: 'Provjerite\\ninterakcije lijekova',
+      title: 'Provjerite\ninterakcije lijekova',
       subtitle:
           'Usporedite terapiju i prepoznajte situacije koje zahtijevaju dodatnu stručnu provjeru.',
       icon: Icons.health_and_safety_rounded,
@@ -38,7 +38,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       color: MedixColors.primary,
     ),
     _OnboardingSlide(
-      title: 'Brinite o svom\\nzdravlju',
+      title: 'Brinite o svom\nzdravlju',
       subtitle:
           'Spremite favorite, vodite terapiju, pratite raspored i koristite lokalne podsjetnike.',
       icon: Icons.calendar_month_rounded,

@@ -6,6 +6,7 @@ import '../../widgets/medix_brand.dart';
 import '../../widgets/medix_page.dart';
 import '../classifications/classifications_screen.dart';
 import '../clinical/clinical_tools_screen.dart';
+import '../compare/medication_compare_screen.dart';
 import '../interactions/interactions_screen.dart';
 import '../news/news_screen.dart';
 import '../pharmacies/pharmacies_screen.dart';
@@ -15,6 +16,7 @@ import '../smart/smart_search_screen.dart';
 import '../substitutions/substitutions_screen.dart';
 import '../therapy/calendar_screen.dart';
 import 'about_screen.dart';
+import 'privacy_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({
@@ -62,6 +64,16 @@ class MoreScreen extends StatelessWidget {
             onTap: () => _push(
               context,
               InteractionsScreen(state: state),
+            ),
+          ),
+          _MenuItem(
+            icon: Icons.compare_arrows_rounded,
+            title: 'Usporedba lijekova',
+            subtitle: 'Usporedite 2 do 4 lijeka i pakiranja',
+            color: MedixColors.cyan,
+            onTap: () => _push(
+              context,
+              MedicationCompareScreen(state: state),
             ),
           ),
           _MenuItem(
@@ -175,30 +187,19 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           _MenuItem(
-            icon: Icons.language_rounded,
-            title: 'Jezik',
-            subtitle: 'Hrvatski',
-            color: MedixColors.primary,
-            onTap: () {},
-          ),
-          _MenuItem(
-            icon: Icons.dark_mode_outlined,
-            title: 'Tema',
-            subtitle: 'MediX Dark',
-            color: MedixColors.cyan,
-            onTap: () {},
-          ),
-          _MenuItem(
             icon: Icons.shield_outlined,
             title: 'Sigurnost i privatnost',
             subtitle: 'Lokalna terapija i favoriti · bez obveznog računa',
             color: MedixColors.success,
-            onTap: () {},
+            onTap: () => _push(
+              context,
+              const PrivacyScreen(),
+            ),
           ),
           _MenuItem(
             icon: Icons.info_outline_rounded,
             title: 'O aplikaciji',
-            subtitle: 'MediX 0.3.0',
+            subtitle: 'MediX 0.3.1',
             color: MedixColors.primary,
             onTap: () => _push(
               context,

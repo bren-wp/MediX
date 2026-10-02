@@ -2,6 +2,26 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.1] - 2026-10-02
+
+### Dodano
+- napredni filteri baze lijekova: režim izdavanja, lista, cijena, ATK, oblik i nositelj/proizvođač
+- sortiranje po nazivu, djelatnoj tvari, ATK šifri i cijeni
+- usporedba 2 do 4 lijeka i pakiranja jedan uz drugi
+- funkcionalno otvaranje ljekarni u Android aplikaciji za karte
+- interaktivni profesionalni edukacijski moduli
+- zaseban ekran sigurnosti i privatnosti
+
+### Poboljšano
+- HALMED javni registar postavljen kao primarni izvor identiteta lijeka; HZZO i cjenovni podaci služe kao enrichment
+- automatske data-quality provjere blokiraju pravne osobe kao nazive lijekova, duplicate identitete, nevaljane ATK zapise i loše placeholdere
+- detaljni HALMED podaci o načinu izdavanja, propisivanju, mjestu izdavanja i statusu lijeka prikazuju se odvojeno
+- pretraživ odabir lijekova u modulu interakcija
+- nedostajući interaction podatak više se ne prikazuje kao negativan rezultat
+- uklonjeni neaktivni jezik/tema izbornici
+- gumb za dijeljenje zamijenjen funkcionalnim kopiranjem strukturiranog sažetka lijeka
+- bolja navigacija između pretrage i usporedbe
+
 ## [0.3.0] - 2026-10-02
 
 ### Dodano

@@ -30,6 +30,9 @@ class _MedixAppState extends State<MedixApp> {
     MedicationRepository repository;
 
     try {
+      final halmedRaw = await rootBundle.loadString(
+        'assets/data/halmed_catalog.json',
+      );
       final reimbursementRaw = await rootBundle.loadString(
         'assets/data/medications_official.json',
       );
@@ -37,6 +40,7 @@ class _MedixAppState extends State<MedixApp> {
         'assets/data/halmed_prices_2026.json',
       );
       repository = MedicationRepository.fromBundledCatalogs(
+        halmedJson: halmedRaw,
         reimbursementJson: reimbursementRaw,
         priceJson: priceRaw,
       );

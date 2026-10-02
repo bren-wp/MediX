@@ -5,11 +5,11 @@
 <h1 align="center">MediX — lijekovi, interakcije i klinički alati na jednom mjestu</h1>
 
 <p align="center">
-  Moderna Android baza lijekova za Hrvatsku, dizajnirana za liječnike, farmaceute, zdravstvene djelatnike, studente i korisnike kojima trebaju brze, strukturirane informacije o lijekovima.
+  Moderna Android aplikacija s opsežnim katalogom lijekova za Hrvatsku, dizajnirana za liječnike, farmaceute, zdravstvene djelatnike, studente i korisnike kojima trebaju brze, strukturirane informacije o lijekovima.
 </p>
 
 <p align="center">
-  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.0</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
+  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.1</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
 </p>
 
 <p align="center">
@@ -20,17 +20,20 @@
 
 MediX spaja katalog lijekova i pakiranja, detalje proizvoda, ATK klasifikaciju, cijene i doplate, interakcije, paralelne lijekove, terapiju, podsjetnike, MKB-10 i kliničke kalkulatore u jedno pregledno sučelje.
 
+Identitet lijeka dolazi iz javne **HALMED Baze lijekova**. **HZZO** se koristi kao dodatni sloj za listu, doplate, smjernice i druge refundacijske podatke, a službeni cjenovni izvor kao zaseban enrichment. Sinkronizacija prolazi automatske provjere kvalitete prije nego što se generirani katalog smije spremiti u repozitorij.
+
 Aplikacija je razvijena kao **hrvatska profesionalna alternativa klasičnim bazama lijekova**, ali s modernijim UX-om, snažnom pretragom i vizualnim sustavom koji je od početka dizajniran za MediX.
 
 ### ⚡ Što MediX donosi
 
 | | Modul | Što radi |
 |---|---|---|
-| 🔎 | **Brza pretraga lijekova** | Pretraga po nazivu, djelatnoj tvari, ATK šifri, kategoriji, pakiranju i nositelju |
+| 🔎 | **Napredna pretraga lijekova** | Naziv, djelatna tvar, ATK, pakiranje, nositelj, režim izdavanja, lista i cjenovni filteri |
 | ✨ | **MediX Smart** | Pametna pretraga prirodnim upitom bez generiranja terapijskih preporuka |
 | 💊 | **Detalj lijeka** | Djelatna tvar, jačina, oblik, pakiranje, ATK, režim izdavanja, cijene i doplate |
-| 🔄 | **Paralelni i srodni lijekovi** | Grupiranje i usporedba lijekova prema djelatnoj tvari |
-| ⚠️ | **Interakcije** | Modul za provjeru kombinacija lijekova i upozorenja |
+| ↔️ | **Usporedba lijekova** | Usporedba 2–4 lijeka/pakiranja jedan uz drugi bez automatskog rangiranja |
+| 🔄 | **Paralelni i srodni lijekovi** | Grupiranje proizvoda prema djelatnoj tvari |
+| ⚠️ | **Interakcije** | Pretraživ odabir lijekova; nedostajući podatak nikada se ne prikazuje kao “nema interakcije” |
 | 🧮 | **Klinički alati** | BMI, BSA, eGFR, CHA₂DS₂-VASc, HAS-BLED, GCS, MELD, PERC i Wells PE |
 | 🧬 | **ATK klasifikacija** | Pregled lijekova po ATK šiframa |
 | 🩺 | **MKB-10** | Lokalni pretraživi registar s 39.559 zapisa |
@@ -38,8 +41,8 @@ Aplikacija je razvijena kao **hrvatska profesionalna alternativa klasičnim baza
 | ❤️ | **Favoriti** | Brzi pristup često korištenim lijekovima |
 | 🤰 | **Posebne skupine** | Trudnoća i dojenje, djeca i starije osobe |
 | 💶 | **Cijene i pakiranja** | Pretraživ pregled raspoloživih cjenovnih i paketnih zapisa |
-| 🏥 | **Ljekarne** | Pripremljen lokacijski modul za ljekarne u blizini |
-| 🎓 | **Edukacija** | Farmakologija, sigurnost lijekova i profesionalni edukacijski moduli |
+| 🏥 | **Ljekarne** | Otvaranje pretrage ljekarni u Android aplikaciji za karte |
+| 🎓 | **Edukacija** | Interaktivni vodiči o zapisima lijekova, sigurnosti, usporedbi i kalkulatorima |
 
 ## 🧠 MediX Smart
 
@@ -50,11 +53,11 @@ Umjesto da korisnik mora znati točan naziv proizvoda, MediX Smart razumije stru
 - `ATK C09`
 - `lijekovi za alergiju`
 
-Rezultati se rangiraju iz lokalnog kataloga prema nazivu, djelatnoj tvari, ATK šifri, kategoriji, pakiranju i farmaceutskom obliku.
+Rezultati se rangiraju iz lokalnog kataloga prema nazivu, djelatnoj tvari, ATK šifri, kategoriji, pakiranju i farmaceutskom obliku. Klasična pretraga dodatno omogućuje kombiniranje režima izdavanja, statusa liste, cijene, ATK skupine, oblika i nositelja/proizvođača.
 
 ## 🧮 Klinički alati
 
-MediX 0.3.0 uključuje devet brzih kalkulatora i bodovnih sustava:
+MediX 0.3.1 uključuje devet brzih kalkulatora i bodovnih sustava:
 
 **BMI · BSA Mosteller · eGFR MDRD · CHA₂DS₂-VASc · HAS-BLED · Glasgow Coma Scale · MELD · PERC · Wells PE**
 
@@ -113,6 +116,6 @@ MediX se razvija prema jednoj aplikaciji za profesionalni rad s lijekovima: **š
 ---
 
 <p align="center">
-  <strong>MediX 0.3.0</strong><br>
+  <strong>MediX 0.3.1</strong><br>
   Vaš vodič kroz lijekove.
 </p>

@@ -3,25 +3,28 @@ name: Sync official medicine data
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 4 * * 1"
+    - cron: "17 4 * * *"
   push:
     branches:
-      - "feat/full-android-v0.2.0"
+      - main
+      - "feat/medix-pro-v0.3.1"
     paths:
+      - "tool/sync_halmed_catalog.py"
       - "tool/sync_hzzo_catalog.py"
       - "tool/sync_halmed_prices.py"
+      - "tool/validate_catalogs.py"
       - ".github/workflows/sync-official-data.yml"
 
 permissions:
   contents: write
 
 concurrency:
-  group: medix-official-data-sync
+  group: medix-official-data-sync-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   sync:
-    name: Build official medicine catalogs
+    name: Build verified medicine catalogs
     runs-on: ubuntu-latest
 
     steps:
@@ -36,42 +39,36 @@ jobs:
           python-version: "3.13"
 
       - name: Install importer dependencies
-        run: python -m pip install --disable-pip-version-check requests beautifulsoup4
+        run: python -m pip install --disable-pip-version-check requests beautifulsoup4 openpyxl
 
-      - name: Synchronize HZZO catalog
-        run: python tool/sync_hzzo_catalog.py --minimum-records 1000
+      - name: Synchronize HALMED human-medicine registry
+        run: python tool/sync_halmed_catalog.py --minimum-records 4000
 
-      - name: Synchronize HALMED 2026 prices
+      - name: Synchronize HZZO reimbursement enrichment
+        run: python tool/sync_hzzo_catalog.py --minimum-records 500
+
+      - name: Synchronize 2026 wholesale prices
         run: python tool/sync_halmed_prices.py --minimum-records 1000
 
-      - name: Validate generated catalogs
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
+      - name: Validate catalogs and build quality report
+        run: python tool/validate_catalogs.py --report docs/DATA_QUALITY_REPORT.md
 
-          catalogs = {
-              "HZZO": ("assets/data/medications_official.json", 1000),
-              "HALMED": ("assets/data/halmed_prices_2026.json", 1000),
-          }
-          for label, (filename, minimum) in catalogs.items():
-              data = json.loads(Path(filename).read_text(encoding="utf-8"))
-              count = len(data.get("records", []))
-              assert count >= minimum, (label, count)
-              print(f"Validated {label}: {count} records")
-          PY
-
-      - name: Commit refreshed official data
+      - name: Commit refreshed verified data
         run: |
-          if git diff --quiet --             assets/data/medications_official.json             assets/data/halmed_prices_2026.json; then
+          tracked=(
+            assets/data/halmed_catalog.json
+            assets/data/medications_official.json
+            assets/data/halmed_prices_2026.json
+            docs/DATA_QUALITY_REPORT.md
+          )
+
+          if git diff --quiet -- "${tracked[@]}"; then
             echo "Official catalogs are already current."
             exit 0
           fi
 
           git config user.name "MediX Data Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add             assets/data/medications_official.json             assets/data/halmed_prices_2026.json
-          git commit -m "data: refresh official medicine catalogs"
-
-          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git add -- "${tracked[@]}"
+          git commit -m "data: refresh verified medicine catalogs"
           git push origin HEAD:"${GITHUB_REF_NAME}"
