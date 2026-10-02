@@ -17,6 +17,8 @@ void main() {
     String? holder,
     String? manufacturer,
     String? dispensingStatus,
+    String? marketStatus,
+    String? shortageStatus,
     List<MedicationPrice> prices = const [],
   }) {
     return Medication(
@@ -39,6 +41,8 @@ void main() {
       marketingAuthorizationHolder: holder,
       manufacturer: manufacturer,
       dispensingStatus: dispensingStatus,
+      marketStatus: marketStatus,
+      shortageStatus: shortageStatus,
       prices: prices,
       isDemo: false,
     );
@@ -68,6 +72,8 @@ void main() {
       holder: 'Alfa Pharma',
       manufacturer: 'Alfa Manufacturing',
       dispensingStatus: 'na recept',
+      marketStatus: 'stavljeno u promet',
+      shortageStatus: 'nema nestašice',
       prices: [
         price(2.5, MedicationPriceKind.hzzoCopay),
       ],
@@ -81,6 +87,8 @@ void main() {
       atc: 'R06AX01',
       form: 'sirup',
       holder: 'Beta Pharma',
+      marketStatus: 'nije stavljeno u promet',
+      shortageStatus: 'nestašica',
       prices: [
         price(8, MedicationPriceKind.maxWholesale),
       ],
@@ -91,6 +99,14 @@ void main() {
       ingredient: 'Tvar Gamma',
       atc: 'N02BE01',
       holder: 'Gamma Pharma',
+      marketStatus: 'privremeni prekid opskrbe',
+    ),
+    medication(
+      id: 'd',
+      name: 'Delta',
+      ingredient: 'Tvar Delta',
+      atc: 'A01AB09; R05CA12',
+      holder: 'Delta Pharma',
     ),
   ];
 
@@ -123,7 +139,7 @@ void main() {
       ),
     );
 
-    expect(result.map((item) => item.id), ['c']);
+    expect(result.map((item) => item.id), ['d', 'c']);
   });
 
   test('filters ATC group, form and holder', () {
@@ -137,6 +153,15 @@ void main() {
     );
 
     expect(result.map((item) => item.id), ['b']);
+  });
+
+  test('ATC filter checks every ATC code in a record', () {
+    final result = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(atcGroup: 'R'),
+    );
+
+    expect(result.map((item) => item.id), ['b', 'd']);
   });
 
   test('holder/manufacturer filter checks both fields', () {
@@ -155,6 +180,48 @@ void main() {
     );
 
     expect(result.map((item) => item.id), ['a']);
+  });
+
+  test('filters by HALMED market status', () {
+    final marketed = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(market: MarketFilter.marketed),
+    );
+    final notMarketed = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(market: MarketFilter.notMarketed),
+    );
+    final interrupted = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(
+        market: MarketFilter.temporaryInterruption,
+      ),
+    );
+
+    expect(marketed.map((item) => item.id), ['a']);
+    expect(notMarketed.map((item) => item.id), ['b']);
+    expect(interrupted.map((item) => item.id), ['c']);
+  });
+
+  test('filters HALMED shortage status', () {
+    final reported = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(shortage: ShortageFilter.reported),
+    );
+    final noneReported = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(
+        shortage: ShortageFilter.noneReported,
+      ),
+    );
+    final unknown = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(shortage: ShortageFilter.unknown),
+    );
+
+    expect(reported.map((item) => item.id), ['b']);
+    expect(noneReported.map((item) => item.id), ['a']);
+    expect(unknown.map((item) => item.id), ['d', 'c']);
   });
 
   test('filters by available price type', () {
@@ -177,6 +244,6 @@ void main() {
       const MedicationQuery(sort: MedicationSort.priceAsc),
     );
 
-    expect(result.map((item) => item.id), ['a', 'b', 'c']);
+    expect(result.map((item) => item.id), ['a', 'b', 'd', 'c']);
   });
 }

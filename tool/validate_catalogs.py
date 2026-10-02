@@ -137,6 +137,8 @@ def validate_halmed(data: dict, minimum: int) -> dict:
     rx = 0
     otc = 0
     unknown = 0
+    market = Counter()
+    shortage = Counter()
     for row in records:
         status = norm(row.get("rx_status"))
         if "bez recepta" in status:
@@ -145,6 +147,24 @@ def validate_halmed(data: dict, minimum: int) -> dict:
             rx += 1
         else:
             unknown += 1
+
+        market_status = norm(row.get("market_status"))
+        if "privremeni prekid" in market_status:
+            market["temporary_interruption"] += 1
+        elif "nije stavljeno u promet" in market_status:
+            market["not_marketed"] += 1
+        elif "stavljeno u promet" in market_status:
+            market["marketed"] += 1
+        else:
+            market["unknown"] += 1
+
+        shortage_status = norm(row.get("shortage_status"))
+        if "nema nestašice" in shortage_status:
+            shortage["none_reported"] += 1
+        elif "nestašic" in shortage_status:
+            shortage["reported"] += 1
+        else:
+            shortage["unknown"] += 1
 
     quality = data.get("quality") if isinstance(data.get("quality"), dict) else {}
     rejected_reasons = quality.get("rejected_reasons")
@@ -167,6 +187,13 @@ def validate_halmed(data: dict, minimum: int) -> dict:
         "rx": rx,
         "otc": otc,
         "unknown_dispensing": unknown,
+        "marketed": market["marketed"],
+        "not_marketed": market["not_marketed"],
+        "temporary_interruption": market["temporary_interruption"],
+        "unknown_market_status": market["unknown"],
+        "shortage_reported": shortage["reported"],
+        "shortage_none_reported": shortage["none_reported"],
+        "unknown_shortage_status": shortage["unknown"],
         "missing_atc": sum(
             1
             for row in records
@@ -219,6 +246,13 @@ Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 - Na recept: {stats["rx"]}
 - Bez recepta (OTC): {stats["otc"]}
 - Bez poznatog režima izdavanja: {stats["unknown_dispensing"]}
+- Stavljeno u promet: {stats["marketed"]}
+- Nije stavljeno u promet: {stats["not_marketed"]}
+- Privremeni prekid opskrbe: {stats["temporary_interruption"]}
+- Bez poznatog tržišnog statusa: {stats["unknown_market_status"]}
+- Prijavljena nestašica: {stats["shortage_reported"]}
+- Bez evidentirane nestašice: {stats["shortage_none_reported"]}
+- Bez poznatog statusa nestašice: {stats["unknown_shortage_status"]}
 - Bez ATK: {stats["missing_atc"]}
 - Bez pakiranja: {stats["missing_package"]}
 - Odbačeni HALMED zapisi: {stats["rejected_records"]}

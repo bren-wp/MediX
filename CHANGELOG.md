@@ -2,6 +2,18 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.2] - 2026-10-02
+
+### Dodano
+- filter po stvarnom HALMED statusu lijeka na tržištu
+- filter po HALMED statusu nestašice
+- regulatorni statusi prekida opskrbe i nestašice vidljivi su izravno na kartici i detalju lijeka
+
+### Poboljšano
+- ATK skupina V prikazuje se kao zasebna skupina umjesto generičkog "ostalo"
+- ATK filter i izbornik ispravno obrađuju HALMED zapise s više ATK šifri
+- release-candidate i data-sync workflowi sada prate buduće `feat/medix-pro-v*` razvojne grane bez ručnog prepisivanja verzije
+
 ## [0.3.1] - 2026-10-02
 
 ### Dodano

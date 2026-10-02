@@ -343,6 +343,27 @@ class _Badges extends StatelessWidget {
             label: 'ATK ${medication.atcCode}',
             color: MedixColors.cyan,
           ),
+        if (medication.marketState ==
+            MedicationMarketState.temporaryInterruption)
+          const _Badge(
+            icon: Icons.pause_circle_outline_rounded,
+            label: 'Privremeni prekid opskrbe',
+            color: MedixColors.warning,
+          )
+        else if (medication.marketState ==
+            MedicationMarketState.notMarketed)
+          const _Badge(
+            icon: Icons.remove_circle_outline_rounded,
+            label: 'Nije stavljeno u promet',
+            color: MedixColors.textSecondary,
+          ),
+        if (medication.shortageState ==
+            MedicationShortageState.reported)
+          const _Badge(
+            icon: Icons.warning_amber_rounded,
+            label: 'Prijavljena nestašica',
+            color: MedixColors.danger,
+          ),
         if (medication.isOnHzzoList)
           _Badge(
             icon: Icons.verified_outlined,

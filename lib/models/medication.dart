@@ -6,6 +6,19 @@ enum ReimbursementStatus {
   supplementary,
 }
 
+enum MedicationMarketState {
+  marketed,
+  notMarketed,
+  temporaryInterruption,
+  unknown,
+}
+
+enum MedicationShortageState {
+  reported,
+  noneReported,
+  unknown,
+}
+
 class Medication {
   const Medication({
     required this.id,
@@ -106,6 +119,37 @@ class Medication {
     if (requiresPrescription == true) return 'na recept';
     if (requiresPrescription == false) return 'bez recepta';
     return 'nije navedeno';
+  }
+
+  MedicationMarketState get marketState {
+    final normalized = (marketStatus ?? '').trim().toLowerCase();
+    if (normalized.isEmpty || normalized == '-') {
+      return MedicationMarketState.unknown;
+    }
+    if (normalized.contains('privremeni prekid')) {
+      return MedicationMarketState.temporaryInterruption;
+    }
+    if (normalized.contains('nije stavljeno u promet')) {
+      return MedicationMarketState.notMarketed;
+    }
+    if (normalized.contains('stavljeno u promet')) {
+      return MedicationMarketState.marketed;
+    }
+    return MedicationMarketState.unknown;
+  }
+
+  MedicationShortageState get shortageState {
+    final normalized = (shortageStatus ?? '').trim().toLowerCase();
+    if (normalized.isEmpty || normalized == '-') {
+      return MedicationShortageState.unknown;
+    }
+    if (normalized.contains('nema nestašice')) {
+      return MedicationShortageState.noneReported;
+    }
+    if (normalized.contains('nestašic')) {
+      return MedicationShortageState.reported;
+    }
+    return MedicationShortageState.unknown;
   }
 
   bool get isOnHzzoList =>

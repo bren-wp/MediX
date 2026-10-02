@@ -113,6 +113,24 @@ class MedicationTile extends StatelessWidget {
                             label: medication.atcCode!,
                             icon: Icons.tag_rounded,
                           ),
+                        if (medication.marketState ==
+                            MedicationMarketState.temporaryInterruption)
+                          const _InfoChip(
+                            label: 'Prekid opskrbe',
+                            icon: Icons.pause_circle_outline_rounded,
+                          )
+                        else if (medication.marketState ==
+                            MedicationMarketState.notMarketed)
+                          const _InfoChip(
+                            label: 'Nije u prometu',
+                            icon: Icons.remove_circle_outline_rounded,
+                          ),
+                        if (medication.shortageState ==
+                            MedicationShortageState.reported)
+                          const _InfoChip(
+                            label: 'Nestašica',
+                            icon: Icons.warning_amber_rounded,
+                          ),
                       ],
                     ),
                   ],

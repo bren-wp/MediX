@@ -1,11 +1,11 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-02T00:45:03.388520+00:00",
+  "generated_at": "2026-10-02T01:00:14.420826+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16abefe84dce46.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16abf0211dd5de.xlsx",
     "scope": "public_human_medicine_search_results"
   },
   "quality": {

@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.1</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
+  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.2</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@ Aplikacija je razvijena kao **hrvatska profesionalna alternativa klasičnim baza
 
 | | Modul | Što radi |
 |---|---|---|
-| 🔎 | **Napredna pretraga lijekova** | Naziv, djelatna tvar, ATK, pakiranje, nositelj, režim izdavanja, lista i cjenovni filteri |
+| 🔎 | **Napredna pretraga lijekova** | Naziv, djelatna tvar, ATK, pakiranje, nositelj, režim izdavanja, status tržišta, nestašica, lista i cjenovni filteri |
 | ✨ | **MediX Smart** | Pametna pretraga prirodnim upitom bez generiranja terapijskih preporuka |
 | 💊 | **Detalj lijeka** | Djelatna tvar, jačina, oblik, pakiranje, ATK, režim izdavanja, cijene i doplate |
 | ↔️ | **Usporedba lijekova** | Usporedba 2–4 lijeka/pakiranja jedan uz drugi bez automatskog rangiranja |
@@ -53,11 +53,11 @@ Umjesto da korisnik mora znati točan naziv proizvoda, MediX Smart razumije stru
 - `ATK C09`
 - `lijekovi za alergiju`
 
-Rezultati se rangiraju iz lokalnog kataloga prema nazivu, djelatnoj tvari, ATK šifri, kategoriji, pakiranju i farmaceutskom obliku. Klasična pretraga dodatno omogućuje kombiniranje režima izdavanja, statusa liste, cijene, ATK skupine, oblika i nositelja/proizvođača.
+Rezultati se rangiraju iz lokalnog kataloga prema nazivu, djelatnoj tvari, ATK šifri, kategoriji, pakiranju i farmaceutskom obliku. Klasična pretraga dodatno omogućuje kombiniranje režima izdavanja, HALMED statusa na tržištu, statusa nestašice, statusa HZZO liste, cijene, ATK skupine, oblika i nositelja/proizvođača.
 
 ## 🧮 Klinički alati
 
-MediX 0.3.1 uključuje devet brzih kalkulatora i bodovnih sustava:
+MediX 0.3.2 uključuje devet brzih kalkulatora i bodovnih sustava:
 
 **BMI · BSA Mosteller · eGFR MDRD · CHA₂DS₂-VASc · HAS-BLED · Glasgow Coma Scale · MELD · PERC · Wells PE**
 
@@ -116,6 +116,6 @@ MediX se razvija prema jednoj aplikaciji za profesionalni rad s lijekovima: **š
 ---
 
 <p align="center">
-  <strong>MediX 0.3.1</strong><br>
+  <strong>MediX 0.3.2</strong><br>
   Vaš vodič kroz lijekove.
 </p>

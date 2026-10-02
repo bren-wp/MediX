@@ -23,6 +23,21 @@ enum PriceFilter {
   wholesale,
 }
 
+enum MarketFilter {
+  all,
+  marketed,
+  notMarketed,
+  temporaryInterruption,
+  unknown,
+}
+
+enum ShortageFilter {
+  all,
+  reported,
+  noneReported,
+  unknown,
+}
+
 enum MedicationSort {
   nameAsc,
   ingredientAsc,
@@ -37,6 +52,8 @@ class MedicationQuery {
     this.dispensing = DispensingFilter.all,
     this.reimbursement = ReimbursementFilter.all,
     this.price = PriceFilter.all,
+    this.market = MarketFilter.all,
+    this.shortage = ShortageFilter.all,
     this.atcGroup,
     this.form,
     this.holder,
@@ -47,6 +64,8 @@ class MedicationQuery {
   final DispensingFilter dispensing;
   final ReimbursementFilter reimbursement;
   final PriceFilter price;
+  final MarketFilter market;
+  final ShortageFilter shortage;
   final String? atcGroup;
   final String? form;
   final String? holder;
@@ -56,6 +75,8 @@ class MedicationQuery {
       dispensing != DispensingFilter.all ||
       reimbursement != ReimbursementFilter.all ||
       price != PriceFilter.all ||
+      market != MarketFilter.all ||
+      shortage != ShortageFilter.all ||
       atcGroup != null ||
       form != null ||
       holder != null;
@@ -65,6 +86,8 @@ class MedicationQuery {
     DispensingFilter? dispensing,
     ReimbursementFilter? reimbursement,
     PriceFilter? price,
+    MarketFilter? market,
+    ShortageFilter? shortage,
     String? atcGroup,
     bool clearAtcGroup = false,
     String? form,
@@ -78,6 +101,8 @@ class MedicationQuery {
       dispensing: dispensing ?? this.dispensing,
       reimbursement: reimbursement ?? this.reimbursement,
       price: price ?? this.price,
+      market: market ?? this.market,
+      shortage: shortage ?? this.shortage,
       atcGroup: clearAtcGroup ? null : (atcGroup ?? this.atcGroup),
       form: clearForm ? null : (form ?? this.form),
       holder: clearHolder ? null : (holder ?? this.holder),
@@ -123,11 +148,19 @@ List<Medication> applyMedicationQuery(
       return false;
     }
 
+    if (!_matchesMarket(medication, query.market)) {
+      return false;
+    }
+
+    if (!_matchesShortage(medication, query.shortage)) {
+      return false;
+    }
+
     if (normalizedAtc != null &&
         normalizedAtc.isNotEmpty &&
-        !(medication.atcCode ?? '')
-            .toUpperCase()
-            .startsWith(normalizedAtc)) {
+        !_atcTokens(medication.atcCode).any(
+          (code) => code.startsWith(normalizedAtc),
+        )) {
       return false;
     }
 
@@ -235,6 +268,40 @@ bool _matchesPrice(
   };
 }
 
+bool _matchesMarket(
+  Medication medication,
+  MarketFilter filter,
+) {
+  return switch (filter) {
+    MarketFilter.all => true,
+    MarketFilter.marketed =>
+      medication.marketState == MedicationMarketState.marketed,
+    MarketFilter.notMarketed =>
+      medication.marketState == MedicationMarketState.notMarketed,
+    MarketFilter.temporaryInterruption =>
+      medication.marketState ==
+          MedicationMarketState.temporaryInterruption,
+    MarketFilter.unknown =>
+      medication.marketState == MedicationMarketState.unknown,
+  };
+}
+
+bool _matchesShortage(
+  Medication medication,
+  ShortageFilter filter,
+) {
+  return switch (filter) {
+    ShortageFilter.all => true,
+    ShortageFilter.reported =>
+      medication.shortageState == MedicationShortageState.reported,
+    ShortageFilter.noneReported =>
+      medication.shortageState ==
+          MedicationShortageState.noneReported,
+    ShortageFilter.unknown =>
+      medication.shortageState == MedicationShortageState.unknown,
+  };
+}
+
 int _compare(
   Medication a,
   Medication b,
@@ -302,6 +369,16 @@ double? _primaryPrice(Medication medication) {
 
 int _withNameFallback(int result, int fallback) {
   return result == 0 ? fallback : result;
+}
+
+Iterable<String> _atcTokens(String? value) sync* {
+  final raw = value?.toUpperCase().trim() ?? '';
+  if (raw.isEmpty) return;
+
+  for (final part in raw.split(RegExp(r'[;,]'))) {
+    final code = part.trim();
+    if (code.isNotEmpty) yield code;
+  }
 }
 
 String _normalize(String value) {

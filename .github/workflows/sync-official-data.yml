@@ -7,7 +7,7 @@ on:
   push:
     branches:
       - main
-      - "feat/medix-pro-v0.3.1"
+      - "feat/medix-pro-v*"
     paths:
       - "tool/sync_halmed_catalog.py"
       - "tool/sync_hzzo_catalog.py"
@@ -71,4 +71,9 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add -- "${tracked[@]}"
           git commit -m "data: refresh verified medicine catalogs"
+
+          # The branch can move while network-backed catalog sync is running.
+          # Rebase the generated-data commit instead of failing with a stale
+          # non-fast-forward push.
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push origin HEAD:"${GITHUB_REF_NAME}"
