@@ -1,11 +1,11 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-02T01:16:35.678890+00:00",
+  "generated_at": "2026-10-02T10:29:36.620509+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16abf05e66cf58.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16abf8784efa3f.xlsx",
     "scope": "public_human_medicine_search_results"
   },
   "quality": {
@@ -43501,7 +43501,7 @@
       "composition": "jedna tableta sadrži 500 mg cefuroksima u obliku cefuroksimaksetila",
       "form": "Filmom obložena tableta",
       "strength": "500 mg",
-      "package": "HR-H-816131041-01 | 6 tableta u blisteru, u kutiji | - | - HR-H-816131041-02 | 7 tableta u blisteru, u kutiji | - | - HR-H-816131041-03 | 8 tableta u blisteru, u kutiji | - | - HR-H-816131041-04 | 10 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku HR-H-816131041-05 | 12 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-816131041-06 | 14 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-816131041-07 | 20 tableta u blisteru, u kutiji | - | - HR-H-816131041-08 | 21 tableta u blisteru, u kutiji | - | - HR-H-816131041-09 | 100 tableta u blisteru, u kutiji | - | -",
+      "package": "HR-H-816131041-01 | 6 tableta u blisteru, u kutiji | - | - HR-H-816131041-02 | 7 tableta u blisteru, u kutiji | - | - HR-H-816131041-03 | 8 tableta u blisteru, u kutiji | - | - HR-H-816131041-04 | 10 tableta u blisteru, u kutiji | trajni prekid opskrbe | - HR-H-816131041-05 | 12 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-816131041-06 | 14 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-816131041-07 | 20 tableta u blisteru, u kutiji | - | - HR-H-816131041-08 | 21 tableta u blisteru, u kutiji | - | - HR-H-816131041-09 | 100 tableta u blisteru, u kutiji | - | -",
       "manufacturer": "Alkaloid - INT d.o.o., Ljubljana - Črnuče, Slovenija",
       "holder": "Alkaloid - INT d.o.o., Šlandrova ulica 4, Ljubljana - Črnuče, Slovenija",
       "decision_date": "27.02.2023.",
@@ -43514,8 +43514,8 @@
       "advertising": "zabranjeno",
       "atc_code": "J01DC02",
       "category": "Antiinfektivni lijekovi",
-      "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "market_status": "trajni prekid opskrbe",
+      "shortage_status": "",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Furextil-500-mg-filmom-oblozene-tablete/16784/"
     },
     {
@@ -45997,7 +45997,7 @@
       "composition": "Svaka tableta sadrži 10 mg haloperidola",
       "form": "tableta",
       "strength": "10 mg",
-      "package": "HR-H-435067757-01 | 30 tableta u bočici, u kutiji | stavljeno u promet | u tijeku",
+      "package": "HR-H-435067757-01 | 30 tableta u bočici, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Krka d.d., Novo mesto, Novo Mesto, Slovenija",
       "holder": "Krka - farma d.o.o., Radnička cesta 48, Zagreb, Hrvatska",
       "decision_date": "28.04.2016.",
@@ -46011,7 +46011,7 @@
       "atc_code": "N05AD01",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "shortage_status": "nema nestašice",
       "official_record_url": null
     },
     {
@@ -54135,7 +54135,7 @@
       "composition": "jedna tableta sadrži 5 mg bisoprololfumarata",
       "form": "tableta",
       "strength": "5 mg",
-      "package": "HR-H-584474974-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku",
+      "package": "HR-H-584474974-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Pliva Hrvatska d.o.o., Zagreb, Hrvatska<br/>Chanelle Medical, Loughrea, Co. Galway, Irska",
       "holder": "Pliva Hrvatska d.o.o., Prilaz baruna Filipovića 25, Zagreb, Hrvatska",
       "decision_date": "13.09.2019.",
@@ -54149,7 +54149,7 @@
       "atc_code": "C07AB07",
       "category": "Srce i krvožilni sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Kordobis-5-mg-tablete/10187/"
     },
     {
@@ -79095,7 +79095,7 @@
       "composition": "jedna tableta sadrži 4 mg perindopril-tert-butilamina, što odgovara dozi od 3,338 mg perindoprila",
       "form": "tableta",
       "strength": "4 mg",
-      "package": "HR-H-841697345-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku HR-H-841697345-02 | 60 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-841697345-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-841697345-02 | 60 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "Krka - farma d.o.o., Zagreb, Hrvatska<br/>Krka d.d., Novo mesto, Novo Mesto, Slovenija",
       "holder": "Krka - farma d.o.o., Radnička cesta 48, Zagreb, Hrvatska",
       "decision_date": "08.06.2015.",
@@ -79109,7 +79109,7 @@
       "atc_code": "C09AA04",
       "category": "Srce i krvožilni sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Perineva-4-mg-tablete/11577/"
     },
     {
@@ -101663,7 +101663,7 @@
       "composition": "svaka tableta sadrži 1 mg lorazepama",
       "form": "Tableta",
       "strength": "1 mg",
-      "package": "HR-H-956450782-01 | 10 tableta u blisteru, u kutiji | - | - HR-H-956450782-02 | 14 tableta u blisteru, u kutiji | - | - HR-H-956450782-03 | 15 tableta u blisteru, u kutiji | - | - HR-H-956450782-04 | 20 tableta u blisteru, u kutiji | - | - HR-H-956450782-05 | 28 tableta u blisteru, u kutiji | - | - HR-H-956450782-06 | 30 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku HR-H-956450782-07 | 50 tableta u blisteru, u kutiji | - | - HR-H-956450782-08 | 60 tableta u blisteru, u kutiji | - | - HR-H-956450782-09 | 90 tableta u blisteru, u kutiji | - | - HR-H-956450782-10 | 100 tableta u blisteru, u kutiji | - | - HR-H-956450782-11 | 500 tableta u blisteru, u kutiji | - | -",
+      "package": "HR-H-956450782-01 | 10 tableta u blisteru, u kutiji | - | - HR-H-956450782-02 | 14 tableta u blisteru, u kutiji | - | - HR-H-956450782-03 | 15 tableta u blisteru, u kutiji | - | - HR-H-956450782-04 | 20 tableta u blisteru, u kutiji | - | - HR-H-956450782-05 | 28 tableta u blisteru, u kutiji | - | - HR-H-956450782-06 | 30 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-956450782-07 | 50 tableta u blisteru, u kutiji | - | - HR-H-956450782-08 | 60 tableta u blisteru, u kutiji | - | - HR-H-956450782-09 | 90 tableta u blisteru, u kutiji | - | - HR-H-956450782-10 | 100 tableta u blisteru, u kutiji | - | - HR-H-956450782-11 | 500 tableta u blisteru, u kutiji | - | -",
       "manufacturer": "Medochemie Ltd., Agios Athanassios, Limassol, Cipar<br/>Farmaceutisch Analytisch Laboratorium Duiver B.V. (FAL B.V.), Duiven, Gelderland, Nizozemska",
       "holder": "Medochemie Ltd., 1-10 Konstantinoupoleos street, Limassol, Cipar",
       "decision_date": "17.09.2026.",
@@ -101677,7 +101677,7 @@
       "atc_code": "N05BA06",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Temelor-1-mg-tablete/16439/"
     },
     {
@@ -101689,7 +101689,7 @@
       "composition": "svaka tableta sadrži 2,5 mg lorazepama",
       "form": "Tableta",
       "strength": "2,5 mg",
-      "package": "HR-H-199858664-01 | 10 tableta u blisteru, u kutiji | - | - HR-H-199858664-02 | 14 tableta u blisteru, u kutiji | - | - HR-H-199858664-03 | 15 tableta u blisteru, u kutiji | - | - HR-H-199858664-04 | 20 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku HR-H-199858664-05 | 28 tableta u blisteru, u kutiji | - | - HR-H-199858664-06 | 30 tableta u blisteru, u kutiji | - | - HR-H-199858664-07 | 50 tableta u blisteru, u kutiji | - | - HR-H-199858664-08 | 60 tableta u blisteru, u kutiji | - | - HR-H-199858664-09 | 90 tableta u blisteru, u kutiji | - | - HR-H-199858664-10 | 100 tableta u blisteru, u kutiji | - | - HR-H-199858664-11 | 500 tableta u blisteru, u kutiji | - | -",
+      "package": "HR-H-199858664-01 | 10 tableta u blisteru, u kutiji | - | - HR-H-199858664-02 | 14 tableta u blisteru, u kutiji | - | - HR-H-199858664-03 | 15 tableta u blisteru, u kutiji | - | - HR-H-199858664-04 | 20 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-199858664-05 | 28 tableta u blisteru, u kutiji | - | - HR-H-199858664-06 | 30 tableta u blisteru, u kutiji | - | - HR-H-199858664-07 | 50 tableta u blisteru, u kutiji | - | - HR-H-199858664-08 | 60 tableta u blisteru, u kutiji | - | - HR-H-199858664-09 | 90 tableta u blisteru, u kutiji | - | - HR-H-199858664-10 | 100 tableta u blisteru, u kutiji | - | - HR-H-199858664-11 | 500 tableta u blisteru, u kutiji | - | -",
       "manufacturer": "Medochemie Ltd., Agios Athanassios, Limassol, Cipar<br/>Farmaceutisch Analytisch Laboratorium Duiver B.V. (FAL B.V.), Duiven, Gelderland, Nizozemska",
       "holder": "Medochemie Ltd., 1-10 Konstantinoupoleos street, Limassol, Cipar",
       "decision_date": "17.09.2026.",
@@ -101703,7 +101703,7 @@
       "atc_code": "N05BA06",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Temelor-25-mg-tablete/16440/"
     },
     {
