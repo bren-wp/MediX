@@ -155,8 +155,16 @@ def parse_page(html: str) -> list[dict]:
             continue
 
         atc = clean(fields.get("ATK šifra"))
-        protected = clean(fields.get("Zaštićeni naziv")) or title.split(" (", 1)[0]
         generic = clean(fields.get("Nezaštićeni naziv"))
+
+        # HZZO search also contains reimbursed medical nutrition and other
+        # non-medicine products. They may enrich MediX only when matched to a
+        # HALMED medicine and must never become medicine identities.
+        if atc.upper().startswith("V06D"):
+            continue
+        if "namirnice bez glutena" in generic.casefold():
+            continue
+        protected = clean(fields.get("Zaštićeni naziv")) or title.split(" (", 1)[0]
         package = clean(fields.get("Oblik, jačina i pakiranje"))
         basic = clean(fields.get("Osnovna lista lijekova")).lower() == "da"
         supplementary = (
@@ -345,7 +353,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--output",
-        default="assets/data/medications_official.json",
+        default="assets/data/hzzo_reimbursement.json",
         type=Path,
     )
     parser.add_argument("--max-pages", default=FALLBACK_MAX_PAGES, type=int)
