@@ -530,25 +530,8 @@ class MedicationRepository {
         .replaceAll('š', 's')
         .replaceAll('đ', 'd')
         .replaceAll(RegExp(r'[^a-z0-9%]+'), ' ')
-        .replaceAll(RegExp(r'\\s+'), ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
-  }
-
-  static String _productKey(
-    String name,
-    String ingredient,
-    String? atc,
-  ) {
-    String normalize(String value) => value
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9čćžšđ]+'), ' ')
-        .trim();
-
-    return [
-      normalize(name),
-      normalize(ingredient),
-      normalize(atc ?? ''),
-    ].join('|');
   }
 
   static String _categoryForAtc(String? atc) {
@@ -579,31 +562,6 @@ class MedicationRepository {
       caseSensitive: false,
     ).firstMatch(package);
     return match?.group(1)?.trim() ?? '';
-  }
-
-  static String _extractForm(String package) {
-    final lower = package.toLowerCase();
-    const forms = <String>[
-      'tablete',
-      'tableta',
-      'kapsule',
-      'kapsula',
-      'sirup',
-      'oralna otopina',
-      'otopina za injekciju',
-      'otopina za infuziju',
-      'krema',
-      'mast',
-      'gel',
-      'sprej',
-      'kapi',
-      'prašak',
-      'čepići',
-    ];
-    for (final form in forms) {
-      if (lower.contains(form)) return form;
-    }
-    return 'lijek';
   }
 
   factory MedicationRepository.demo() {
