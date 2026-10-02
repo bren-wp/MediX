@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Synchronize the complete public HALMED human-medicine registry.
+"""Synchronize the public HALMED human-medicine registry for MediX.
 
-HALMED's public medicine database is the identity source for MediX. Other
-catalogs may enrich these records, but may not create a medicine on their own.
+HALMED is the medicine-identity source. HZZO and price catalogs may enrich
+HALMED records, but may never create medicine identities on their own.
 """
 
 from __future__ import annotations
@@ -12,6 +12,7 @@ import hashlib
 import io
 import json
 import re
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urljoin
@@ -21,6 +22,7 @@ from bs4 import BeautifulSoup
 from openpyxl import load_workbook
 
 BASE_URL = "https://www.halmed.hr/Lijekovi/Baza-lijekova/"
+SEARCH_FORM_ID = "pretrazi_bazu"
 MIN_EXPECTED_RECORDS = 4000
 
 ATC_CATEGORIES = {
@@ -37,7 +39,7 @@ ATC_CATEGORIES = {
     "P": "Antiparazitici",
     "R": "Dišni sustav",
     "S": "Osjetila",
-    "V": "Ostali lijekovi",
+    "V": "Razni pripravci (ATK V)",
 }
 
 STRENGTH_RE = re.compile(
@@ -45,6 +47,20 @@ STRENGTH_RE = re.compile(
     r"jedinica)(?:\s*/\s*\d+(?:[.,]\d+)?\s*(?:ml|g))?)",
     re.IGNORECASE,
 )
+ATC_RE = re.compile(r"^[A-Z]\d{2}[A-Z]{2}\d{2}$")
+LEGAL_ENTITY_RE = re.compile(
+    r"(?:^|\s)(?:d\.?\s*o\.?\s*o\.?|d\.?\s*d\.?|j\.?\s*d\.?\s*o\.?\s*o\.?|"
+    r"obrt|ustanova|limited|ltd\.?|gmbh|s\.?a\.?|b\.?v\.?)(?:\s|$)",
+    re.IGNORECASE,
+)
+TECHNICAL_NAMES = {
+    "naziv",
+    "naziv lijeka",
+    "proizvođač",
+    "nositelj odobrenja",
+    "nije navedeno",
+    "nepoznato",
+}
 
 REQUIRED_HEADERS = {
     "Naziv",
@@ -61,6 +77,10 @@ def clean(value: object | None) -> str:
     return re.sub(r"\s+", " ", "" if value is None else str(value)).strip()
 
 
+def normalized(value: object | None) -> str:
+    return clean(value).casefold()
+
+
 def stable_id(approval: str, name: str) -> str:
     basis = f"{approval}|{name}".encode("utf-8")
     return "halmed-" + hashlib.sha1(basis).hexdigest()[:24]
@@ -68,7 +88,7 @@ def stable_id(approval: str, name: str) -> str:
 
 def category_for(atc: str) -> str:
     first = clean(atc)[:1].upper()
-    return ATC_CATEGORIES.get(first, "Ostali lijekovi")
+    return ATC_CATEGORIES.get(first, "Neklasificirano")
 
 
 def derive_strength(name: str, composition: str) -> str:
@@ -76,19 +96,20 @@ def derive_strength(name: str, composition: str) -> str:
         match = STRENGTH_RE.search(value or "")
         if match:
             return clean(match.group(1))
-    return "nije navedeno"
+    return ""
 
 
 def find_export_url(html: str, page_url: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
     for link in soup.find_all("a", href=True):
         href = urljoin(page_url, link.get("href"))
-        text = clean(link.get_text(" ", strip=True)).lower()
-        if href.lower().endswith(".xlsx") or (
-            "spremi rezultate" in text and "xlsx" in text
-        ):
+        text = clean(link.get_text(" ", strip=True)).casefold()
+        lower_href = href.casefold()
+        if lower_href.endswith((".xls", ".xlsx")):
             return href
-    raise RuntimeError("HALMED XLSX export link was not discovered.")
+        if "spremi rezultate" in text and "xls" in lower_href:
+            return href
+    raise RuntimeError("HALMED Excel export link was not discovered.")
 
 
 def medicine_links(html: str, page_url: str) -> dict[str, str]:
@@ -116,7 +137,43 @@ def find_header_row(sheet) -> tuple[int, list[str]]:
     raise RuntimeError("HALMED XLSX header row was not recognized.")
 
 
-def parse_workbook(content: bytes, detail_links: dict[str, str]) -> list[dict]:
+def identity_issue(record: dict) -> str | None:
+    name = clean(record.get("name"))
+    approval = clean(record.get("authorization_number"))
+    if not name:
+        return "missing_name"
+    if not approval:
+        return "missing_authorization_number"
+
+    normalized_name = name.casefold()
+    if normalized_name in TECHNICAL_NAMES:
+        return "technical_placeholder_name"
+
+    holder = normalized(record.get("holder"))
+    manufacturer = normalized(record.get("manufacturer"))
+    if holder and normalized_name == holder:
+        return "name_equals_holder"
+    if manufacturer and normalized_name == manufacturer:
+        return "name_equals_manufacturer"
+    if LEGAL_ENTITY_RE.search(name):
+        return "legal_entity_as_name"
+
+    evidence = (
+        clean(record.get("active_ingredient")),
+        clean(record.get("form")),
+        clean(record.get("atc_code")),
+        clean(record.get("package")),
+        clean(record.get("rx_status")),
+    )
+    if not any(evidence):
+        return "missing_regulatory_metadata"
+    return None
+
+
+def parse_workbook(
+    content: bytes,
+    detail_links: dict[str, str],
+) -> tuple[list[dict], Counter[str]]:
     workbook = load_workbook(
         io.BytesIO(content),
         read_only=True,
@@ -138,6 +195,7 @@ def parse_workbook(content: bytes, detail_links: dict[str, str]) -> list[dict]:
 
     records: list[dict] = []
     seen_ids: set[str] = set()
+    rejected: Counter[str] = Counter()
 
     for row in sheet.iter_rows(
         min_row=header_row + 1,
@@ -145,58 +203,61 @@ def parse_workbook(content: bytes, detail_links: dict[str, str]) -> list[dict]:
     ):
         name = value(row, "Naziv")
         approval = value(row, "Broj odobrenja")
-        active = value(row, "Djelatna tvar")
         revoked = value(row, "Datum ukidanja rješenja")
 
-        if not name or not approval:
+        if not name:
+            rejected["missing_name"] += 1
+            continue
+        if not approval:
+            rejected["missing_authorization_number"] += 1
             continue
         if revoked:
-            # Revoked marketing authorisations are not current medicines.
+            rejected["revoked_authorization"] += 1
             continue
-
-        record_id = stable_id(approval, name)
-        if record_id in seen_ids:
-            continue
-        seen_ids.add(record_id)
 
         atc = value(row, "ATK")
         composition = value(row, "Sastav")
-        dispensing = value(row, "Način izdavanja")
-        market_status = value(row, "Status lijeka na tržištu")
-        shortage = value(row, "Status nestašice")
-        package = value(row, "Pakiranje")
+        record = {
+            "id": stable_id(approval, name),
+            "name": name,
+            "previous_name": value(row, "Raniji naziv"),
+            "authorization_number": approval,
+            "active_ingredient": value(row, "Djelatna tvar"),
+            "composition": composition,
+            "form": value(row, "Farmaceutski oblik"),
+            "strength": derive_strength(name, composition),
+            "package": value(row, "Pakiranje"),
+            "manufacturer": value(row, "Proizvođač"),
+            "holder": value(row, "Nositelj odobrenja"),
+            "decision_date": value(row, "Datum rješenja"),
+            "authorization_expiry": value(row, "Rok rješenja"),
+            "class": value(row, "Klasa"),
+            "urbroj": value(row, "Urbroj"),
+            "rx_status": value(row, "Način izdavanja"),
+            "prescribing_mode": value(row, "Način propisivanja"),
+            "dispensing_place": value(row, "Mjesto izdavanja"),
+            "advertising": value(
+                row,
+                "Način oglašavanja prema stanovništvu",
+            ),
+            "atc_code": atc,
+            "category": category_for(atc),
+            "market_status": value(row, "Status lijeka na tržištu"),
+            "shortage_status": value(row, "Status nestašice"),
+            "official_record_url": detail_links.get(name.casefold()),
+        }
 
-        records.append(
-            {
-                "id": record_id,
-                "name": name,
-                "previous_name": value(row, "Raniji naziv"),
-                "authorization_number": approval,
-                "active_ingredient": active,
-                "composition": composition,
-                "form": value(row, "Farmaceutski oblik") or "lijek",
-                "strength": derive_strength(name, composition),
-                "package": package,
-                "manufacturer": value(row, "Proizvođač"),
-                "holder": value(row, "Nositelj odobrenja"),
-                "decision_date": value(row, "Datum rješenja"),
-                "authorization_expiry": value(row, "Rok rješenja"),
-                "class": value(row, "Klasa"),
-                "urbroj": value(row, "Urbroj"),
-                "rx_status": dispensing,
-                "prescribing_mode": value(row, "Način propisivanja"),
-                "dispensing_place": value(row, "Mjesto izdavanja"),
-                "advertising": value(
-                    row,
-                    "Način oglašavanja prema stanovništvu",
-                ),
-                "atc_code": atc,
-                "category": category_for(atc),
-                "market_status": market_status,
-                "shortage_status": shortage,
-                "official_record_url": detail_links.get(name.casefold()),
-            }
-        )
+        issue = identity_issue(record)
+        if issue is not None:
+            rejected[issue] += 1
+            continue
+
+        record_id = record["id"]
+        if record_id in seen_ids:
+            rejected["duplicate_id"] += 1
+            continue
+        seen_ids.add(record_id)
+        records.append(record)
 
     records.sort(
         key=lambda item: (
@@ -204,7 +265,7 @@ def parse_workbook(content: bytes, detail_links: dict[str, str]) -> list[dict]:
             item["authorization_number"],
         )
     )
-    return records
+    return records, rejected
 
 
 def validate(records: list[dict], minimum: int) -> None:
@@ -214,45 +275,49 @@ def validate(records: list[dict], minimum: int) -> None:
             f"minimum is {minimum}."
         )
 
-    forbidden_names = {
-        "a1 d.o.o.",
-        "a.g.r.",
-        "m.b.s.",
-        "namirnice bez glutena",
-    }
-    offenders = [
-        record["name"]
+    ids = [record["id"] for record in records]
+    if len(ids) != len(set(ids)):
+        raise RuntimeError("Duplicate HALMED IDs detected.")
+
+    identities = [
+        (
+            normalized(record.get("authorization_number")),
+            normalized(record.get("name")),
+        )
         for record in records
-        if record["name"].casefold() in forbidden_names
     ]
-    if offenders:
+    if len(identities) != len(set(identities)):
+        raise RuntimeError("Duplicate HALMED medicine identities detected.")
+
+    invalid_atc = [
+        clean(record.get("atc_code"))
+        for record in records
+        if clean(record.get("atc_code"))
+        and not ATC_RE.fullmatch(clean(record.get("atc_code")).upper())
+    ]
+    if invalid_atc:
         raise RuntimeError(
-            "Non-medicine/company names leaked into HALMED catalog: "
-            + ", ".join(sorted(set(offenders)))
+            "Invalid HALMED ATC values detected: "
+            + ", ".join(sorted(set(invalid_atc))[:10])
         )
 
-    missing_names = [
-        record["authorization_number"]
+    invalid_identity = [
+        (record.get("name"), identity_issue(record))
         for record in records
-        if not clean(record.get("name"))
+        if identity_issue(record) is not None
     ]
-    if missing_names:
+    if invalid_identity:
         raise RuntimeError(
-            f"{len(missing_names)} records are missing medicine names."
+            "Invalid medicine identities remained after filtering: "
+            + ", ".join(
+                f"{name!r} ({reason})"
+                for name, reason in invalid_identity[:10]
+            )
         )
 
-    company_only = [
-        record["name"]
-        for record in records
-        if record["name"].casefold()
-        == clean(record.get("holder")).casefold()
-        and clean(record.get("holder"))
-    ]
-    if company_only:
-        raise RuntimeError(
-            "Holder was mapped as medicine name: "
-            + ", ".join(company_only[:10])
-        )
+    names = {normalized(record.get("name")) for record in records}
+    if "a1 d.o.o." in names:
+        raise RuntimeError("Regression: A1 d.o.o. leaked into medicine names.")
 
 
 def main() -> int:
@@ -282,9 +347,17 @@ def main() -> int:
 
     landing = session.get(BASE_URL, timeout=60)
     landing.raise_for_status()
+    landing_soup = BeautifulSoup(landing.text, "html.parser")
+    search_form = landing_soup.find("form", id=SEARCH_FORM_ID)
+    if search_form is None:
+        raise RuntimeError("HALMED medicine search form was not found.")
 
+    action = urljoin(
+        landing.url,
+        (search_form.get("action") or BASE_URL).split("#", 1)[0],
+    )
     search = session.post(
-        BASE_URL,
+        action,
         data={"trazi_baza": "OK"},
         timeout=180,
         allow_redirects=True,
@@ -297,16 +370,23 @@ def main() -> int:
     export = session.get(export_url, timeout=180)
     export.raise_for_status()
 
-    records = parse_workbook(export.content, links)
+    records, rejected = parse_workbook(export.content, links)
     validate(records, args.minimum_records)
 
     payload = {
-        "schema_version": 2,
+        "schema_version": 3,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source": {
             "name": "HALMED Baza lijekova",
             "url": BASE_URL,
-            "scope": "current_authorized_human_medicines",
+            "search_action": action,
+            "export_url": export_url,
+            "scope": "public_human_medicine_search_results",
+        },
+        "quality": {
+            "accepted_records": len(records),
+            "rejected_records": sum(rejected.values()),
+            "rejected_reasons": dict(sorted(rejected.items())),
         },
         "record_count": len(records),
         "records": records,
@@ -320,7 +400,7 @@ def main() -> int:
 
     print(
         f"Wrote {len(records)} current HALMED human medicines "
-        f"to {args.output}"
+        f"to {args.output}; rejected={sum(rejected.values())}"
     )
     return 0
 

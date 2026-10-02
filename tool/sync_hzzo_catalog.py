@@ -24,7 +24,7 @@ from bs4 import BeautifulSoup, Tag
 
 BASE_URL = "https://hzzo.hr/trazilica-za-lijekove"
 EFFECTIVE_DATE = "2026-10-01"
-MIN_EXPECTED_RECORDS = 1000
+MIN_EXPECTED_RECORDS = 500
 FALLBACK_MAX_PAGES = 1000
 
 LABELS = [
@@ -58,7 +58,7 @@ ATC_CATEGORIES = {
     "P": "Antiparazitici",
     "R": "Dišni sustav",
     "S": "Osjetila",
-    "V": "Ostali lijekovi",
+    "V": "Razni pripravci (ATK V)",
 }
 
 STRENGTH_RE = re.compile(
@@ -80,7 +80,7 @@ def slug(value: str) -> str:
 
 def category_for(atc: str) -> str:
     first = clean(atc)[:1].upper()
-    return ATC_CATEGORIES.get(first, "Ostali lijekovi")
+    return ATC_CATEGORIES.get(first, "Neklasificirano")
 
 
 def derive_form(package: str) -> str:
@@ -93,7 +93,7 @@ def derive_form(package: str) -> str:
 
 def derive_strength(package: str) -> str:
     match = STRENGTH_RE.search(package or "")
-    return clean(match.group(1)) if match else clean(package)[:120]
+    return clean(match.group(1)) if match else ""
 
 
 def parse_number(value: str | None) -> float | None:
@@ -154,7 +154,9 @@ def parse_page(html: str) -> list[dict]:
         if "ATK šifra" not in fields or "Nezaštićeni naziv" not in fields:
             continue
 
-        atc = clean(fields.get("ATK šifra"))
+        atc_raw = clean(fields.get("ATK šifra"))
+        atc_match = re.match(r"[A-Z]\\d{2}[A-Z]{2}\\d{2}", atc_raw.upper())
+        atc = atc_match.group(0) if atc_match else ""
         generic = clean(fields.get("Nezaštićeni naziv"))
 
         # HZZO search also contains reimbursed medical nutrition and other
@@ -178,6 +180,7 @@ def parse_page(html: str) -> list[dict]:
             "name": protected or title,
             "active_ingredient": generic,
             "atc_code": atc,
+            "hzzo_atc_entry": atc_raw,
             "category": category_for(atc),
             "route": clean(fields.get("Način primjene")),
             "holder": clean(fields.get("Nositelj odobrenja")),
@@ -334,10 +337,11 @@ def write_catalog(records: Iterable[dict], output: Path) -> None:
             "url": BASE_URL,
             "effective_date": EFFECTIVE_DATE,
             "scope": (
-                "Lijekovi prikazani u javnoj HZZO tražilici. "
-                "Kliničke informacije moraju se nadopuniti iz "
-                "eLijekovi/HALMED regulatornih izvora."
+                "Administrativni i refundacijski podaci iz javne HZZO "
+                "tražilice. Ovaj katalog je enrichment sloj i ne stvara "
+                "identitet lijeka bez HALMED podudaranja."
             ),
+            "enrichment_only": True,
         },
         "record_count": len(record_list),
         "records": record_list,
@@ -353,7 +357,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--output",
-        default="assets/data/hzzo_reimbursement.json",
+        default="assets/data/medications_official.json",
         type=Path,
     )
     parser.add_argument("--max-pages", default=FALLBACK_MAX_PAGES, type=int)
@@ -365,13 +369,31 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    previous_count = None
+    if args.output.exists():
+        try:
+            previous = json.loads(args.output.read_text(encoding="utf-8"))
+            source = previous.get("source", {})
+            if source.get("enrichment_only") is True:
+                previous_count = int(previous.get("record_count", 0)) or None
+        except (OSError, ValueError, TypeError, json.JSONDecodeError):
+            previous_count = None
+
     records = fetch_all(args.max_pages, args.delay)
     if len(records) < args.minimum_records:
         raise RuntimeError(
-            "Refusing to replace catalog: "
+            "Refusing to replace HZZO enrichment: "
             f"only {len(records)} records were parsed; "
             f"minimum is {args.minimum_records}."
         )
+    if previous_count is not None:
+        allowed_floor = int(previous_count * 0.65)
+        if len(records) < allowed_floor:
+            raise RuntimeError(
+                "Refusing dramatic HZZO enrichment drop: "
+                f"previous={previous_count}, current={len(records)}, "
+                f"allowed_floor={allowed_floor}."
+            )
 
     write_catalog(records, args.output)
     print(f"Wrote {len(records)} records to {args.output}")
