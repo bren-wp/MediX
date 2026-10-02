@@ -315,6 +315,24 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
+    if (current.market != MarketFilter.all) {
+      addChip(
+        _marketLabel(current.market),
+        () => setState(
+          () => query = query.copyWith(market: MarketFilter.all),
+        ),
+      );
+    }
+
+    if (current.shortage != ShortageFilter.all) {
+      addChip(
+        _shortageLabel(current.shortage),
+        () => setState(
+          () => query = query.copyWith(shortage: ShortageFilter.all),
+        ),
+      );
+    }
+
     if (current.atcGroup != null) {
       addChip(
         'ATK ' + current.atcGroup!,
@@ -472,6 +490,30 @@ class _FilterSheetState extends State<_FilterSheet> {
               onChanged: (next) {
                 setState(
                   () => value = value.copyWith(price: next),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _Dropdown<MarketFilter>(
+              label: 'Status na tržištu',
+              value: value.market,
+              items: MarketFilter.values,
+              itemLabel: _marketLabel,
+              onChanged: (next) {
+                setState(
+                  () => value = value.copyWith(market: next),
+                );
+              },
+            ),
+            const SizedBox(height: 12),
+            _Dropdown<ShortageFilter>(
+              label: 'Nestašica',
+              value: value.shortage,
+              items: ShortageFilter.values,
+              itemLabel: _shortageLabel,
+              onChanged: (next) {
+                setState(
+                  () => value = value.copyWith(shortage: next),
                 );
               },
             ),
@@ -692,6 +734,8 @@ int _activeFilterCount(MedicationQuery query) {
   if (query.dispensing != DispensingFilter.all) count++;
   if (query.reimbursement != ReimbursementFilter.all) count++;
   if (query.price != PriceFilter.all) count++;
+  if (query.market != MarketFilter.all) count++;
+  if (query.shortage != ShortageFilter.all) count++;
   if (query.atcGroup != null) count++;
   if (query.form != null) count++;
   if (query.holder != null) count++;
@@ -726,6 +770,25 @@ String _priceLabel(PriceFilter value) {
   };
 }
 
+String _marketLabel(MarketFilter value) {
+  return switch (value) {
+    MarketFilter.all => 'Svi tržišni statusi',
+    MarketFilter.marketed => 'Stavljeno u promet',
+    MarketFilter.notMarketed => 'Nije stavljeno u promet',
+    MarketFilter.temporaryInterruption => 'Privremeni prekid opskrbe',
+    MarketFilter.unknown => 'Status tržišta nije naveden',
+  };
+}
+
+String _shortageLabel(ShortageFilter value) {
+  return switch (value) {
+    ShortageFilter.all => 'Svi statusi nestašice',
+    ShortageFilter.reported => 'Prijavljena nestašica',
+    ShortageFilter.noneReported => 'Nema evidentirane nestašice',
+    ShortageFilter.unknown => 'Status nestašice nije naveden',
+  };
+}
+
 String _atcGroupLabel(String group) {
   return switch (group) {
     'A' => 'Probavni sustav i metabolizam',
@@ -741,6 +804,7 @@ String _atcGroupLabel(String group) {
     'P' => 'Antiparazitici',
     'R' => 'Dišni sustav',
     'S' => 'Osjetila',
-    _ => 'Ostalo',
+    'V' => 'Razni pripravci',
+    _ => 'Neklasificirano',
   };
 }
