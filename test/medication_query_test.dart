@@ -101,6 +101,13 @@ void main() {
       holder: 'Gamma Pharma',
       marketStatus: 'privremeni prekid opskrbe',
     ),
+    medication(
+      id: 'd',
+      name: 'Delta',
+      ingredient: 'Tvar Delta',
+      atc: 'A01AB09; R05CA12',
+      holder: 'Delta Pharma',
+    ),
   ];
 
   test('text search is tokenized and diacritic-insensitive', () {
@@ -132,7 +139,7 @@ void main() {
       ),
     );
 
-    expect(result.map((item) => item.id), ['c']);
+    expect(result.map((item) => item.id), ['d', 'c']);
   });
 
   test('filters ATC group, form and holder', () {
@@ -146,6 +153,15 @@ void main() {
     );
 
     expect(result.map((item) => item.id), ['b']);
+  });
+
+  test('ATC filter checks every ATC code in a record', () {
+    final result = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(atcGroup: 'R'),
+    );
+
+    expect(result.map((item) => item.id), ['b', 'd']);
   });
 
   test('holder/manufacturer filter checks both fields', () {
@@ -205,7 +221,7 @@ void main() {
 
     expect(reported.map((item) => item.id), ['b']);
     expect(noneReported.map((item) => item.id), ['a']);
-    expect(unknown.map((item) => item.id), ['c']);
+    expect(unknown.map((item) => item.id), ['d', 'c']);
   });
 
   test('filters by available price type', () {
@@ -228,6 +244,6 @@ void main() {
       const MedicationQuery(sort: MedicationSort.priceAsc),
     );
 
-    expect(result.map((item) => item.id), ['a', 'b', 'c']);
+    expect(result.map((item) => item.id), ['a', 'b', 'd', 'c']);
   });
 }
