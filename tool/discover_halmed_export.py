@@ -127,7 +127,7 @@ def main() -> int:
             )
             sheet = workbook[workbook.sheetnames[0]]
             sample_rows = []
-            for row in sheet.iter_rows(min_row=1, max_row=8, values_only=True):
+            for row in sheet.iter_rows(min_row=1, max_row=14, values_only=True):
                 sample_rows.append(
                     [None if value is None else str(value) for value in row]
                 )
