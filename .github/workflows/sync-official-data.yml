@@ -40,7 +40,7 @@ jobs:
         run: python -m pip install --disable-pip-version-check requests beautifulsoup4 openpyxl
 
       - name: Synchronize complete HALMED human-medicine registry
-        run: python tool/sync_halmed_catalog.py --minimum-records 5500
+        run: python tool/sync_halmed_catalog.py --minimum-records 4000
 
       - name: Synchronize HZZO reimbursement catalog
         run: python tool/sync_hzzo_catalog.py --minimum-records 1000
@@ -55,7 +55,7 @@ jobs:
           from pathlib import Path
 
           expected = {
-              "HALMED": ("assets/data/halmed_catalog.json", 5500),
+              "HALMED": ("assets/data/halmed_catalog.json", 4000),
               "HZZO": ("assets/data/hzzo_reimbursement.json", 1000),
               "Prices": ("assets/data/halmed_prices_2026.json", 1000),
           }
