@@ -21,6 +21,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/data/medications_official.json
-    - assets/data/halmed_prices_2026.json
-    - assets/data/icd10.json
+    - assets/data/

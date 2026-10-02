@@ -19,60 +19,85 @@ class MedicationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final subtitle = medication.compactSubtitle;
+    final ingredient = medication.activeIngredient.trim();
+
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(18),
         side: const BorderSide(color: Color(0xFF173C61)),
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(18),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(13, 12, 8, 12),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 52,
-                height: 52,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: const Color(0x22168DFF),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Icon(
                   Icons.medication_outlined,
+                  size: 22,
                   color: MedixColors.cyan,
                 ),
               ),
-              const SizedBox(width: 14),
+              const SizedBox(width: 11),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       medication.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 15,
+                        height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      medication.subtitle,
-                      style: const TextStyle(
-                        color: MedixColors.textSecondary,
+                    if (ingredient.isNotEmpty) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        ingredient,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: MedixColors.textMuted,
+                          fontSize: 11,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
+                    ],
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: MedixColors.textSecondary,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 7),
                     Wrap(
-                      spacing: 7,
-                      runSpacing: 7,
+                      spacing: 6,
+                      runSpacing: 5,
                       children: [
                         _InfoChip(
                           label: medication.requiresPrescription == true
                               ? 'Na recept'
                               : medication.requiresPrescription == false
                                   ? 'Bez recepta'
-                                  : 'Režim izdavanja nije naveden',
+                                  : 'Izdavanje: —',
                           icon: medication.requiresPrescription == true
                               ? Icons.description_outlined
                               : medication.requiresPrescription == false
@@ -83,6 +108,11 @@ class MedicationTile extends StatelessWidget {
                           label: medication.category,
                           icon: Icons.category_outlined,
                         ),
+                        if ((medication.atcCode ?? '').isNotEmpty)
+                          _InfoChip(
+                            label: medication.atcCode!,
+                            icon: Icons.tag_rounded,
+                          ),
                       ],
                     ),
                   ],
@@ -92,9 +122,11 @@ class MedicationTile extends StatelessWidget {
                 tooltip: isFavorite
                     ? 'Ukloni iz favorita'
                     : 'Dodaj u favorite',
+                visualDensity: VisualDensity.compact,
                 onPressed: onFavorite,
                 icon: Icon(
                   isFavorite ? Icons.favorite : Icons.favorite_border,
+                  size: 21,
                   color: isFavorite
                       ? MedixColors.danger
                       : MedixColors.textSecondary,
@@ -120,7 +152,8 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      constraints: const BoxConstraints(maxWidth: 180),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
       decoration: BoxDecoration(
         color: const Color(0x22168DFF),
         borderRadius: BorderRadius.circular(999),
@@ -128,13 +161,17 @@ class _InfoChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: MedixColors.cyan),
-          const SizedBox(width: 5),
+          Icon(icon, size: 11, color: MedixColors.cyan),
+          const SizedBox(width: 4),
           Flexible(
             child: Text(
               label,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 11),
+              style: const TextStyle(
+                fontSize: 10,
+                height: 1.1,
+              ),
             ),
           ),
         ],

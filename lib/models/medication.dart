@@ -26,8 +26,13 @@ class Medication {
     this.authorizationNumber,
     this.marketingAuthorizationHolder,
     this.manufacturer,
+    this.localRepresentative,
     this.route,
     this.packageDescription,
+    this.dispensingStatus,
+    this.prescribingMode,
+    this.dispensingPlace,
+    this.marketStatus,
     this.reimbursementStatus = ReimbursementStatus.none,
     this.hzzoGuidelineCode,
     this.prices = const [],
@@ -57,8 +62,13 @@ class Medication {
   final String? authorizationNumber;
   final String? marketingAuthorizationHolder;
   final String? manufacturer;
+  final String? localRepresentative;
   final String? route;
   final String? packageDescription;
+  final String? dispensingStatus;
+  final String? prescribingMode;
+  final String? dispensingPlace;
+  final String? marketStatus;
   final ReimbursementStatus reimbursementStatus;
   final String? hzzoGuidelineCode;
   final List<MedicationPrice> prices;
@@ -68,7 +78,35 @@ class Medication {
   final String? shortageStatus;
   final bool isDemo;
 
-  String get subtitle => '$strength · $form';
+  static bool _hasUsefulValue(String value) {
+    final normalized = value.trim().toLowerCase();
+    return normalized.isNotEmpty &&
+        normalized != 'nije navedeno' &&
+        normalized != 'nepoznato' &&
+        normalized != 'doza' &&
+        normalized != 'lijek';
+  }
+
+  String? get compactSubtitle {
+    final parts = <String>[
+      if (_hasUsefulValue(strength)) strength.trim(),
+      if (_hasUsefulValue(form) &&
+          form.trim().toLowerCase() != strength.trim().toLowerCase())
+        form.trim(),
+    ];
+    return parts.isEmpty ? null : parts.join(' · ');
+  }
+
+  String get subtitle =>
+      compactSubtitle ?? 'Podaci o pakiranju nisu dostupni';
+
+  String get dispensingLabel {
+    final raw = dispensingStatus?.trim();
+    if (raw != null && raw.isNotEmpty) return raw;
+    if (requiresPrescription == true) return 'na recept';
+    if (requiresPrescription == false) return 'bez recepta';
+    return 'nije navedeno';
+  }
 
   bool get isOnHzzoList =>
       reimbursementStatus == ReimbursementStatus.basic ||
@@ -112,8 +150,13 @@ class Medication {
     String? authorizationNumber,
     String? marketingAuthorizationHolder,
     String? manufacturer,
+    String? localRepresentative,
     String? route,
     String? packageDescription,
+    String? dispensingStatus,
+    String? prescribingMode,
+    String? dispensingPlace,
+    String? marketStatus,
     ReimbursementStatus? reimbursementStatus,
     String? hzzoGuidelineCode,
     List<MedicationPrice>? prices,
@@ -146,9 +189,15 @@ class Medication {
       marketingAuthorizationHolder:
           marketingAuthorizationHolder ?? this.marketingAuthorizationHolder,
       manufacturer: manufacturer ?? this.manufacturer,
+      localRepresentative:
+          localRepresentative ?? this.localRepresentative,
       route: route ?? this.route,
       packageDescription:
           packageDescription ?? this.packageDescription,
+      dispensingStatus: dispensingStatus ?? this.dispensingStatus,
+      prescribingMode: prescribingMode ?? this.prescribingMode,
+      dispensingPlace: dispensingPlace ?? this.dispensingPlace,
+      marketStatus: marketStatus ?? this.marketStatus,
       reimbursementStatus:
           reimbursementStatus ?? this.reimbursementStatus,
       hzzoGuidelineCode: hzzoGuidelineCode ?? this.hzzoGuidelineCode,

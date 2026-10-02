@@ -151,15 +151,14 @@ class MedicationRepository {
       if (rawRecord is! Map) continue;
       final record = Map<String, dynamic>.from(rawRecord);
 
+      if (!_isValidHumanMedicineRecord(record)) {
+        continue;
+      }
+
       final id = record['id']?.toString().trim() ?? '';
       final name = record['name']?.toString().trim() ?? '';
       final approval =
           record['authorization_number']?.toString().trim() ?? '';
-
-      if (id.isEmpty || name.isEmpty || approval.isEmpty) {
-        continue;
-      }
-
       final active =
           record['active_ingredient']?.toString().trim() ?? '';
       final form = record['form']?.toString().trim() ?? '';
@@ -170,11 +169,9 @@ class MedicationRepository {
         Medication(
           id: id,
           name: name,
-          activeIngredient:
-              active.isEmpty ? 'nije navedeno' : active,
-          strength:
-              strength.isEmpty ? 'nije navedeno' : strength,
-          form: form.isEmpty ? 'lijek' : form,
+          activeIngredient: active,
+          strength: strength,
+          form: form,
           category:
               record['category']?.toString().trim().isNotEmpty ==
                       true
@@ -197,8 +194,18 @@ class MedicationRepository {
               _nullableString(record['holder']),
           manufacturer:
               _nullableString(record['manufacturer']),
+          localRepresentative:
+              _nullableString(record['local_representative']),
           packageDescription:
               _nullableString(record['package']),
+          dispensingStatus:
+              _nullableString(record['rx_status']),
+          prescribingMode:
+              _nullableString(record['prescribing_mode']),
+          dispensingPlace:
+              _nullableString(record['dispensing_place']),
+          marketStatus:
+              _nullableString(record['market_status']),
           reimbursementStatus: ReimbursementStatus.none,
           prices: const [],
           officialRecordUrl:
@@ -382,6 +389,9 @@ class MedicationRepository {
 
       medications[index] = existing.copyWith(
         prices: mergedPrices,
+        localRepresentative:
+            existing.localRepresentative ??
+                _nullableString(record['local_representative']),
         lastReviewed:
             existing.lastReviewed.isAfter(publishedDate)
                 ? existing.lastReviewed
@@ -502,6 +512,52 @@ class MedicationRepository {
     return double.tryParse(normalized);
   }
 
+  static bool _isValidHumanMedicineRecord(
+    Map<String, dynamic> record,
+  ) {
+    final id = _nullableString(record['id']);
+    final name = _nullableString(record['name']);
+    final approval = _nullableString(record['authorization_number']);
+    if (id == null || name == null || approval == null) return false;
+
+    final normalizedName = _normalize(name);
+    final holder = _normalize(record['holder']?.toString() ?? '');
+    final manufacturer =
+        _normalize(record['manufacturer']?.toString() ?? '');
+
+    if (normalizedName == holder && holder.isNotEmpty) return false;
+    if (normalizedName == manufacturer && manufacturer.isNotEmpty) {
+      return false;
+    }
+
+    const technicalNames = {
+      'naziv',
+      'naziv lijeka',
+      'proizvodac',
+      'nositelj odobrenja',
+      'nije navedeno',
+      'nepoznato',
+    };
+    if (technicalNames.contains(normalizedName)) return false;
+    if (_looksLikeLegalEntity(name)) return false;
+
+    final evidence = [
+      record['active_ingredient'],
+      record['form'],
+      record['atc_code'],
+      record['package'],
+      record['rx_status'],
+    ].any((value) => _nullableString(value) != null);
+    return evidence;
+  }
+
+  static bool _looksLikeLegalEntity(String value) {
+    final normalized = _normalize(value);
+    return RegExp(
+      r'\\b(?:d o o|d d|j d o o|obrt|ustanova|limited|ltd|gmbh|s a|b v)\\b',
+    ).hasMatch(normalized);
+  }
+
   static bool? _requiresPrescription(String? value) {
     final normalized = value?.toUpperCase().trim() ?? '';
     if (normalized.isEmpty) return null;
@@ -536,7 +592,7 @@ class MedicationRepository {
 
   static String _categoryForAtc(String? atc) {
     final first = (atc ?? '').trim().toUpperCase();
-    if (first.isEmpty) return 'Ostali lijekovi';
+    if (first.isEmpty) return 'Neklasificirano';
 
     return switch (first[0]) {
       'A' => 'Probavni sustav i metabolizam',
@@ -552,7 +608,8 @@ class MedicationRepository {
       'P' => 'Antiparazitici',
       'R' => 'Dišni sustav',
       'S' => 'Osjetila',
-      _ => 'Ostali lijekovi',
+      'V' => 'Razni pripravci (ATK V)',
+      _ => 'Neklasificirano',
     };
   }
 
