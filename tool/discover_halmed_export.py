@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Discover the public HALMED medicine-search form and Excel export route."""
+"""Discover the public HALMED human-medicine search and export routes."""
 
 from __future__ import annotations
 
 import json
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -39,6 +39,38 @@ def serialize_form(form, page_url: str) -> dict:
     }
 
 
+def export_links(soup: BeautifulSoup, page_url: str) -> list[dict]:
+    links = []
+    for link in soup.find_all("a", href=True):
+        href = urljoin(page_url, link.get("href"))
+        text = clean(link.get_text(" ", strip=True))
+        lower = (href + " " + text).lower()
+        if any(token in lower for token in (".xls", ".xlsx", "excel", "export", "preuz")):
+            links.append({"text": text, "href": href})
+    return links
+
+
+def medicine_links(soup: BeautifulSoup, page_url: str) -> list[dict]:
+    seen: set[str] = set()
+    links: list[dict] = []
+    base_path = urlparse(BASE_URL).path.rstrip("/") + "/"
+    for link in soup.find_all("a", href=True):
+        href = urljoin(page_url, link.get("href"))
+        path = urlparse(href).path
+        if not path.startswith(base_path) or path.rstrip("/") == base_path.rstrip("/"):
+            continue
+        if href in seen:
+            continue
+        seen.add(href)
+        links.append(
+            {
+                "text": clean(link.get_text(" ", strip=True)),
+                "href": href,
+            }
+        )
+    return links
+
+
 def main() -> int:
     session = requests.Session()
     session.headers.update(
@@ -56,21 +88,47 @@ def main() -> int:
 
     soup = BeautifulSoup(response.text, "html.parser")
     forms = [serialize_form(form, response.url) for form in soup.find_all("form")]
-    links = []
-    for link in soup.find_all("a", href=True):
-        href = urljoin(response.url, link.get("href"))
-        text = clean(link.get_text(" ", strip=True))
-        lower = (href + " " + text).lower()
-        if any(token in lower for token in (".xls", ".xlsx", "excel", "export", "preuz")):
-            links.append({"text": text, "href": href})
+
+    search_form = soup.find("form", id="pretrazi_bazu")
+    search_report: dict = {}
+    if search_form is not None:
+        action = urljoin(
+            response.url,
+            (search_form.get("action") or BASE_URL).split("#", 1)[0],
+        )
+        payload = {"trazi_baza": "OK"}
+        result = session.post(
+            action,
+            data=payload,
+            timeout=120,
+            allow_redirects=True,
+        )
+        result.raise_for_status()
+        result_soup = BeautifulSoup(result.text, "html.parser")
+        meds = medicine_links(result_soup, result.url)
+
+        search_report = {
+            "status": result.status_code,
+            "final_url": result.url,
+            "content_length": len(result.content),
+            "export_links": export_links(result_soup, result.url),
+            "medicine_link_count": len(meds),
+            "sample_medicine_links": meds[:15],
+            "contains_results_anchor": bool(
+                result_soup.find(id="rezultati")
+            ),
+        }
 
     print(
         json.dumps(
             {
-                "status": response.status_code,
-                "final_url": response.url,
-                "forms": forms,
-                "export_links": links,
+                "landing": {
+                    "status": response.status_code,
+                    "final_url": response.url,
+                    "forms": forms,
+                    "export_links": export_links(soup, response.url),
+                },
+                "blank_search": search_report,
             },
             ensure_ascii=False,
             indent=2,
