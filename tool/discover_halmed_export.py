@@ -3,10 +3,12 @@
 
 from __future__ import annotations
 
+import io
 import json
 from urllib.parse import urljoin, urlparse
 
 import requests
+from openpyxl import load_workbook
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.halmed.hr/Lijekovi/Baza-lijekova/"
@@ -113,16 +115,41 @@ def main() -> int:
         result_soup = BeautifulSoup(result.text, "html.parser")
         meds = medicine_links(result_soup, result.url)
 
+        exports = export_links(result_soup, result.url)
+        workbook_report: dict = {}
+        if exports:
+            xlsx = session.get(exports[0]["href"], timeout=120)
+            xlsx.raise_for_status()
+            workbook = load_workbook(
+                io.BytesIO(xlsx.content),
+                read_only=True,
+                data_only=True,
+            )
+            sheet = workbook[workbook.sheetnames[0]]
+            sample_rows = []
+            for row in sheet.iter_rows(min_row=1, max_row=8, values_only=True):
+                sample_rows.append(
+                    [None if value is None else str(value) for value in row]
+                )
+            workbook_report = {
+                "content_length": len(xlsx.content),
+                "sheet_names": workbook.sheetnames,
+                "max_row": sheet.max_row,
+                "max_column": sheet.max_column,
+                "sample_rows": sample_rows,
+            }
+
         search_report = {
             "status": result.status_code,
             "final_url": result.url,
             "content_length": len(result.content),
-            "export_links": export_links(result_soup, result.url),
+            "export_links": exports,
             "medicine_link_count": len(meds),
             "sample_medicine_links": meds[:15],
             "contains_results_anchor": bool(
                 result_soup.find(id="rezultati")
             ),
+            "workbook": workbook_report,
         }
 
     print(
