@@ -54,9 +54,14 @@ class _SearchScreenState extends State<SearchScreen> {
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     atcGroups = widget.state.repository.medications
-        .map((item) => item.atcCode?.trim().toUpperCase() ?? '')
-        .where((item) => item.isNotEmpty)
-        .map((item) => item.substring(0, 1))
+        .expand(
+          (item) => (item.atcCode ?? '')
+              .toUpperCase()
+              .split(RegExp(r'[;,]'))
+              .map((code) => code.trim())
+              .where((code) => code.isNotEmpty),
+        )
+        .map((code) => code.substring(0, 1))
         .toSet()
         .toList()
       ..sort();
