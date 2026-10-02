@@ -33,16 +33,17 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
     final medication = widget.medication;
     final lines = <String>[
       medication.name,
-      medication.subtitle,
-      'Djelatna tvar: ' + medication.activeIngredient,
+      if (medication.compactSubtitle != null)
+        medication.compactSubtitle!,
+      if (medication.activeIngredient.trim().isNotEmpty)
+        'Djelatna tvar: ' + medication.activeIngredient,
       if (medication.atcCode != null)
         'ATK: ' + medication.atcCode!,
-      'Izdavanje: ' +
-          (medication.requiresPrescription == true
-              ? 'na recept'
-              : medication.requiresPrescription == false
-                  ? 'bez recepta'
-                  : 'nije navedeno'),
+      'Izdavanje: ' + medication.dispensingLabel,
+      if (medication.prescribingMode != null)
+        'Propisivanje: ' + medication.prescribingMode!,
+      if (medication.dispensingPlace != null)
+        'Mjesto izdavanja: ' + medication.dispensingPlace!,
       if (medication.packageDescription != null)
         'Pakiranje: ' + medication.packageDescription!,
       if (medication.hzzoCopay != null)
@@ -177,8 +178,14 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
         medication.authorizationNumber != null ||
         medication.marketingAuthorizationHolder != null ||
         medication.manufacturer != null ||
+        medication.localRepresentative != null ||
         medication.route != null ||
         medication.packageDescription != null ||
+        medication.dispensingStatus != null ||
+        medication.prescribingMode != null ||
+        medication.dispensingPlace != null ||
+        medication.marketStatus != null ||
+        medication.shortageStatus != null ||
         medication.isOnHzzoList;
   }
 }
@@ -281,14 +288,16 @@ class _Hero extends StatelessWidget {
               letterSpacing: -.6,
             ),
           ),
-          const SizedBox(height: 3),
-          Text(
-            medication.subtitle,
-            style: const TextStyle(
-              color: MedixColors.textSecondary,
-              fontSize: 14,
+          if (medication.compactSubtitle != null) ...[
+            const SizedBox(height: 3),
+            Text(
+              medication.compactSubtitle!,
+              style: const TextStyle(
+                color: MedixColors.textSecondary,
+                fontSize: 14,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -316,7 +325,7 @@ class _Badges extends StatelessWidget {
               ? 'Na recept'
               : medication.requiresPrescription == false
                   ? 'Bez recepta'
-                  : 'Režim izdavanja nije naveden',
+                  : 'Izdavanje: —',
           color: medication.requiresPrescription == true
               ? MedixColors.primary
               : medication.requiresPrescription == false
@@ -414,14 +423,16 @@ class _OverviewSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          _InfoRow(
-            label: 'Djelatna tvar',
-            value: medication.activeIngredient,
-          ),
-          _InfoRow(
-            label: 'Oblik i jačina',
-            value: medication.subtitle,
-          ),
+          if (medication.activeIngredient.trim().isNotEmpty)
+            _InfoRow(
+              label: 'Djelatna tvar',
+              value: medication.activeIngredient,
+            ),
+          if (medication.compactSubtitle != null)
+            _InfoRow(
+              label: 'Oblik i jačina',
+              value: medication.compactSubtitle!,
+            ),
         ],
       ),
     );
@@ -443,10 +454,22 @@ class _MetadataSection extends StatelessWidget {
         ('Nositelj odobrenja', medication.marketingAuthorizationHolder!),
       if (medication.manufacturer != null)
         ('Proizvođač', medication.manufacturer!),
+      if (medication.localRepresentative != null)
+        ('Lokalni predstavnik', medication.localRepresentative!),
+      if (medication.dispensingStatus != null)
+        ('Način izdavanja', medication.dispensingStatus!),
+      if (medication.prescribingMode != null)
+        ('Način propisivanja', medication.prescribingMode!),
+      if (medication.dispensingPlace != null)
+        ('Mjesto izdavanja', medication.dispensingPlace!),
       if (medication.route != null)
         ('Način primjene', medication.route!),
       if (medication.packageDescription != null)
         ('Pakiranje', medication.packageDescription!),
+      if (medication.marketStatus != null)
+        ('Status lijeka na tržištu', medication.marketStatus!),
+      if (medication.shortageStatus != null)
+        ('Status nestašice', medication.shortageStatus!),
       if (medication.hzzoGuidelineCode != null)
         ('Oznaka smjernice', medication.hzzoGuidelineCode!),
     ];

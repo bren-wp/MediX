@@ -137,12 +137,14 @@ List<Medication> applyMedicationQuery(
     }
 
     if (normalizedHolder.isNotEmpty) {
-      final candidate = _normalize(
-        medication.marketingAuthorizationHolder ??
-            medication.manufacturer ??
-            '',
+      final holder = _normalize(
+        medication.marketingAuthorizationHolder ?? '',
       );
-      if (candidate != normalizedHolder) {
+      final manufacturer = _normalize(
+        medication.manufacturer ?? '',
+      );
+      if (holder != normalizedHolder &&
+          manufacturer != normalizedHolder) {
         return false;
       }
     }
@@ -167,6 +169,11 @@ bool _matchesText(Medication medication, String query) {
       medication.authorizationNumber ?? '',
       medication.marketingAuthorizationHolder ?? '',
       medication.manufacturer ?? '',
+      medication.localRepresentative ?? '',
+      medication.dispensingStatus ?? '',
+      medication.prescribingMode ?? '',
+      medication.dispensingPlace ?? '',
+      medication.marketStatus ?? '',
       medication.route ?? '',
       medication.packageDescription ?? '',
       medication.hzzoGuidelineCode ?? '',

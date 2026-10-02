@@ -13,6 +13,9 @@ Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 - zaseban ekran sigurnosti i privatnosti
 
 ### Poboljšano
+- HALMED javni registar postavljen kao primarni izvor identiteta lijeka; HZZO i cjenovni podaci služe kao enrichment
+- automatske data-quality provjere blokiraju pravne osobe kao nazive lijekova, duplicate identitete, nevaljane ATK zapise i loše placeholdere
+- detaljni HALMED podaci o načinu izdavanja, propisivanju, mjestu izdavanja i statusu lijeka prikazuju se odvojeno
 - pretraživ odabir lijekova u modulu interakcija
 - nedostajući interaction podatak više se ne prikazuje kao negativan rezultat
 - uklonjeni neaktivni jezik/tema izbornici

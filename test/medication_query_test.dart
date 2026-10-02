@@ -15,6 +15,8 @@ void main() {
     String? atc,
     String form = 'tablete',
     String? holder,
+    String? manufacturer,
+    String? dispensingStatus,
     List<MedicationPrice> prices = const [],
   }) {
     return Medication(
@@ -35,6 +37,8 @@ void main() {
       reimbursementStatus: reimbursement,
       atcCode: atc,
       marketingAuthorizationHolder: holder,
+      manufacturer: manufacturer,
+      dispensingStatus: dispensingStatus,
       prices: prices,
       isDemo: false,
     );
@@ -62,6 +66,8 @@ void main() {
       reimbursement: ReimbursementStatus.basic,
       atc: 'C09AA01',
       holder: 'Alfa Pharma',
+      manufacturer: 'Alfa Manufacturing',
+      dispensingStatus: 'na recept',
       prices: [
         price(2.5, MedicationPriceKind.hzzoCopay),
       ],
@@ -131,6 +137,24 @@ void main() {
     );
 
     expect(result.map((item) => item.id), ['b']);
+  });
+
+  test('holder/manufacturer filter checks both fields', () {
+    final byManufacturer = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(holder: 'Alfa Manufacturing'),
+    );
+
+    expect(byManufacturer.map((item) => item.id), ['a']);
+  });
+
+  test('text search includes detailed dispensing metadata', () {
+    final result = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(text: 'na recept'),
+    );
+
+    expect(result.map((item) => item.id), ['a']);
   });
 
   test('filters by available price type', () {

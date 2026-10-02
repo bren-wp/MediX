@@ -5,7 +5,7 @@
 <h1 align="center">MediX — lijekovi, interakcije i klinički alati na jednom mjestu</h1>
 
 <p align="center">
-  Moderna Android baza lijekova za Hrvatsku, dizajnirana za liječnike, farmaceute, zdravstvene djelatnike, studente i korisnike kojima trebaju brze, strukturirane informacije o lijekovima.
+  Moderna Android aplikacija s opsežnim katalogom lijekova za Hrvatsku, dizajnirana za liječnike, farmaceute, zdravstvene djelatnike, studente i korisnike kojima trebaju brze, strukturirane informacije o lijekovima.
 </p>
 
 <p align="center">
@@ -19,6 +19,8 @@
 ## 💊 Profesionalna baza lijekova, napravljena za brz rad
 
 MediX spaja katalog lijekova i pakiranja, detalje proizvoda, ATK klasifikaciju, cijene i doplate, interakcije, paralelne lijekove, terapiju, podsjetnike, MKB-10 i kliničke kalkulatore u jedno pregledno sučelje.
+
+Identitet lijeka dolazi iz javne **HALMED Baze lijekova**. **HZZO** se koristi kao dodatni sloj za listu, doplate, smjernice i druge refundacijske podatke, a službeni cjenovni izvor kao zaseban enrichment. Sinkronizacija prolazi automatske provjere kvalitete prije nego što se generirani katalog smije spremiti u repozitorij.
 
 Aplikacija je razvijena kao **hrvatska profesionalna alternativa klasičnim bazama lijekova**, ali s modernijim UX-om, snažnom pretragom i vizualnim sustavom koji je od početka dizajniran za MediX.
 

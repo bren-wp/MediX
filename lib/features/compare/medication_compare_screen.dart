@@ -316,12 +316,20 @@ class _ComparisonTable extends StatelessWidget {
         'Djelatna tvar',
         (m) => m.activeIngredient,
       ),
-      _ComparisonRow('Jačina', (m) => m.strength),
-      _ComparisonRow('Oblik', (m) => m.form),
-      _ComparisonRow('ATK', (m) => m.atcCode ?? 'Nije navedeno'),
+      _ComparisonRow('Jačina', (m) => _valueOrDash(m.strength)),
+      _ComparisonRow('Oblik', (m) => _valueOrDash(m.form)),
+      _ComparisonRow('ATK', (m) => m.atcCode ?? '—'),
       _ComparisonRow(
         'Izdavanje',
-        (m) => _dispensing(m.requiresPrescription),
+        (m) => m.dispensingLabel,
+      ),
+      _ComparisonRow(
+        'Propisivanje',
+        (m) => m.prescribingMode ?? '—',
+      ),
+      _ComparisonRow(
+        'Mjesto izdavanja',
+        (m) => m.dispensingPlace ?? '—',
       ),
       _ComparisonRow(
         'Lista',
@@ -329,18 +337,19 @@ class _ComparisonTable extends StatelessWidget {
       ),
       _ComparisonRow(
         'Pakiranje',
-        (m) => m.packageDescription ?? 'Nije navedeno',
+        (m) => m.packageDescription ?? '—',
       ),
       _ComparisonRow(
         'Nositelj',
-        (m) =>
-            m.marketingAuthorizationHolder ??
-            m.manufacturer ??
-            'Nije navedeno',
+        (m) => m.marketingAuthorizationHolder ?? '—',
+      ),
+      _ComparisonRow(
+        'Proizvođač',
+        (m) => m.manufacturer ?? '—',
       ),
       _ComparisonRow(
         'Način primjene',
-        (m) => m.route ?? 'Nije navedeno',
+        (m) => m.route ?? '—',
       ),
       _ComparisonRow(
         'Doplata',
@@ -352,7 +361,7 @@ class _ComparisonTable extends StatelessWidget {
       ),
       _ComparisonRow(
         'Broj odobrenja',
-        (m) => m.authorizationNumber ?? 'Nije navedeno',
+        (m) => m.authorizationNumber ?? '—',
       ),
     ];
 
@@ -490,10 +499,14 @@ class _ComparisonRow {
   final String Function(Medication medication) value;
 }
 
-String _dispensing(bool? value) {
-  if (value == true) return 'Na recept';
-  if (value == false) return 'Bez recepta';
-  return 'Nije navedeno';
+String _valueOrDash(String value) {
+  final trimmed = value.trim();
+  return trimmed.isEmpty ||
+          trimmed.toLowerCase() == 'nije navedeno' ||
+          trimmed.toLowerCase() == 'lijek' ||
+          trimmed.toLowerCase() == 'doza'
+      ? '—'
+      : trimmed;
 }
 
 String _reimbursement(ReimbursementStatus status) {
