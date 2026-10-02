@@ -96,7 +96,13 @@ def main() -> int:
             response.url,
             (search_form.get("action") or BASE_URL).split("#", 1)[0],
         )
-        payload = {"trazi_baza": "OK"}
+        # Query one bounded medicine group so discovery cannot be blocked by
+        # rendering the entire human-medicine registry in one HTML response.
+        # 40 = OTC group in the current public HALMED search form.
+        payload = {
+            "trazi_baza": "OK",
+            "skupine_lijekova": "40",
+        }
         result = session.post(
             action,
             data=payload,
@@ -128,7 +134,7 @@ def main() -> int:
                     "forms": forms,
                     "export_links": export_links(soup, response.url),
                 },
-                "blank_search": search_report,
+                "sample_group_search": search_report,
             },
             ensure_ascii=False,
             indent=2,
