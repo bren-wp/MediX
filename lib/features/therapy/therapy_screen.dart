@@ -169,6 +169,15 @@ class _TherapyCard extends StatelessWidget {
                     color: MedixColors.textSecondary,
                   ),
                 ),
+                const SizedBox(height: 7),
+                Text(
+                  _weekdaySummary(entry.weekdays),
+                  style: const TextStyle(
+                    color: MedixColors.cyanSoft,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 const SizedBox(height: 9),
                 Wrap(
                   spacing: 7,
@@ -255,6 +264,7 @@ class _AddTherapySheet extends StatefulWidget {
 class _AddTherapySheetState extends State<_AddTherapySheet> {
   final doseController = TextEditingController();
   final List<TimeOfDay> times = <TimeOfDay>[];
+  final Set<int> weekdays = <int>{1, 2, 3, 4, 5, 6, 7};
   String? medicationId;
 
   @override
@@ -300,11 +310,12 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
   Future<void> _save() async {
     if (medicationId == null ||
         doseController.text.trim().isEmpty ||
-        times.isEmpty) {
+        times.isEmpty ||
+        weekdays.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Odaberite lijek, opišite dozu i dodajte vrijeme.',
+            'Odaberite lijek, opišite dozu, dane i dodajte vrijeme.',
           ),
         ),
       );
@@ -324,6 +335,7 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
       medicationId: medicationId!,
       doseDescription: doseController.text,
       times: formattedTimes,
+      weekdays: weekdays.toList()..sort(),
     );
 
     Navigator.of(context).pop();
@@ -399,6 +411,43 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
               ),
             ),
             const SizedBox(height: 16),
+            const Text(
+              'Dani uzimanja',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 7,
+              runSpacing: 7,
+              children: List.generate(7, (index) {
+                final day = index + 1;
+                return FilterChip(
+                  label: Text(_weekdayShortLabel(day)),
+                  selected: weekdays.contains(day),
+                  onSelected: (selected) {
+                    setState(() {
+                      if (selected) {
+                        weekdays.add(day);
+                      } else {
+                        weekdays.remove(day);
+                      }
+                    });
+                  },
+                );
+              }),
+            ),
+            if (weekdays.isEmpty)
+              const Padding(
+                padding: EdgeInsets.only(top: 7),
+                child: Text(
+                  'Odaberite barem jedan dan.',
+                  style: TextStyle(
+                    color: MedixColors.warning,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 const Expanded(
@@ -451,4 +500,31 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
       ),
     );
   }
+}
+
+
+String _weekdayShortLabel(int weekday) {
+  return switch (weekday) {
+    1 => 'Pon',
+    2 => 'Uto',
+    3 => 'Sri',
+    4 => 'Čet',
+    5 => 'Pet',
+    6 => 'Sub',
+    7 => 'Ned',
+    _ => '—',
+  };
+}
+
+String _weekdaySummary(List<int> weekdays) {
+  final normalized = weekdays
+      .where((day) => day >= 1 && day <= 7)
+      .toSet()
+      .toList()
+    ..sort();
+
+  if (normalized.length == 7) {
+    return 'Svaki dan';
+  }
+  return normalized.map(_weekdayShortLabel).join(', ');
 }
