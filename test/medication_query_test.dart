@@ -44,7 +44,6 @@ void main() {
       marketStatus: marketStatus,
       shortageStatus: shortageStatus,
       prices: prices,
-      isDemo: false,
     );
   }
 
