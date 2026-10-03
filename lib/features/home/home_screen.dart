@@ -97,14 +97,20 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 14),
-              GridView.count(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: .92,
-                children: [
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final columns =
+                      constraints.maxWidth < 430 ? 2 : 3;
+                  return GridView.count(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    childAspectRatio:
+                        columns == 2 ? 1.45 : .92,
+                    children: [
                   _HomeAction(
                     icon: Icons.medication_rounded,
                     title: 'Svi lijekovi',
@@ -178,7 +184,9 @@ class HomeScreen extends StatelessWidget {
                       ManufacturersScreen(state: state),
                     ),
                   ),
-                ],
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 22),
               const Text(
@@ -189,14 +197,20 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 9),
-              GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: 2.1,
-                children: [
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final columns =
+                      constraints.maxWidth < 360 ? 1 : 2;
+                  return GridView.count(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    childAspectRatio:
+                        columns == 1 ? 4.3 : 2.1,
+                    children: [
                   _ProfessionalAction(
                     icon: Icons.auto_awesome_rounded,
                     title: 'MediX Smart',
@@ -237,7 +251,9 @@ class HomeScreen extends StatelessWidget {
                       ClassificationsScreen(state: state),
                     ),
                   ),
-                ],
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 22),
               Row(
@@ -261,17 +277,24 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: categories.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childAspectRatio: 1.06,
-                ),
-                itemBuilder: (context, index) {
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final columns =
+                      constraints.maxWidth < 430 ? 2 : 3;
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    itemCount: categories.length,
+                    gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio:
+                          columns == 2 ? 1.5 : 1.06,
+                    ),
+                    itemBuilder: (context, index) {
                   final category = categories[index];
                   return _CategoryCard(
                     title: category,
@@ -285,6 +308,8 @@ class HomeScreen extends StatelessWidget {
                         filter: (m) => m.category == category,
                       ),
                     ),
+                  );
+                    },
                   );
                 },
               ),
