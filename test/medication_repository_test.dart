@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:medix/data/medication_repository.dart';
+import 'support/medication_fixtures.dart';
 import 'package:medix/models/drug_interaction.dart';
 
 void main() {
   group('MedicationRepository', () {
-    final repository = MedicationRepository.demo();
+    final repository = buildTestRepository();
 
     test('searches by medication name', () {
       final results = repository.search('paracetamol');
@@ -26,7 +26,7 @@ void main() {
       expect(reverse?.severity, InteractionSeverity.significant);
     });
 
-    test('returns null when demo interaction is not configured', () {
+    test('returns null when interaction is not configured', () {
       final result = repository.interactionBetween(
         'paracetamol-500',
         'loratadine-10',
