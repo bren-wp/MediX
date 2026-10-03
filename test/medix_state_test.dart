@@ -26,6 +26,14 @@ void main() {
       expect(state.favorites, isEmpty);
     });
 
+    test('ignores invalid medication ids in local state', () {
+      state.toggleFavorite('missing');
+      state.markViewed('missing');
+
+      expect(state.favorites, isEmpty);
+      expect(state.recent, isEmpty);
+    });
+
     test('keeps most recent medication first without duplicates', () {
       state.markViewed('paracetamol-500');
       state.markViewed('ibuprofen-400');
