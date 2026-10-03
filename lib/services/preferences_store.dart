@@ -57,13 +57,13 @@ class MedixPreferences implements MedixPersistence {
                 : <String>[];
             final rawWeekdays = map['weekdays'];
             final weekdays = rawWeekdays is List
-                ? rawWeekdays
-                    .map((e) => int.tryParse(e.toString()))
-                    .whereType<int>()
-                    .where((day) => day >= 1 && day <= 7)
-                    .toSet()
-                    .toList()
-                  ..sort()
+                ? (rawWeekdays
+                      .map((e) => int.tryParse(e.toString()))
+                      .whereType<int>()
+                      .where((day) => day >= 1 && day <= 7)
+                      .toSet()
+                      .toList()
+                  ..sort())
                 : <int>[1, 2, 3, 4, 5, 6, 7];
 
             if (id.isEmpty ||
