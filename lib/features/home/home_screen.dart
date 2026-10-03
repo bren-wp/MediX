@@ -260,7 +260,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   const Expanded(
                     child: Text(
-                      'Popularne kategorije',
+                      'Kategorije lijekova',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -316,7 +316,7 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 22),
               Text(
                 state.recent.isEmpty
-                    ? 'Izdvojeni lijekovi'
+                    ? 'Lijekovi iz baze'
                     : 'Nedavno pregledano',
                 style: const TextStyle(
                   fontSize: 18,
