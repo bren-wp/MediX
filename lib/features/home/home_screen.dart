@@ -6,7 +6,6 @@ import '../../state/medix_state.dart';
 import '../../widgets/medication_tile.dart';
 import '../../widgets/medix_brand.dart';
 import '../../widgets/medix_page.dart';
-import '../catalog/conditions_screen.dart';
 import '../catalog/ingredients_screen.dart';
 import '../catalog/manufacturers_screen.dart';
 import '../catalog/medication_collection_screen.dart';
@@ -63,40 +62,55 @@ class HomeScreen extends StatelessWidget {
                 child: MedixBrand(),
               ),
               const SizedBox(height: 18),
-              InkWell(
-                onTap: onSearchRequested,
-                borderRadius: BorderRadius.circular(15),
-                child: IgnorePointer(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Pretraži lijek, djelatnu tvar, bolest...',
-                      prefixIcon: const Icon(Icons.search_rounded),
-                      suffixIcon: Container(
-                        margin: const EdgeInsets.all(7),
-                        width: 36,
-                        decoration: BoxDecoration(
-                          color: MedixColors.primary.withValues(alpha: .16),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.tune_rounded,
-                          size: 19,
-                          color: MedixColors.cyan,
+              Semantics(
+                button: true,
+                label: 'Pretraži lijekove',
+                child: MedixSectionCard(
+                  onTap: onSearchRequested,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.search_rounded,
+                        color: MedixColors.textSecondary,
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Naziv, djelatna tvar, ATK, pakiranje...',
+                          style: TextStyle(
+                            color: MedixColors.textMuted,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                    ),
+                      MedixIconBubble(
+                        icon: Icons.tune_rounded,
+                        color: MedixColors.cyan,
+                        size: 34,
+                      ),
+                    ],
                   ),
                 ),
               ),
               const SizedBox(height: 14),
-              GridView.count(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: .92,
-                children: [
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final columns =
+                      constraints.maxWidth < 430 ? 2 : 3;
+                  return GridView.count(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    childAspectRatio:
+                        columns == 2 ? 1.45 : .92,
+                    children: [
                   _HomeAction(
                     icon: Icons.medication_rounded,
                     title: 'Svi lijekovi',
@@ -135,12 +149,21 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   _HomeAction(
-                    icon: Icons.medical_services_outlined,
-                    title: 'Bolesti i stanja',
-                    color: MedixColors.cyan,
+                    icon: Icons.inventory_2_outlined,
+                    title: 'U prometu',
+                    subtitle: 'HALMED',
+                    color: MedixColors.success,
                     onTap: () => _push(
                       context,
-                      ConditionsScreen(state: state),
+                      MedicationCollectionScreen(
+                        title: 'Lijekovi u prometu',
+                        state: state,
+                        filter: (m) =>
+                            m.marketState ==
+                            MedicationMarketState.marketed,
+                        description:
+                            'Prikaz zapisa čiji HALMED status navodi da je lijek stavljen u promet.',
+                      ),
                     ),
                   ),
                   _HomeAction(
@@ -161,7 +184,9 @@ class HomeScreen extends StatelessWidget {
                       ManufacturersScreen(state: state),
                     ),
                   ),
-                ],
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 22),
               const Text(
@@ -172,14 +197,20 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 9),
-              GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                childAspectRatio: 2.1,
-                children: [
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final columns =
+                      constraints.maxWidth < 360 ? 1 : 2;
+                  return GridView.count(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    childAspectRatio:
+                        columns == 1 ? 4.3 : 2.1,
+                    children: [
                   _ProfessionalAction(
                     icon: Icons.auto_awesome_rounded,
                     title: 'MediX Smart',
@@ -220,14 +251,16 @@ class HomeScreen extends StatelessWidget {
                       ClassificationsScreen(state: state),
                     ),
                   ),
-                ],
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 22),
               Row(
                 children: [
                   const Expanded(
                     child: Text(
-                      'Popularne kategorije',
+                      'Kategorije lijekova',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -244,17 +277,24 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: categories.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childAspectRatio: 1.06,
-                ),
-                itemBuilder: (context, index) {
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final columns =
+                      constraints.maxWidth < 430 ? 2 : 3;
+                  return GridView.builder(
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    itemCount: categories.length,
+                    gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      childAspectRatio:
+                          columns == 2 ? 1.5 : 1.06,
+                    ),
+                    itemBuilder: (context, index) {
                   final category = categories[index];
                   return _CategoryCard(
                     title: category,
@@ -269,12 +309,14 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   );
+                    },
+                  );
                 },
               ),
               const SizedBox(height: 22),
               Text(
                 state.recent.isEmpty
-                    ? 'Izdvojeni lijekovi'
+                    ? 'Lijekovi iz baze'
                     : 'Nedavno pregledano',
                 style: const TextStyle(
                   fontSize: 18,

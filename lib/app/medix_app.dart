@@ -9,6 +9,7 @@ import '../services/preferences_store.dart';
 import '../services/notification_service.dart';
 import '../state/medix_state.dart';
 import '../widgets/medix_brand.dart';
+import '../widgets/medix_page.dart';
 
 class MedixApp extends StatefulWidget {
   const MedixApp({super.key});
@@ -19,6 +20,8 @@ class MedixApp extends StatefulWidget {
 
 class _MedixAppState extends State<MedixApp> {
   MedixState? state;
+  bool _loading = false;
+  bool _dataLoadFailed = false;
 
   @override
   void initState() {
@@ -27,8 +30,10 @@ class _MedixAppState extends State<MedixApp> {
   }
 
   Future<void> _loadRepository() async {
-    MedicationRepository repository;
+    if (_loading) return;
+    _loading = true;
 
+    late final MedicationRepository repository;
     try {
       final halmedRaw = await rootBundle.loadString(
         'assets/data/halmed_catalog.json',
@@ -44,8 +49,24 @@ class _MedixAppState extends State<MedixApp> {
         reimbursementJson: reimbursementRaw,
         priceJson: priceRaw,
       );
-    } catch (_) {
-      repository = MedicationRepository.demo();
+    } catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'MediX startup',
+          context: ErrorDescription(
+            'while loading verified medicine catalogs',
+          ),
+        ),
+      );
+      _loading = false;
+      if (mounted) {
+        setState(() {
+          _dataLoadFailed = true;
+        });
+      }
+      return;
     }
 
     TherapyReminderScheduler? reminders;
@@ -62,8 +83,23 @@ class _MedixAppState extends State<MedixApp> {
       persistence: MedixPreferences(),
       reminders: reminders,
     );
-    await loadedState.restore();
 
+    try {
+      await loadedState.restore();
+    } catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'MediX startup',
+          context: ErrorDescription(
+            'while restoring local user state',
+          ),
+        ),
+      );
+    }
+
+    _loading = false;
     if (!mounted) {
       loadedState.dispose();
       return;
@@ -71,7 +107,16 @@ class _MedixAppState extends State<MedixApp> {
 
     setState(() {
       state = loadedState;
+      _dataLoadFailed = false;
     });
+  }
+
+  void _retryLoad() {
+    if (_loading) return;
+    setState(() {
+      _dataLoadFailed = false;
+    });
+    _loadRepository();
   }
 
   @override
@@ -89,7 +134,9 @@ class _MedixAppState extends State<MedixApp> {
       debugShowCheckedModeBanner: false,
       theme: MedixTheme.dark(),
       home: currentState == null
-          ? const _SplashScreen()
+          ? _dataLoadFailed
+              ? _DataLoadErrorScreen(onRetry: _retryLoad)
+              : const _SplashScreen()
           : AnimatedBuilder(
               animation: currentState,
               builder: (context, _) {
@@ -143,6 +190,30 @@ class _SplashScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+
+class _DataLoadErrorScreen extends StatelessWidget {
+  const _DataLoadErrorScreen({
+    required this.onRetry,
+  });
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return MedixPage(
+      child: MedixEmptyState(
+        icon: Icons.error_outline_rounded,
+        title: 'Službeni podaci nisu učitani',
+        message:
+            'MediX neće prikazati demo ili zamjenske lijekove. Provjerite instalaciju aplikacije i pokušajte ponovno učitati provjerene kataloge.',
+        color: MedixColors.warning,
+        actionLabel: 'Pokušaj ponovno',
+        onAction: onRetry,
       ),
     );
   }

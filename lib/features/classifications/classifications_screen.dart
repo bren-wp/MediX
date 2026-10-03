@@ -37,28 +37,34 @@ class _ClassificationsScreenState extends State<ClassificationsScreen> {
   }
 
   Future<List<_IcdRecord>> _loadIcd10() async {
-    try {
-      final raw = await rootBundle.loadString('assets/data/icd10.json');
-      final decoded = jsonDecode(raw);
-      if (decoded is! Map) return _fallbackChapters;
-      final records = decoded['records'];
-      if (records is! List || records.isEmpty) {
-        return _fallbackChapters;
-      }
-
-      return records
-          .whereType<Map>()
-          .map(
-            (item) => _IcdRecord(
-              code: item['code']?.toString() ?? '',
-              title: item['title']?.toString() ?? '',
-            ),
-          )
-          .where((item) => item.code.isNotEmpty && item.title.isNotEmpty)
-          .toList(growable: false);
-    } catch (_) {
-      return _fallbackChapters;
+    final raw = await rootBundle.loadString('assets/data/icd10.json');
+    final decoded = jsonDecode(raw);
+    if (decoded is! Map) {
+      throw const FormatException('Neispravan MKB-10 katalog.');
     }
+
+    final records = decoded['records'];
+    if (records is! List || records.isEmpty) {
+      throw const FormatException('MKB-10 katalog je prazan.');
+    }
+
+    final parsed = records
+        .whereType<Map>()
+        .map(
+          (item) => _IcdRecord(
+            code: item['code']?.toString().trim() ?? '',
+            title: item['title']?.toString().trim() ?? '',
+          ),
+        )
+        .where((item) => item.code.isNotEmpty && item.title.isNotEmpty)
+        .toList(growable: false);
+
+    if (parsed.isEmpty) {
+      throw const FormatException(
+        'MKB-10 katalog nema valjane zapise.',
+      );
+    }
+    return parsed;
   }
 
   @override
@@ -101,6 +107,18 @@ class _ClassificationsScreenState extends State<ClassificationsScreen> {
                         ? 'ATK šifra, lijek ili djelatna tvar...'
                         : 'MKB-10 šifra ili naziv...',
                     prefixIcon: const Icon(Icons.search_rounded),
+                    suffixIcon: queryController.text.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: 'Očisti pretragu',
+                            onPressed: () {
+                              queryController.clear();
+                              setState(() {});
+                            },
+                            icon: const Icon(
+                              Icons.close_rounded,
+                            ),
+                          ),
                   ),
                 ),
               ],
@@ -115,6 +133,15 @@ class _ClassificationsScreenState extends State<ClassificationsScreen> {
                 : FutureBuilder<List<_IcdRecord>>(
                     future: icdRecords,
                     builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return MedixEmptyState(
+                          icon: Icons.error_outline_rounded,
+                          title: 'MKB-10 katalog nije učitan',
+                          message:
+                              'MediX neće prikazati skraćene ili zamjenske dijagnostičke podatke kada provjereni lokalni katalog nije dostupan.',
+                          color: MedixColors.warning,
+                        );
+                      }
                       if (!snapshot.hasData) {
                         return const Center(
                           child: CircularProgressIndicator(),
@@ -127,6 +154,15 @@ class _ClassificationsScreenState extends State<ClassificationsScreen> {
                                 item.title.toLowerCase().contains(query);
                           })
                           .toList(growable: false);
+
+                      if (records.isEmpty) {
+                        return const MedixEmptyState(
+                          icon: Icons.search_off_rounded,
+                          title: 'Nema podudarnih MKB-10 zapisa',
+                          message:
+                              'Promijenite MKB-10 šifru ili naziv u pretrazi.',
+                        );
+                      }
 
                       return ListView.separated(
                         padding:
@@ -199,9 +235,14 @@ class _AtcBrowser extends StatelessWidget {
   Widget build(BuildContext context) {
     final groups = <String, List<Medication>>{};
     for (final medication in state.repository.medications) {
-      final code = medication.atcCode?.trim();
-      if (code == null || code.isEmpty) continue;
-      groups.putIfAbsent(code, () => []).add(medication);
+      final rawCodes = medication.atcCode?.trim() ?? '';
+      if (rawCodes.isEmpty) continue;
+
+      for (final rawCode in rawCodes.split(RegExp(r'[;,]'))) {
+        final code = rawCode.trim().toUpperCase();
+        if (code.isEmpty) continue;
+        groups.putIfAbsent(code, () => []).add(medication);
+      }
     }
 
     final codes = groups.keys.where((code) {
@@ -215,6 +256,15 @@ class _AtcBrowser extends StatelessWidget {
       return haystack.contains(query);
     }).toList()
       ..sort();
+
+    if (codes.isEmpty) {
+      return const MedixEmptyState(
+        icon: Icons.search_off_rounded,
+        title: 'Nema podudarnih ATK zapisa',
+        message:
+            'Promijenite ATK šifru, naziv lijeka ili djelatnu tvar.',
+      );
+    }
 
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
@@ -347,58 +397,3 @@ class _IcdRecord {
   final String code;
   final String title;
 }
-
-const _fallbackChapters = <_IcdRecord>[
-  _IcdRecord(code: 'A00-B99', title: 'Zarazne i parazitarne bolesti'),
-  _IcdRecord(code: 'C00-D48', title: 'Novotvorine'),
-  _IcdRecord(
-    code: 'D50-D89',
-    title: 'Bolesti krvi, krvotvornog i imunosnog sustava',
-  ),
-  _IcdRecord(
-    code: 'E00-E90',
-    title: 'Endokrine bolesti, prehrana i metabolizam',
-  ),
-  _IcdRecord(
-    code: 'F00-F99',
-    title: 'Mentalni poremećaji i poremećaji ponašanja',
-  ),
-  _IcdRecord(code: 'G00-G99', title: 'Bolesti živčanog sustava'),
-  _IcdRecord(code: 'H00-H59', title: 'Bolesti oka i očnih adneksa'),
-  _IcdRecord(code: 'H60-H95', title: 'Bolesti uha i mastoidnog nastavka'),
-  _IcdRecord(code: 'I00-I99', title: 'Bolesti cirkulacijskog sustava'),
-  _IcdRecord(code: 'J00-J99', title: 'Bolesti dišnoga sustava'),
-  _IcdRecord(code: 'K00-K93', title: 'Bolesti probavnoga sustava'),
-  _IcdRecord(code: 'L00-L99', title: 'Bolesti kože i potkožnoga tkiva'),
-  _IcdRecord(
-    code: 'M00-M99',
-    title: 'Bolesti mišićno-koštanog sustava i vezivnoga tkiva',
-  ),
-  _IcdRecord(code: 'N00-N99', title: 'Bolesti genitourinarnog sustava'),
-  _IcdRecord(code: 'O00-O99', title: 'Trudnoća, porođaj i babinje'),
-  _IcdRecord(
-    code: 'P00-P96',
-    title: 'Određena stanja nastala u perinatalnom razdoblju',
-  ),
-  _IcdRecord(
-    code: 'Q00-Q99',
-    title: 'Prirođene malformacije i kromosomske abnormalnosti',
-  ),
-  _IcdRecord(
-    code: 'R00-R99',
-    title: 'Simptomi, znakovi i abnormalni nalazi',
-  ),
-  _IcdRecord(
-    code: 'S00-T98',
-    title: 'Ozljede, otrovanja i ostale posljedice vanjskih uzroka',
-  ),
-  _IcdRecord(code: 'U00-U89', title: 'Šifre za posebne namjene'),
-  _IcdRecord(
-    code: 'V01-Y98',
-    title: 'Vanjski uzroci morbiditeta i mortaliteta',
-  ),
-  _IcdRecord(
-    code: 'Z00-Z99',
-    title: 'Čimbenici koji utječu na stanje zdravlja i kontakt sa zdravstvenom službom',
-  ),
-];

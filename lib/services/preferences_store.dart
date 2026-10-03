@@ -55,6 +55,16 @@ class MedixPreferences implements MedixPersistence {
             final times = rawTimes is List
                 ? rawTimes.map((e) => e.toString()).toList()
                 : <String>[];
+            final rawWeekdays = map['weekdays'];
+            final weekdays = rawWeekdays is List
+                ? (rawWeekdays
+                      .map((e) => int.tryParse(e.toString()))
+                      .whereType<int>()
+                      .where((day) => day >= 1 && day <= 7)
+                      .toSet()
+                      .toList()
+                  ..sort())
+                : <int>[1, 2, 3, 4, 5, 6, 7];
 
             if (id.isEmpty ||
                 medicationId.isEmpty ||
@@ -69,6 +79,9 @@ class MedixPreferences implements MedixPersistence {
                 medicationId: medicationId,
                 doseDescription: dose,
                 times: times,
+                weekdays: weekdays.isEmpty
+                    ? const [1, 2, 3, 4, 5, 6, 7]
+                    : weekdays,
                 isActive: map['active'] != false,
               ),
             );
@@ -111,6 +124,7 @@ class MedixPreferences implements MedixPersistence {
               'medication_id': entry.medicationId,
               'dose': entry.doseDescription,
               'times': entry.times,
+              'weekdays': entry.weekdays,
               'active': entry.isActive,
             },
           )

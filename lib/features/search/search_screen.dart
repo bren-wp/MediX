@@ -41,12 +41,13 @@ class _SearchScreenState extends State<SearchScreen> {
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     holders = widget.state.repository.medications
-        .map(
-          (item) =>
-              item.marketingAuthorizationHolder ??
-              item.manufacturer ??
-              '',
+        .expand(
+          (item) => [
+            item.marketingAuthorizationHolder,
+            item.manufacturer,
+          ],
         )
+        .whereType<String>()
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .toSet()
@@ -234,8 +235,13 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 4),
               Expanded(
                 child: results.isEmpty
-                    ? _EmptyResults(
-                        onReset: () {
+                    ? MedixEmptyState(
+                        icon: Icons.search_off_rounded,
+                        title: 'Nema podudarnih lijekova',
+                        message:
+                            'Promijenite upit ili uklonite dio filtera.',
+                        actionLabel: 'Poništi pretragu i filtere',
+                        onAction: () {
                           controller.clear();
                           setState(() {
                             query = const MedicationQuery();
@@ -681,53 +687,6 @@ class _SectionLabel extends StatelessWidget {
           color: MedixColors.textSecondary,
           fontSize: 12,
           fontWeight: FontWeight.w800,
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyResults extends StatelessWidget {
-  const _EmptyResults({required this.onReset});
-
-  final VoidCallback onReset;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const MedixIconBubble(
-              icon: Icons.search_off_rounded,
-              color: MedixColors.cyan,
-              size: 72,
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Nema podudarnih lijekova',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 7),
-            const Text(
-              'Promijenite upit ili uklonite dio filtera.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: MedixColors.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 14),
-            OutlinedButton.icon(
-              onPressed: onReset,
-              icon: const Icon(Icons.restart_alt_rounded),
-              label: const Text('Poništi pretragu i filtere'),
-            ),
-          ],
         ),
       ),
     );

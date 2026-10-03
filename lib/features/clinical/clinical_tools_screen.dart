@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/clinical_calculations.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../widgets/medix_page.dart';
 
@@ -421,10 +422,10 @@ final List<_ToolDefinition> _definitions = [
     },
   ),
   _ToolDefinition(
-    title: 'eGFR · MDRD',
-    subtitle: 'Procijenjena glomerularna filtracija',
+    title: 'eGFR · CKD-EPI 2021',
+    subtitle: 'Race-free procjena za odrasle',
     description:
-        'MDRD IDMS procjena iz dobi, serumskog kreatinina i spola. Ne uključuje zastarjeli rasni koeficijent.',
+        '2021 CKD-EPI kreatininska procjena iz dobi, serumskog kreatinina i spola, bez rasnog koeficijenta.',
     icon: Icons.water_drop_outlined,
     color: MedixColors.purple,
     fields: const [
@@ -450,14 +451,15 @@ final List<_ToolDefinition> _definitions = [
           _number(values, 'creatinine', 'serumski kreatinin');
       final sex = _choice(values, 'sex', 'spol');
 
-      var egfr = 175 *
-          math.pow(creatinine, -1.154) *
-          math.pow(age, -0.203);
-      if (sex == 1) egfr *= 0.742;
+      final egfr = calculateCkdEpi2021Creatinine(
+        age: age,
+        creatinineMgDl: creatinine,
+        female: sex == 1,
+      );
 
       return _ToolResult(
         '${egfr.toStringAsFixed(0)} mL/min/1,73 m²',
-        'Procjena prema MDRD IDMS formuli.',
+        'Procjena prema 2021 CKD-EPI kreatininskoj jednadžbi za odrasle.',
       );
     },
   ),
@@ -591,10 +593,10 @@ final List<_ToolDefinition> _definitions = [
     },
   ),
   _ToolDefinition(
-    title: 'MELD',
-    subtitle: 'Klasični MELD rezultat',
+    title: 'MELD · originalni',
+    subtitle: 'Izvorni / pre-2016 MELD',
     description:
-        'Klasični MELD iz bilirubina, INR-a i kreatinina. Za suvremene odluke provjerite protokol ustanove.',
+        'Izvorni MELD iz bilirubina, INR-a i kreatinina, s rasponom 6–40. Za aktualnu transplantacijsku alokaciju koristite važeći protokol ustanove.',
     icon: Icons.biotech_outlined,
     color: MedixColors.warning,
     fields: const [
@@ -603,26 +605,24 @@ final List<_ToolDefinition> _definitions = [
       _ToolField.number('creatinine', 'Kreatinin', unit: 'mg/dL'),
       _ToolField.toggle(
         'dialysis',
-        'Dijaliza u posljednjem tjednu',
+        'Dijaliza najmanje 2 puta u posljednjem tjednu',
       ),
     ],
     calculate: (values) {
-      var bilirubin = _number(values, 'bilirubin', 'bilirubin');
-      var inr = _number(values, 'inr', 'INR');
-      var creatinine =
+      final bilirubin = _number(values, 'bilirubin', 'bilirubin');
+      final inr = _number(values, 'inr', 'INR');
+      final creatinine =
           _number(values, 'creatinine', 'kreatinin');
-      bilirubin = math.max(1.0, bilirubin).toDouble();
-      inr = math.max(1.0, inr).toDouble();
-      creatinine = _flag(values, 'dialysis')
-          ? 4
-          : math.min(4, math.max(1, creatinine));
-      final meld = 3.78 * math.log(bilirubin) +
-          11.2 * math.log(inr) +
-          9.57 * math.log(creatinine) +
-          6.43;
+      final meld = calculateOriginalMeld(
+        bilirubinMgDl: bilirubin,
+        inr: inr,
+        creatinineMgDl: creatinine,
+        dialysisAtLeastTwiceLastWeek:
+            _flag(values, 'dialysis'),
+      );
       return _ToolResult(
         'MELD ${meld.round()}',
-        'Klasična formula; rezultat treba tumačiti prema aktualnom protokolu.',
+        'Izvorni MELD je ograničen na raspon 6–40; za suvremenu alokaciju provjerite aktualni MELD protokol.',
       );
     },
   ),
@@ -647,6 +647,11 @@ final List<_ToolDefinition> _definitions = [
       final age = _number(values, 'age', 'dob');
       final heartRate = _number(values, 'heartRate', 'puls');
       final spo2 = _number(values, 'spo2', 'SpO₂');
+      if (spo2 > 100) {
+        throw const FormatException(
+          'SpO₂ ne može biti veći od 100%.',
+        );
+      }
       var score = 0;
       if (age >= 50) score++;
       if (heartRate >= 100) score++;

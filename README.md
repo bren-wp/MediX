@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.2</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
+  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.3</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
 </p>
 
 <p align="center">
@@ -37,7 +37,7 @@ Aplikacija je razvijena kao **hrvatska profesionalna alternativa klasičnim baza
 | 🧮 | **Klinički alati** | BMI, BSA, eGFR, CHA₂DS₂-VASc, HAS-BLED, GCS, MELD, PERC i Wells PE |
 | 🧬 | **ATK klasifikacija** | Pregled lijekova po ATK šiframa |
 | 🩺 | **MKB-10** | Lokalni pretraživi registar s 39.559 zapisa |
-| 📅 | **Moja terapija** | Lokalno spremljen plan terapije, kalendar i Android podsjetnici |
+| 📅 | **Moja terapija** | Lokalni plan po danima u tjednu, kalendar i Android podsjetnici |
 | ❤️ | **Favoriti** | Brzi pristup često korištenim lijekovima |
 | 🤰 | **Posebne skupine** | Trudnoća i dojenje, djeca i starije osobe |
 | 💶 | **Cijene i pakiranja** | Pretraživ pregled raspoloživih cjenovnih i paketnih zapisa |
@@ -49,17 +49,17 @@ Aplikacija je razvijena kao **hrvatska profesionalna alternativa klasičnim baza
 Umjesto da korisnik mora znati točan naziv proizvoda, MediX Smart razumije strukturirane upite poput:
 
 - `paracetamol 500 mg`
-- `antibiotici na recept`
+- `na recept`
+- `bez recepta`
 - `ATK C09`
-- `lijekovi za alergiju`
 
 Rezultati se rangiraju iz lokalnog kataloga prema nazivu, djelatnoj tvari, ATK šifri, kategoriji, pakiranju i farmaceutskom obliku. Klasična pretraga dodatno omogućuje kombiniranje režima izdavanja, HALMED statusa na tržištu, statusa nestašice, statusa HZZO liste, cijene, ATK skupine, oblika i nositelja/proizvođača.
 
 ## 🧮 Klinički alati
 
-MediX 0.3.2 uključuje devet brzih kalkulatora i bodovnih sustava:
+MediX 0.3.3 uključuje devet brzih kalkulatora i bodovnih sustava:
 
-**BMI · BSA Mosteller · eGFR MDRD · CHA₂DS₂-VASc · HAS-BLED · Glasgow Coma Scale · MELD · PERC · Wells PE**
+**BMI · BSA Mosteller · eGFR CKD-EPI 2021 · CHA₂DS₂-VASc · HAS-BLED · Glasgow Coma Scale · originalni MELD · PERC · Wells PE**
 
 Alati su napravljeni kao pomoćni profesionalni izračuni. Rezultat sam po sebi nije dijagnoza niti terapijska preporuka.
 
@@ -105,7 +105,7 @@ Release candidate build prolazi `flutter analyze`, testove, release APK i releas
 - Flutter / Dart
 - Android package: `com.brendigo.medix`
 - lokalna pohrana favorita i terapije
-- lokalne Android obavijesti i dnevni podsjetnici
+- lokalne Android obavijesti i tjedni raspored podsjetnika
 - verzionirani offline katalozi
 - automatizirane provjere kvalitete i build pipeline
 
@@ -116,6 +116,6 @@ MediX se razvija prema jednoj aplikaciji za profesionalni rad s lijekovima: **š
 ---
 
 <p align="center">
-  <strong>MediX 0.3.2</strong><br>
+  <strong>MediX 0.3.3</strong><br>
   Vaš vodič kroz lijekove.
 </p>

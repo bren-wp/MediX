@@ -22,10 +22,12 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int index = 0;
+  late final List<Widget> pages;
 
   @override
-  Widget build(BuildContext context) {
-    final pages = <Widget>[
+  void initState() {
+    super.initState();
+    pages = <Widget>[
       HomeScreen(
         state: widget.state,
         onSearchRequested: () => setState(() => index = 1),
@@ -35,7 +37,10 @@ class _AppShellState extends State<AppShell> {
       FavoritesScreen(state: widget.state),
       MoreScreen(state: widget.state),
     ];
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MedixColors.background,
       body: IndexedStack(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../core/theme/medix_theme.dart';
 import '../../data/official_sources.dart';
@@ -6,6 +7,19 @@ import '../../widgets/medix_page.dart';
 
 class SourcesScreen extends StatelessWidget {
   const SourcesScreen({super.key});
+
+  Future<void> _copySourceUrl(
+    BuildContext context,
+    String url,
+  ) async {
+    await Clipboard.setData(ClipboardData(text: url));
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Poveznica službenog izvora je kopirana.'),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,12 +71,42 @@ class SourcesScreen extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
-                const SizedBox(height: 7),
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: SelectableText(
+                        source.url,
+                        style: const TextStyle(
+                          color: MedixColors.textMuted,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Kopiraj poveznicu',
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () => _copySourceUrl(
+                        context,
+                        source.url,
+                      ),
+                      icon: const Icon(
+                        Icons.copy_rounded,
+                        size: 18,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
                 Text(
-                  source.url,
+                  'Ažurirano: '
+                  '${source.updatedAt.day.toString().padLeft(2, '0')}.'
+                  '${source.updatedAt.month.toString().padLeft(2, '0')}.'
+                  '${source.updatedAt.year}.',
                   style: const TextStyle(
                     color: MedixColors.textMuted,
-                    fontSize: 11,
+                    fontSize: 10,
                   ),
                 ),
               ],

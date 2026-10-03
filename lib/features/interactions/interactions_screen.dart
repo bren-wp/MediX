@@ -365,17 +365,49 @@ class _MedicationPickerState extends State<_MedicationPicker> {
                   controller: controller,
                   autofocus: true,
                   onChanged: (_) => setState(() {}),
-                  decoration: const InputDecoration(
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
                     hintText:
                         'Naziv, djelatna tvar, ATK...',
-                    prefixIcon: Icon(Icons.search_rounded),
+                    prefixIcon:
+                        const Icon(Icons.search_rounded),
+                    suffixIcon: controller.text.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: 'Očisti pretragu',
+                            onPressed: () {
+                              controller.clear();
+                              setState(() {});
+                            },
+                            icon: const Icon(
+                              Icons.close_rounded,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  results.length == 100
+                      ? 'Prikazano prvih 100 rezultata'
+                      : '${results.length} rezultata',
+                  style: const TextStyle(
+                    color: MedixColors.textSecondary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
           ),
           Expanded(
-            child: ListView.separated(
+            child: results.isEmpty
+                ? const MedixEmptyState(
+                    icon: Icons.search_off_rounded,
+                    title: 'Nema podudarnih lijekova',
+                    message:
+                        'Promijenite naziv, djelatnu tvar ili ATK šifru.',
+                  )
+                : ListView.separated(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
               itemCount: results.length,
               separatorBuilder: (_, __) =>

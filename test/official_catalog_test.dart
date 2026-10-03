@@ -5,6 +5,8 @@ import 'package:medix/data/medication_repository.dart';
 import 'package:medix/models/medication.dart';
 import 'package:medix/models/medication_price.dart';
 
+import 'support/medication_fixtures.dart';
+
 void main() {
   group('Official medicine catalog', () {
     test('maps HZZO administrative fields and copay', () {
@@ -45,7 +47,6 @@ void main() {
         medication.reimbursementStatus,
         ReimbursementStatus.supplementary,
       );
-      expect(medication.isDemo, isFalse);
       expect(medication.prices, hasLength(1));
       expect(
         medication.prices.single.kind,
@@ -115,7 +116,11 @@ void main() {
     });
 
     test('builds compact subtitle without duplicate placeholders', () {
-      final medication = MedicationRepository.demo().medications.first;
+      final medication = testMedication(
+        id: 'subtitle-test',
+        name: 'Testmed',
+        ingredient: 'testna tvar',
+      );
 
       expect(medication.compactSubtitle, '500 mg · tablete');
 

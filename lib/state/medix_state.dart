@@ -109,6 +109,8 @@ class MedixState extends ChangeNotifier {
   }
 
   void toggleFavorite(String medicationId) {
+    if (medicationById(medicationId) == null) return;
+
     if (!_favoriteIds.remove(medicationId)) {
       _favoriteIds.add(medicationId);
     }
@@ -121,6 +123,8 @@ class MedixState extends ChangeNotifier {
   }
 
   void markViewed(String medicationId) {
+    if (medicationById(medicationId) == null) return;
+
     _recentIds.remove(medicationId);
     _recentIds.insert(0, medicationId);
     if (_recentIds.length > 8) {
@@ -138,6 +142,7 @@ class MedixState extends ChangeNotifier {
     required String medicationId,
     required String doseDescription,
     required List<String> times,
+    List<int> weekdays = const [1, 2, 3, 4, 5, 6, 7],
   }) {
     final normalizedTimes = times
         .map((time) => time.trim())
@@ -145,10 +150,16 @@ class MedixState extends ChangeNotifier {
         .toSet()
         .toList()
       ..sort();
+    final normalizedWeekdays = weekdays
+        .where((day) => day >= 1 && day <= 7)
+        .toSet()
+        .toList()
+      ..sort();
 
     if (medicationById(medicationId) == null ||
         doseDescription.trim().isEmpty ||
-        normalizedTimes.isEmpty) {
+        normalizedTimes.isEmpty ||
+        normalizedWeekdays.isEmpty) {
       return;
     }
 
@@ -159,6 +170,7 @@ class MedixState extends ChangeNotifier {
         medicationId: medicationId,
         doseDescription: doseDescription.trim(),
         times: normalizedTimes,
+        weekdays: normalizedWeekdays,
       ),
     );
     notifyListeners();

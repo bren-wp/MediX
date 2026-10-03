@@ -2,6 +2,33 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.3] - u razvoju
+
+### Dodano
+- terapijski raspored po danima u tjednu s Android podsjetnicima koji prate odabrane dane
+- stvarni dnevni prikaz terapije u kalendaru
+- CKD-EPI 2021 race-free kreatininska eGFR jednadžba za odrasle
+- testovi kliničkih izračuna, tjednog rasporeda terapije i sinkronizacije verzije aplikacije
+
+### Poboljšano
+- potpuno ispoliran početni ekran i responzivni gridovi za uže Android zaslone
+- jedinstveni empty-state sustav i jasniji error/retry tokovi
+- searchable kategorije, djelatne tvari te proizvođači/nositelji s manje dupliciranog UI koda
+- cjenik koristi lazy prikaz, retry, clear-search i vidljiv službeni izvor
+- detalj lijeka prikazuje izvor podataka i datum zadnje provjere
+- MKB-10 više ne pada na skraćeni zamjenski katalog kada službeni lokalni asset nije dostupan
+- ATK i MediX Smart ispravno obrađuju zapise s više ATK šifri
+- originalni MELD vraća zaokruženi rezultat u rasponu 6–40
+- interakcijski picker ima clear-search, broj rezultata i prazan rezultat
+- sigurniji tok otvaranja ljekarni i potvrda prije brisanja terapije
+- stabilnije prebacivanje donje navigacije bez nepotrebne rekonstrukcije ekrana
+
+### Uklonjeno
+- demo-only ekran "Bolesti i stanja"
+- produkcijski demo katalog i tihi fallback na izmišljene lijekove
+- zastarjelo `Medication.isDemo` polje
+- duplicirani kataloški UI za kategorije, djelatne tvari i proizvođače
+
 ## [0.3.2] - 2026-10-02
 
 ### Dodano

@@ -89,7 +89,9 @@ class _SmartSearchScreenState extends State<SmartSearchScreen> {
       if (wantsRx && medication.requiresPrescription != true) continue;
       if (wantsOtc && medication.requiresPrescription != false) continue;
       if (requestedAtc != null &&
-          !(medication.atcCode ?? '').toUpperCase().startsWith(requestedAtc)) {
+          !_atcCodes(medication.atcCode).any(
+            (code) => code.startsWith(requestedAtc),
+          )) {
         continue;
       }
 
@@ -130,6 +132,17 @@ class _SmartSearchScreenState extends State<SmartSearchScreen> {
     });
 
     return scored.take(150).map((item) => item.$1).toList(growable: false);
+  }
+
+
+  Iterable<String> _atcCodes(String? value) sync* {
+    final raw = value?.toUpperCase().trim() ?? '';
+    if (raw.isEmpty) return;
+
+    for (final part in raw.split(RegExp(r'[;,]'))) {
+      final code = part.trim();
+      if (code.isNotEmpty) yield code;
+    }
   }
 
   @override
@@ -199,9 +212,9 @@ class _SmartSearchScreenState extends State<SmartSearchScreen> {
               children: [
                 for (final suggestion in const [
                   'paracetamol 500 mg',
-                  'antibiotici na recept',
+                  'na recept',
+                  'bez recepta',
                   'ATK C09',
-                  'lijekovi za alergiju',
                 ])
                   ActionChip(
                     label: Text(suggestion),

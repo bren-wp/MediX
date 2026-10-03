@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/app_info.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_brand.dart';
@@ -17,6 +18,7 @@ import '../substitutions/substitutions_screen.dart';
 import '../therapy/calendar_screen.dart';
 import 'about_screen.dart';
 import 'privacy_screen.dart';
+import 'sources_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({
@@ -169,7 +171,7 @@ class MoreScreen extends StatelessWidget {
           _MenuItem(
             icon: Icons.local_pharmacy_outlined,
             title: 'Ljekarne u blizini',
-            subtitle: 'Lokacijski modul',
+            subtitle: 'Otvori pretragu ljekarni u aplikaciji za karte',
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -178,8 +180,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.school_outlined,
-            title: 'Edukacija i novosti',
-            subtitle: 'Stručni sadržaj unutar MediX iskustva',
+            title: 'Edukacija i vodiči',
+            subtitle: 'Kratki vodiči za sigurnije korištenje MediX alata',
             color: MedixColors.warning,
             onTap: () => _push(
               context,
@@ -197,9 +199,19 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           _MenuItem(
+            icon: Icons.verified_user_outlined,
+            title: 'Službeni izvori podataka',
+            subtitle: 'HALMED, HZZO i izvori službenih cjenovnih podataka',
+            color: MedixColors.cyan,
+            onTap: () => _push(
+              context,
+              const SourcesScreen(),
+            ),
+          ),
+          _MenuItem(
             icon: Icons.info_outline_rounded,
             title: 'O aplikaciji',
-            subtitle: 'MediX 0.3.1',
+            subtitle: 'MediX ${MedixAppInfo.version}',
             color: MedixColors.primary,
             onTap: () => _push(
               context,

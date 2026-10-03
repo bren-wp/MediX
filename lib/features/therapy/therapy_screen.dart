@@ -39,7 +39,12 @@ class TherapyScreen extends StatelessWidget {
             label: const Text('Dodaj terapiju'),
           ),
           child: state.therapy.isEmpty
-              ? const _EmptyTherapy()
+              ? const MedixEmptyState(
+                  icon: Icons.event_available_outlined,
+                  title: 'Nema spremljene terapije',
+                  message:
+                      'Dodajte lijek, opis doze i vrijeme uzimanja. Plan se čuva lokalno na uređaju i može koristiti Android podsjetnike.',
+                )
               : ListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
                   children: [
@@ -58,46 +63,6 @@ class TherapyScreen extends StatelessWidget {
                 ),
         );
       },
-    );
-  }
-}
-
-class _EmptyTherapy extends StatelessWidget {
-  const _EmptyTherapy();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(30),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const MedixIconBubble(
-              icon: Icons.event_available_outlined,
-              color: MedixColors.cyan,
-              size: 82,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Nema spremljene terapije',
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Dodajte lijek, opis doze i vrijeme uzimanja. Plan se čuva lokalno na uređaju i može koristiti Android podsjetnike.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: MedixColors.textSecondary,
-                height: 1.45,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -141,6 +106,32 @@ class _TherapyCard extends StatelessWidget {
   final TherapyEntry entry;
   final MedixState state;
 
+  Future<void> _confirmRemove(BuildContext context) async {
+    final shouldRemove = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Ukloniti terapiju?'),
+        content: const Text(
+          'Ovaj unos i njegovi lokalni podsjetnici bit će uklonjeni.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Odustani'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Ukloni'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldRemove == true) {
+      state.removeTherapy(entry.id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final medication = state.medicationById(entry.medicationId);
@@ -176,6 +167,15 @@ class _TherapyCard extends StatelessWidget {
                   entry.doseDescription,
                   style: const TextStyle(
                     color: MedixColors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 7),
+                Text(
+                  _weekdaySummary(entry.weekdays),
+                  style: const TextStyle(
+                    color: MedixColors.cyanSoft,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 9),
@@ -238,7 +238,7 @@ class _TherapyCard extends StatelessWidget {
               ),
               IconButton(
                 tooltip: 'Obriši terapiju',
-                onPressed: () => state.removeTherapy(entry.id),
+                onPressed: () => _confirmRemove(context),
                 icon: const Icon(Icons.delete_outline),
                 color: MedixColors.danger,
               ),
@@ -264,6 +264,7 @@ class _AddTherapySheet extends StatefulWidget {
 class _AddTherapySheetState extends State<_AddTherapySheet> {
   final doseController = TextEditingController();
   final List<TimeOfDay> times = <TimeOfDay>[];
+  final Set<int> weekdays = <int>{1, 2, 3, 4, 5, 6, 7};
   String? medicationId;
 
   @override
@@ -309,11 +310,12 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
   Future<void> _save() async {
     if (medicationId == null ||
         doseController.text.trim().isEmpty ||
-        times.isEmpty) {
+        times.isEmpty ||
+        weekdays.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Odaberite lijek, opišite dozu i dodajte vrijeme.',
+            'Odaberite lijek, opišite dozu, dane i dodajte vrijeme.',
           ),
         ),
       );
@@ -333,6 +335,7 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
       medicationId: medicationId!,
       doseDescription: doseController.text,
       times: formattedTimes,
+      weekdays: weekdays.toList()..sort(),
     );
 
     Navigator.of(context).pop();
@@ -386,7 +389,10 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
                     (medication) => DropdownMenuItem<String>(
                       value: medication.id,
                       child: Text(
-                        '${medication.name} · ${medication.strength}',
+                        medication.compactSubtitle == null
+                            ? medication.name
+                            : '${medication.name} · '
+                                '${medication.compactSubtitle}',
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -404,6 +410,43 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
                 prefixIcon: Icon(Icons.medication_liquid_outlined),
               ),
             ),
+            const SizedBox(height: 16),
+            const Text(
+              'Dani uzimanja',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 7,
+              runSpacing: 7,
+              children: List.generate(7, (index) {
+                final day = index + 1;
+                return FilterChip(
+                  label: Text(_weekdayShortLabel(day)),
+                  selected: weekdays.contains(day),
+                  onSelected: (selected) {
+                    setState(() {
+                      if (selected) {
+                        weekdays.add(day);
+                      } else {
+                        weekdays.remove(day);
+                      }
+                    });
+                  },
+                );
+              }),
+            ),
+            if (weekdays.isEmpty)
+              const Padding(
+                padding: EdgeInsets.only(top: 7),
+                child: Text(
+                  'Odaberite barem jedan dan.',
+                  style: TextStyle(
+                    color: MedixColors.warning,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -457,4 +500,31 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
       ),
     );
   }
+}
+
+
+String _weekdayShortLabel(int weekday) {
+  return switch (weekday) {
+    1 => 'Pon',
+    2 => 'Uto',
+    3 => 'Sri',
+    4 => 'Čet',
+    5 => 'Pet',
+    6 => 'Sub',
+    7 => 'Ned',
+    _ => '—',
+  };
+}
+
+String _weekdaySummary(List<int> weekdays) {
+  final normalized = weekdays
+      .where((day) => day >= 1 && day <= 7)
+      .toSet()
+      .toList()
+    ..sort();
+
+  if (normalized.length == 7) {
+    return 'Svaki dan';
+  }
+  return normalized.map(_weekdayShortLabel).join(', ');
 }
