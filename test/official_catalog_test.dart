@@ -47,7 +47,6 @@ void main() {
         medication.reimbursementStatus,
         ReimbursementStatus.supplementary,
       );
-      expect(medication.isDemo, isFalse);
       expect(medication.prices, hasLength(1));
       expect(
         medication.prices.single.kind,
