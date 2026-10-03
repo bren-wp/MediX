@@ -39,7 +39,12 @@ class TherapyScreen extends StatelessWidget {
             label: const Text('Dodaj terapiju'),
           ),
           child: state.therapy.isEmpty
-              ? const _EmptyTherapy()
+              ? const MedixEmptyState(
+                  icon: Icons.event_available_outlined,
+                  title: 'Nema spremljene terapije',
+                  message:
+                      'Dodajte lijek, opis doze i vrijeme uzimanja. Plan se čuva lokalno na uređaju i može koristiti Android podsjetnike.',
+                )
               : ListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
                   children: [
@@ -58,46 +63,6 @@ class TherapyScreen extends StatelessWidget {
                 ),
         );
       },
-    );
-  }
-}
-
-class _EmptyTherapy extends StatelessWidget {
-  const _EmptyTherapy();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(30),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const MedixIconBubble(
-              icon: Icons.event_available_outlined,
-              color: MedixColors.cyan,
-              size: 82,
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Nema spremljene terapije',
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Dodajte lijek, opis doze i vrijeme uzimanja. Plan se čuva lokalno na uređaju i može koristiti Android podsjetnike.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: MedixColors.textSecondary,
-                height: 1.45,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
