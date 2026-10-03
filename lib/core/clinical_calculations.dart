@@ -65,5 +65,5 @@ double calculateOriginalMeld({
       9.57 * math.log(creatinine) +
       6.43;
 
-  return raw.clamp(6.0, 40.0).toDouble();
+  return raw.round().clamp(6, 40).toDouble();
 }
