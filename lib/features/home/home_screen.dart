@@ -6,7 +6,6 @@ import '../../state/medix_state.dart';
 import '../../widgets/medication_tile.dart';
 import '../../widgets/medix_brand.dart';
 import '../../widgets/medix_page.dart';
-import '../catalog/conditions_screen.dart';
 import '../catalog/ingredients_screen.dart';
 import '../catalog/manufacturers_screen.dart';
 import '../catalog/medication_collection_screen.dart';
@@ -63,28 +62,37 @@ class HomeScreen extends StatelessWidget {
                 child: MedixBrand(),
               ),
               const SizedBox(height: 18),
-              InkWell(
-                onTap: onSearchRequested,
-                borderRadius: BorderRadius.circular(15),
-                child: IgnorePointer(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Pretraži lijek, djelatnu tvar, bolest...',
-                      prefixIcon: const Icon(Icons.search_rounded),
-                      suffixIcon: Container(
-                        margin: const EdgeInsets.all(7),
-                        width: 36,
-                        decoration: BoxDecoration(
-                          color: MedixColors.primary.withValues(alpha: .16),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Icon(
-                          Icons.tune_rounded,
-                          size: 19,
-                          color: MedixColors.cyan,
+              Semantics(
+                button: true,
+                label: 'Pretraži lijekove',
+                child: MedixSectionCard(
+                  onTap: onSearchRequested,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.search_rounded,
+                        color: MedixColors.textSecondary,
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Naziv, djelatna tvar, ATK, pakiranje...',
+                          style: TextStyle(
+                            color: MedixColors.textMuted,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                    ),
+                      MedixIconBubble(
+                        icon: Icons.tune_rounded,
+                        color: MedixColors.cyan,
+                        size: 34,
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -135,12 +143,21 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   _HomeAction(
-                    icon: Icons.medical_services_outlined,
-                    title: 'Bolesti i stanja',
-                    color: MedixColors.cyan,
+                    icon: Icons.inventory_2_outlined,
+                    title: 'U prometu',
+                    subtitle: 'HALMED',
+                    color: MedixColors.success,
                     onTap: () => _push(
                       context,
-                      ConditionsScreen(state: state),
+                      MedicationCollectionScreen(
+                        title: 'Lijekovi u prometu',
+                        state: state,
+                        filter: (m) =>
+                            m.marketState ==
+                            MedicationMarketState.marketed,
+                        description:
+                            'Prikaz zapisa čiji HALMED status navodi da je lijek stavljen u promet.',
+                      ),
                     ),
                   ),
                   _HomeAction(
