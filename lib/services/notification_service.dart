@@ -133,46 +133,70 @@ class MedixNotificationService implements TherapyReminderScheduler {
           continue;
         }
 
-        final scheduled = _nextTime(hour, minute);
-        final id = _stableId('${entry.id}|$time');
+        for (final weekday in entry.weekdays) {
+          if (weekday < 1 || weekday > 7) continue;
 
-        await _plugin.zonedSchedule(
-          id: id,
-          title: 'Vrijeme za terapiju',
-          body: '${medication.name} · ${entry.doseDescription}',
-          scheduledDate: scheduled,
-          notificationDetails: const NotificationDetails(
-            android: AndroidNotificationDetails(
-              _channelId,
-              _channelName,
-              channelDescription: _channelDescription,
-              importance: Importance.high,
-              priority: Priority.high,
-              icon: 'ic_stat_medix',
-              category: AndroidNotificationCategory.reminder,
+          final scheduled = _nextWeekdayTime(
+            weekday,
+            hour,
+            minute,
+          );
+          final id = _stableId(
+            '${entry.id}|$weekday|$time',
+          );
+
+          await _plugin.zonedSchedule(
+            id: id,
+            title: 'Vrijeme za terapiju',
+            body: '${medication.name} · ${entry.doseDescription}',
+            scheduledDate: scheduled,
+            notificationDetails: const NotificationDetails(
+              android: AndroidNotificationDetails(
+                _channelId,
+                _channelName,
+                channelDescription: _channelDescription,
+                importance: Importance.high,
+                priority: Priority.high,
+                icon: 'ic_stat_medix',
+                category: AndroidNotificationCategory.reminder,
+              ),
             ),
-          ),
-          androidScheduleMode: scheduleMode,
-          matchDateTimeComponents: DateTimeComponents.time,
-          payload: 'therapy:${entry.id}:${medication.id}',
-        );
+            androidScheduleMode: scheduleMode,
+            matchDateTimeComponents:
+                DateTimeComponents.dayOfWeekAndTime,
+            payload: 'therapy:${entry.id}:${medication.id}',
+          );
+        }
       }
     }
   }
 
-  tz.TZDateTime _nextTime(int hour, int minute) {
+  tz.TZDateTime _nextWeekdayTime(
+    int weekday,
+    int hour,
+    int minute,
+  ) {
     final now = tz.TZDateTime.now(tz.local);
+    var daysAhead = (weekday - now.weekday + 7) % 7;
     var scheduled = tz.TZDateTime(
       tz.local,
       now.year,
       now.month,
-      now.day,
+      now.day + daysAhead,
       hour,
       minute,
     );
 
     if (!scheduled.isAfter(now)) {
-      scheduled = scheduled.add(const Duration(days: 1));
+      daysAhead += 7;
+      scheduled = tz.TZDateTime(
+        tz.local,
+        now.year,
+        now.month,
+        now.day + daysAhead,
+        hour,
+        minute,
+      );
     }
     return scheduled;
   }
