@@ -118,3 +118,71 @@ class MedixIconBubble extends StatelessWidget {
     );
   }
 }
+
+
+class MedixEmptyState extends StatelessWidget {
+  const MedixEmptyState({
+    required this.icon,
+    required this.title,
+    required this.message,
+    super.key,
+    this.color = MedixColors.cyan,
+    this.actionLabel,
+    this.onAction,
+  });
+
+  final IconData icon;
+  final String title;
+  final String message;
+  final Color color;
+  final String? actionLabel;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(28),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              MedixIconBubble(
+                icon: icon,
+                color: color,
+                size: 76,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 7),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: MedixColors.textSecondary,
+                  height: 1.45,
+                ),
+              ),
+              if (actionLabel != null && onAction != null) ...[
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: onAction,
+                  icon: const Icon(Icons.restart_alt_rounded),
+                  label: Text(actionLabel!),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
