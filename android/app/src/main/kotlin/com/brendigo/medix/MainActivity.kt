@@ -19,8 +19,7 @@ class MainActivity : FlutterActivity() {
         ).setMethodCallHandler { call, result ->
             when (call.method) {
                 "openNearbyPharmacies" -> {
-                    openNearbyPharmacies()
-                    result.success(true)
+                    result.success(openNearbyPharmacies())
                 }
 
                 else -> result.notImplemented()
@@ -28,7 +27,7 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun openNearbyPharmacies() {
+    private fun openNearbyPharmacies(): Boolean {
         val geoIntent = Intent(
             Intent.ACTION_VIEW,
             Uri.parse("geo:0,0?q=ljekarna"),
@@ -36,12 +35,21 @@ class MainActivity : FlutterActivity() {
 
         try {
             startActivity(geoIntent)
+            return true
         } catch (_: ActivityNotFoundException) {
-            val webIntent = Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://www.google.com/maps/search/ljekarna"),
-            )
+            // Fall through to a regular HTTPS maps search.
+        }
+
+        val webIntent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("https://www.google.com/maps/search/ljekarna"),
+        )
+
+        return try {
             startActivity(webIntent)
+            true
+        } catch (_: ActivityNotFoundException) {
+            false
         }
     }
 }
