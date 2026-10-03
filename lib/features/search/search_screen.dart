@@ -41,12 +41,13 @@ class _SearchScreenState extends State<SearchScreen> {
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
     holders = widget.state.repository.medications
-        .map(
-          (item) =>
-              item.marketingAuthorizationHolder ??
-              item.manufacturer ??
-              '',
+        .expand(
+          (item) => [
+            item.marketingAuthorizationHolder,
+            item.manufacturer,
+          ],
         )
+        .whereType<String>()
         .map((item) => item.trim())
         .where((item) => item.isNotEmpty)
         .toSet()
