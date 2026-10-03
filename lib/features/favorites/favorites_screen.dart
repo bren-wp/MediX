@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medication_tile.dart';
+import '../../widgets/medix_page.dart';
 import '../medications/medication_detail_screen.dart';
 
 class FavoritesScreen extends StatelessWidget {
@@ -20,18 +21,16 @@ class FavoritesScreen extends StatelessWidget {
       builder: (context, _) {
         final favorites = state.favorites;
 
-        return Scaffold(
+        return MedixPage(
+          safeArea: false,
           appBar: AppBar(title: const Text('Favoriti')),
-          body: favorites.isEmpty
-              ? const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(30),
-                    child: Text(
-                      'Još nema favorita. Dodajte lijek dodirom na ikonu srca.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: MedixColors.textSecondary),
-                    ),
-                  ),
+          child: favorites.isEmpty
+              ? const MedixEmptyState(
+                  icon: Icons.favorite_border_rounded,
+                  title: 'Još nema favorita',
+                  message:
+                      'Dodajte lijek dodirom na ikonu srca kako biste ga brzo pronašli kasnije.',
+                  color: MedixColors.danger,
                 )
               : ListView.separated(
                   padding: const EdgeInsets.fromLTRB(18, 4, 18, 30),
