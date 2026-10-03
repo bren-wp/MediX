@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/app_info.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../widgets/medix_brand.dart';
 import '../../widgets/medix_page.dart';
@@ -18,7 +19,7 @@ class AboutScreen extends StatelessWidget {
           const MedixBrand(centered: true),
           const SizedBox(height: 18),
           const Text(
-            'Verzija 0.3.1',
+            'Verzija ${MedixAppInfo.version}',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: MedixColors.textSecondary,
