@@ -27,7 +27,6 @@ Medication testMedication({
     warnings: const [],
     sourceLabel: 'test',
     lastReviewed: DateTime(2026, 10, 3),
-    isDemo: false,
   );
 }
 
