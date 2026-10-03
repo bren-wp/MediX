@@ -109,6 +109,8 @@ class MedixState extends ChangeNotifier {
   }
 
   void toggleFavorite(String medicationId) {
+    if (medicationById(medicationId) == null) return;
+
     if (!_favoriteIds.remove(medicationId)) {
       _favoriteIds.add(medicationId);
     }
@@ -121,6 +123,8 @@ class MedixState extends ChangeNotifier {
   }
 
   void markViewed(String medicationId) {
+    if (medicationById(medicationId) == null) return;
+
     _recentIds.remove(medicationId);
     _recentIds.insert(0, medicationId);
     if (_recentIds.length > 8) {
