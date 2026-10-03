@@ -106,7 +106,6 @@ class MedicationRepository {
           hzzoGuidelineCode: _nullableString(record['guideline']),
           prices: prices,
           officialRecordUrl: sourceUrl,
-          isDemo: false,
         ),
       );
     }
@@ -213,7 +212,6 @@ class MedicationRepository {
                   sourceUrl,
           shortageStatus:
               _nullableString(record['shortage_status']),
-          isDemo: false,
         ),
       );
     }
