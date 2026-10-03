@@ -56,6 +56,17 @@ void main() {
       expect(state.therapy.first.isActive, isTrue);
     });
 
+    test('normalizes therapy weekdays', () {
+      state.addTherapy(
+        medicationId: 'paracetamol-500',
+        doseDescription: '1 tableta',
+        times: const ['08:00'],
+        weekdays: const [5, 1, 5, 3, 9],
+      );
+
+      expect(state.therapy.single.weekdays, const [1, 3, 5]);
+    });
+
     test('does not add invalid therapy plan', () {
       state.addTherapy(
         medicationId: 'missing',
