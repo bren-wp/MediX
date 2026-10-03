@@ -22,7 +22,17 @@ class _PharmaciesScreenState extends State<PharmaciesScreen> {
 
     setState(() => opening = true);
     try {
-      await _channel.invokeMethod<bool>('openNearbyPharmacies');
+      final opened =
+          await _channel.invokeMethod<bool>('openNearbyPharmacies');
+      if (opened != true && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Na ovom uređaju nije pronađena aplikacija za karte ili web preglednik.',
+            ),
+          ),
+        );
+      }
     } on PlatformException {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
