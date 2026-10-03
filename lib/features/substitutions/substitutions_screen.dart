@@ -45,7 +45,9 @@ class _SubstitutionsScreenState extends State<SubstitutionsScreen> {
     return AnimatedBuilder(
       animation: widget.state,
       builder: (context, _) => MedixPage(
-        appBar: AppBar(title: const Text('Zamjene lijekova')),
+        appBar: AppBar(
+          title: const Text('Paralelni i srodni lijekovi'),
+        ),
         safeArea: false,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
@@ -70,25 +72,79 @@ class _SubstitutionsScreenState extends State<SubstitutionsScreen> {
               ),
             ),
             const SizedBox(height: 14),
-            ...matches.map(
-              (medication) => Padding(
-                padding: const EdgeInsets.only(bottom: 9),
-                child: MedicationTile(
-                  medication: medication,
-                  isFavorite: widget.state.isFavorite(medication.id),
-                  onFavorite: () =>
-                      widget.state.toggleFavorite(medication.id),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => MedicationDetailScreen(
-                        medication: medication,
-                        state: widget.state,
+            if (query.isEmpty)
+              const MedixSectionCard(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MedixIconBubble(
+                      icon: Icons.search_rounded,
+                      color: MedixColors.cyan,
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Upišite naziv lijeka ili djelatnu tvar. MediX će zatim prikazati zapise s istom djelatnom tvari.',
+                        style: TextStyle(
+                          color: MedixColors.textSecondary,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else if (matches.isEmpty)
+              const MedixSectionCard(
+                child: Row(
+                  children: [
+                    MedixIconBubble(
+                      icon: Icons.search_off_rounded,
+                      color: MedixColors.textMuted,
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Nema podudarnih zapisa za ovaj pojam.',
+                        style: TextStyle(
+                          color: MedixColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            else ...[
+              Text(
+                '${matches.length} povezanih zapisa',
+                style: const TextStyle(
+                  color: MedixColors.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...matches.map(
+                (medication) => Padding(
+                  padding: const EdgeInsets.only(bottom: 9),
+                  child: MedicationTile(
+                    medication: medication,
+                    isFavorite:
+                        widget.state.isFavorite(medication.id),
+                    onFavorite: () =>
+                        widget.state.toggleFavorite(medication.id),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => MedicationDetailScreen(
+                          medication: medication,
+                          state: widget.state,
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           ],
         ),
       ),
