@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:medix/data/medication_repository.dart';
+import 'support/medication_fixtures.dart';
 import 'package:medix/state/medix_state.dart';
 
 void main() {
@@ -7,7 +7,7 @@ void main() {
     late MedixState state;
 
     setUp(() {
-      state = MedixState(repository: MedicationRepository.demo());
+      state = MedixState(repository: buildTestRepository());
     });
 
     tearDown(() {
