@@ -53,7 +53,6 @@ class Medication {
     this.patientLeafletUrl,
     this.officialRecordUrl,
     this.shortageStatus,
-    this.isDemo = true,
   });
 
   final String id;
@@ -89,7 +88,6 @@ class Medication {
   final String? patientLeafletUrl;
   final String? officialRecordUrl;
   final String? shortageStatus;
-  final bool isDemo;
 
   static bool _hasUsefulValue(String value) {
     final normalized = value.trim().toLowerCase();
@@ -208,7 +206,6 @@ class Medication {
     String? patientLeafletUrl,
     String? officialRecordUrl,
     String? shortageStatus,
-    bool? isDemo,
   }) {
     return Medication(
       id: id ?? this.id,
@@ -250,7 +247,6 @@ class Medication {
       patientLeafletUrl: patientLeafletUrl ?? this.patientLeafletUrl,
       officialRecordUrl: officialRecordUrl ?? this.officialRecordUrl,
       shortageStatus: shortageStatus ?? this.shortageStatus,
-      isDemo: isDemo ?? this.isDemo,
     );
   }
 }
