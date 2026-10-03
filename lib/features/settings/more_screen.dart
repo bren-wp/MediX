@@ -171,7 +171,7 @@ class MoreScreen extends StatelessWidget {
           _MenuItem(
             icon: Icons.local_pharmacy_outlined,
             title: 'Ljekarne u blizini',
-            subtitle: 'Lokacijski modul',
+            subtitle: 'Otvori pretragu ljekarni u aplikaciji za karte',
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -180,8 +180,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.school_outlined,
-            title: 'Edukacija i novosti',
-            subtitle: 'Stručni sadržaj unutar MediX iskustva',
+            title: 'Edukacija i vodiči',
+            subtitle: 'Kratki vodiči za sigurnije korištenje MediX alata',
             color: MedixColors.warning,
             onTap: () => _push(
               context,
