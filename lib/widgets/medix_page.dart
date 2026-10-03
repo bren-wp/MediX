@@ -55,37 +55,48 @@ class MedixSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final card = Container(
-      decoration: BoxDecoration(
-        color: MedixColors.surface,
-        borderRadius: BorderRadius.circular(17),
-        border: Border.all(
-          color: accent?.withValues(alpha: .65) ?? MedixColors.borderSoft,
+    final radius = BorderRadius.circular(17);
+    final decoration = BoxDecoration(
+      color: MedixColors.surface,
+      borderRadius: radius,
+      border: Border.all(
+        color: accent?.withValues(alpha: .65) ??
+            MedixColors.borderSoft,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: (accent ?? MedixColors.primary)
+              .withValues(alpha: .05),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: (accent ?? MedixColors.primary).withValues(alpha: .05),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: padding,
-        child: child,
-      ),
+      ],
     );
 
     if (onTap == null) {
-      return card;
+      return Container(
+        decoration: decoration,
+        padding: padding,
+        child: child,
+      );
     }
 
     return Material(
       color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(17),
-        child: card,
+      child: Ink(
+        decoration: decoration,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: radius,
+          splashColor:
+              MedixColors.primary.withValues(alpha: .10),
+          highlightColor:
+              MedixColors.primary.withValues(alpha: .05),
+          child: Padding(
+            padding: padding,
+            child: child,
+          ),
+        ),
       ),
     );
   }
