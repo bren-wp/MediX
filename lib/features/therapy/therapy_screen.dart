@@ -106,6 +106,32 @@ class _TherapyCard extends StatelessWidget {
   final TherapyEntry entry;
   final MedixState state;
 
+  Future<void> _confirmRemove(BuildContext context) async {
+    final shouldRemove = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Ukloniti terapiju?'),
+        content: const Text(
+          'Ovaj unos i njegovi lokalni podsjetnici bit će uklonjeni.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: const Text('Odustani'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: const Text('Ukloni'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldRemove == true) {
+      state.removeTherapy(entry.id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final medication = state.medicationById(entry.medicationId);
@@ -203,7 +229,7 @@ class _TherapyCard extends StatelessWidget {
               ),
               IconButton(
                 tooltip: 'Obriši terapiju',
-                onPressed: () => state.removeTherapy(entry.id),
+                onPressed: () => _confirmRemove(context),
                 icon: const Icon(Icons.delete_outline),
                 color: MedixColors.danger,
               ),
@@ -351,7 +377,10 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
                     (medication) => DropdownMenuItem<String>(
                       value: medication.id,
                       child: Text(
-                        '${medication.name} · ${medication.strength}',
+                        medication.compactSubtitle == null
+                            ? medication.name
+                            : '${medication.name} · '
+                                '${medication.compactSubtitle}',
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
