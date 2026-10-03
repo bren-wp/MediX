@@ -25,6 +25,14 @@ class _TherapyCalendarScreenState extends State<TherapyCalendarScreen> {
       ...List<int?>.filled(firstWeekday - 1, null),
       ...List<int>.generate(days, (i) => i + 1),
     ];
+    final entriesForSelectedDay = widget.state.therapy
+        .where((entry) => entry.appliesTo(selected))
+        .toList(growable: false)
+      ..sort((a, b) {
+        final firstA = a.times.isEmpty ? '' : a.times.first;
+        final firstB = b.times.isEmpty ? '' : b.times.first;
+        return firstA.compareTo(firstB);
+      });
 
     return AnimatedBuilder(
       animation: widget.state,
@@ -89,9 +97,20 @@ class _TherapyCalendarScreenState extends State<TherapyCalendarScreen> {
                     itemBuilder: (context, index) {
                       final day = cells[index];
                       if (day == null) return const SizedBox.shrink();
+                      final date = DateTime(
+                        month.year,
+                        month.month,
+                        day,
+                      );
                       final isSelected = selected.day == day &&
                           selected.month == month.month &&
                           selected.year == month.year;
+                      final hasActiveTherapy =
+                          widget.state.therapy.any(
+                        (entry) =>
+                            entry.isActive &&
+                            entry.appliesTo(date),
+                      );
                       return InkWell(
                         borderRadius: BorderRadius.circular(999),
                         onTap: () => setState(() {
@@ -105,12 +124,32 @@ class _TherapyCalendarScreenState extends State<TherapyCalendarScreen> {
                                 : Colors.transparent,
                             shape: BoxShape.circle,
                           ),
-                          child: Text(
-                            '$day',
-                            style: TextStyle(
-                              fontWeight:
-                                  isSelected ? FontWeight.w900 : FontWeight.w500,
-                            ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text(
+                                '$day',
+                                style: TextStyle(
+                                  fontWeight: isSelected
+                                      ? FontWeight.w900
+                                      : FontWeight.w500,
+                                ),
+                              ),
+                              if (hasActiveTherapy)
+                                Positioned(
+                                  bottom: 3,
+                                  child: Container(
+                                    width: 4,
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : MedixColors.success,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                       );
@@ -127,6 +166,17 @@ class _TherapyCalendarScreenState extends State<TherapyCalendarScreen> {
                 fontWeight: FontWeight.w900,
               ),
             ),
+            const SizedBox(height: 4),
+            Text(
+              entriesForSelectedDay.isEmpty
+                  ? 'Nema planiranih terapija za ovaj dan.'
+                  : '${entriesForSelectedDay.length} '
+                      '${entriesForSelectedDay.length == 1 ? 'terapija' : 'terapije'}',
+              style: const TextStyle(
+                color: MedixColors.textSecondary,
+                fontSize: 12,
+              ),
+            ),
             const SizedBox(height: 10),
             if (widget.state.therapy.isEmpty)
               const MedixSectionCard(
@@ -135,8 +185,28 @@ class _TherapyCalendarScreenState extends State<TherapyCalendarScreen> {
                   style: TextStyle(color: MedixColors.textSecondary),
                 ),
               )
+            else if (entriesForSelectedDay.isEmpty)
+              const MedixSectionCard(
+                child: Row(
+                  children: [
+                    MedixIconBubble(
+                      icon: Icons.event_available_outlined,
+                      color: MedixColors.textMuted,
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Za odabrani dan nema terapije prema spremljenom rasporedu.',
+                        style: TextStyle(
+                          color: MedixColors.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
             else
-              ...widget.state.therapy.map((entry) {
+              ...entriesForSelectedDay.map((entry) {
                 final medication = widget.state.medicationById(entry.medicationId);
                 if (medication == null) return const SizedBox.shrink();
                 return Padding(
