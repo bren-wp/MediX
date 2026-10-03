@@ -467,6 +467,12 @@ class _MetadataSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final reviewed = medication.lastReviewed;
+    final reviewedLabel =
+        '${reviewed.day.toString().padLeft(2, '0')}.'
+        '${reviewed.month.toString().padLeft(2, '0')}.'
+        '${reviewed.year}.';
+
     final rows = <(String, String)>[
       if (medication.atcCode != null) ('ATK šifra', medication.atcCode!),
       if (medication.authorizationNumber != null)
@@ -493,6 +499,9 @@ class _MetadataSection extends StatelessWidget {
         ('Status nestašice', medication.shortageStatus!),
       if (medication.hzzoGuidelineCode != null)
         ('Oznaka smjernice', medication.hzzoGuidelineCode!),
+      if (medication.sourceLabel.trim().isNotEmpty)
+        ('Izvor podataka', medication.sourceLabel),
+      ('Zadnja provjera', reviewedLabel),
     ];
 
     return MedixSectionCard(
