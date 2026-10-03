@@ -1,24 +1,24 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-02T10:29:36.620509+00:00",
+  "generated_at": "2026-10-03T09:51:27.895745+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16abf8784efa3f.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ac0d01394727.xlsx",
     "scope": "public_human_medicine_search_results"
   },
   "quality": {
-    "accepted_records": 4462,
-    "rejected_records": 1882,
+    "accepted_records": 4461,
+    "rejected_records": 1881,
     "rejected_reasons": {
       "legal_entity_as_name": 24,
       "missing_authorization_number": 1597,
       "missing_name": 1,
-      "revoked_authorization": 260
+      "revoked_authorization": 259
     }
   },
-  "record_count": 4462,
+  "record_count": 4461,
   "records": [
     {
       "id": "halmed-49ce253d899c5e90f7ec6628",
@@ -20038,7 +20038,7 @@
       "category": "Mišićno-koštani sustav",
       "market_status": "stavljeno u promet",
       "shortage_status": "nema nestašice",
-      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Celixib-100-mg-tvrde-kapsule/15244/"
+      "official_record_url": null
     },
     {
       "id": "halmed-85fd8fd5a8940572dec6b5ff",
@@ -20064,7 +20064,7 @@
       "category": "Mišićno-koštani sustav",
       "market_status": "stavljeno u promet",
       "shortage_status": "u tijeku",
-      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Celixib-200-mg-tvrde-kapsule/15245/"
+      "official_record_url": null
     },
     {
       "id": "halmed-b805a1ff97f81f383636cc45",
@@ -31541,7 +31541,7 @@
       "composition": "jedna filmom obložena tableta sadrži 5 mg donepezilklorida u obliku hidrata",
       "form": "filmom obložena tableta",
       "strength": "5 mg",
-      "package": "HR-H-058308404-01 | 28 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
+      "package": "HR-H-058308404-01 | 28 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku",
       "manufacturer": "Pliva Hrvatska d.o.o., Zagreb, Hrvatska",
       "holder": "Pliva Hrvatska d.o.o., Prilaz baruna Filipovića 25, Zagreb, Hrvatska",
       "decision_date": "24.07.2019.",
@@ -31555,7 +31555,7 @@
       "atc_code": "N06DA02",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "shortage_status": "u tijeku",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Donepezil-Pliva-5-mg-filmom-oblozene-tablete/10170/"
     },
     {
@@ -55529,32 +55529,6 @@
       "market_status": "stavljeno u promet",
       "shortage_status": "nema nestašice",
       "official_record_url": null
-    },
-    {
-      "id": "halmed-7589f3275a18c3c25fae31a3",
-      "name": "Lamisil 250 mg tablete",
-      "previous_name": "",
-      "authorization_number": "HR-H-798097379",
-      "active_ingredient": "terbinafinklorid",
-      "composition": "jedna tableta sadrži 250 mg terbinafina (u obliku terbinafinklorida)",
-      "form": "tableta",
-      "strength": "250 mg",
-      "package": "HR-H-798097379-01 | 14 tableta u blisteru, u kutiji | trajni prekid opskrbe | -",
-      "manufacturer": "Novartis Pharma GmbH, Nürnberg, Njemačka<br/>Lek Pharmaceuticals d.d., Lendava, Slovenija<br/>Novartis Farmacéutica S.A., Barcelona, Španjolska",
-      "holder": "Novartis Hrvatska d.o.o., Radnička cesta 37b, Zagreb, Hrvatska",
-      "decision_date": "04.09.2018.",
-      "authorization_expiry": "neograničen",
-      "class": "UP/I-530-09/17-02/389",
-      "urbroj": "381-12-01/38-18-06",
-      "rx_status": "na recept",
-      "prescribing_mode": "neponovljivi recept",
-      "dispensing_place": "u ljekarni",
-      "advertising": "zabranjeno",
-      "atc_code": "D01BA02",
-      "category": "Dermatološki lijekovi",
-      "market_status": "trajni prekid opskrbe",
-      "shortage_status": "",
-      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Lamisil-250-mg-tablete/15039/"
     },
     {
       "id": "halmed-c9eabdbdfe6cdfc510ce9994",
