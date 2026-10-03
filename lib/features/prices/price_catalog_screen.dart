@@ -15,7 +15,19 @@ class PriceCatalogScreen extends StatefulWidget {
 
 class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
   final controller = TextEditingController();
-  late final Future<_PriceCatalog> catalog = _loadCatalog();
+  late Future<_PriceCatalog> catalog;
+
+  @override
+  void initState() {
+    super.initState();
+    catalog = _loadCatalog();
+  }
+
+  void _reload() {
+    setState(() {
+      catalog = _loadCatalog();
+    });
+  }
 
   @override
   void dispose() {
@@ -87,20 +99,21 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
         future: catalog,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Center(
-              child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Text(
-                  'Službeni HALMED cjenik trenutno nije učitan.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: MedixColors.textSecondary),
-                ),
-              ),
+            return MedixEmptyState(
+              icon: Icons.cloud_off_outlined,
+              title: 'Cjenik nije dostupan',
+              message:
+                  'Službeni cjenovni katalog trenutno nije moguće učitati iz lokalnog paketa aplikacije.',
+              color: MedixColors.warning,
+              actionLabel: 'Pokušaj ponovno',
+              onAction: _reload,
             );
           }
 
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           final data = snapshot.data!;
@@ -117,71 +130,123 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
                     row.holder,
                   ].join(' ').toLowerCase();
                   return haystack.contains(query);
-                }).toList();
+                }).toList(growable: false);
+          final visible =
+              filtered.take(300).toList(growable: false);
+          final hasMore = filtered.length > visible.length;
 
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+          return Column(
             children: [
-              TextField(
-                controller: controller,
-                onChanged: (_) => setState(() {}),
-                decoration: const InputDecoration(
-                  hintText: 'Naziv, djelatna tvar, ATK, broj odobrenja...',
-                  prefixIcon: Icon(Icons.search_rounded),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+                child: TextField(
+                  controller: controller,
+                  onChanged: (_) => setState(() {}),
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    hintText:
+                        'Naziv, djelatna tvar, ATK, broj odobrenja...',
+                    prefixIcon:
+                        const Icon(Icons.search_rounded),
+                    suffixIcon: controller.text.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: 'Očisti pretragu',
+                            onPressed: () {
+                              controller.clear();
+                              setState(() {});
+                            },
+                            icon: const Icon(
+                              Icons.close_rounded,
+                            ),
+                          ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 10),
-              MedixSectionCard(
-                accent: MedixColors.success,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const MedixIconBubble(
-                      icon: Icons.euro_rounded,
-                      color: MedixColors.success,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Ažurirano: ${data.publishedDate}\n'
-                        'Prikazane vrijednosti odnose se na evidentirane cijene pakiranja i nisu nužno maloprodajne cijene ljekarni.',
-                        style: const TextStyle(
-                          color: MedixColors.textSecondary,
-                          height: 1.4,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: MedixSectionCard(
+                  accent: MedixColors.success,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const MedixIconBubble(
+                        icon: Icons.euro_rounded,
+                        color: MedixColors.success,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          '${data.sourceName}\n'
+                          'Ažurirano: ${data.publishedDate}\n'
+                          'Prikazane vrijednosti odnose se na evidentirane cijene pakiranja i nisu nužno maloprodajne cijene ljekarni.',
+                          style: const TextStyle(
+                            color: MedixColors.textSecondary,
+                            height: 1.4,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                '${filtered.length} zapisa',
-                style: const TextStyle(
-                  color: MedixColors.textSecondary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...filtered.take(300).map(
-                    (row) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: _PriceCard(row: row),
-                    ),
+                    ],
                   ),
-              if (filtered.length > 300)
-                const Padding(
-                  padding: EdgeInsets.all(16),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
                   child: Text(
-                    'Za brži prikaz prikazano je prvih 300 rezultata. Suzi pretragu za precizniji rezultat.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
+                    '${filtered.length} zapisa',
+                    style: const TextStyle(
                       color: MedixColors.textSecondary,
-                      fontSize: 11,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
+              ),
+              Expanded(
+                child: filtered.isEmpty
+                    ? MedixEmptyState(
+                        icon: Icons.search_off_rounded,
+                        title: 'Nema podudarnih cijena',
+                        message:
+                            'Promijenite pojam pretrage ili ga očistite.',
+                        actionLabel: 'Očisti pretragu',
+                        onAction: () {
+                          controller.clear();
+                          setState(() {});
+                        },
+                      )
+                    : ListView.separated(
+                        padding: const EdgeInsets.fromLTRB(
+                          16,
+                          0,
+                          16,
+                          28,
+                        ),
+                        itemCount:
+                            visible.length + (hasMore ? 1 : 0),
+                        separatorBuilder: (_, __) =>
+                            const SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          if (index == visible.length) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Text(
+                                'Prikazano je prvih 300 rezultata. Suzi pretragu za precizniji rezultat.',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color:
+                                      MedixColors.textSecondary,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            );
+                          }
+                          return _PriceCard(row: visible[index]);
+                        },
+                      ),
+              ),
             ],
           );
         },
