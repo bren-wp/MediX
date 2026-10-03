@@ -17,16 +17,19 @@ class ManufacturersScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final groups = <String, List<Medication>>{};
     for (final medication in state.repository.medications) {
-      final manufacturer = medication.manufacturer?.trim();
-      final holder =
-          medication.marketingAuthorizationHolder?.trim();
-      final name = manufacturer?.isNotEmpty == true
-          ? manufacturer!
-          : holder?.isNotEmpty == true
-              ? holder!
-              : null;
-      if (name == null) continue;
-      groups.putIfAbsent(name, () => []).add(medication);
+      final names = <String>{
+        if (medication.manufacturer?.trim().isNotEmpty == true)
+          medication.manufacturer!.trim(),
+        if (medication.marketingAuthorizationHolder
+                ?.trim()
+                .isNotEmpty ==
+            true)
+          medication.marketingAuthorizationHolder!.trim(),
+      };
+
+      for (final name in names) {
+        groups.putIfAbsent(name, () => []).add(medication);
+      }
     }
 
     return MedixCatalogGroupScreen(
