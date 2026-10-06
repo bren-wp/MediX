@@ -1,11 +1,11 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-05T11:26:13.119394+00:00",
+  "generated_at": "2026-10-06T11:15:13.652143+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ac38948c4770.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ac4d8365fb33.xlsx",
     "scope": "public_human_medicine_search_results"
   },
   "quality": {
@@ -31515,7 +31515,7 @@
       "composition": "jedna filmom obložena tableta sadrži 10 mg donepezilklorida u obliku hidrata",
       "form": "filmom obložena tableta",
       "strength": "10 mg",
-      "package": "HR-H-170495185-01 | 28 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku",
+      "package": "HR-H-170495185-01 | 28 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Pliva Hrvatska d.o.o., Zagreb, Hrvatska",
       "holder": "Pliva Hrvatska d.o.o., Prilaz baruna Filipovića 25, Zagreb, Hrvatska",
       "decision_date": "24.07.2019.",
@@ -31529,7 +31529,7 @@
       "atc_code": "N06DA02",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Donepezil-Pliva-10-mg-filmom-oblozene-tablete/10169/"
     },
     {
@@ -104081,7 +104081,7 @@
       "composition": "jedna tableta sadrži 2 mg doksazozina u obliku doksazozinmesilata",
       "form": "tableta",
       "strength": "2 mg",
-      "package": "HR-H-106125034-01 | 20 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku HR-H-106125034-02 | 30 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-106125034-01 | 20 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-106125034-02 | 30 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "Pliva Hrvatska d.o.o., Zagreb, Republika Hrvatska",
       "holder": "Pliva Hrvatska d.o.o., Prilaz baruna Filipovića 25, Zagreb",
       "decision_date": "26.03.2018.",
@@ -104095,7 +104095,7 @@
       "atc_code": "C02CA04",
       "category": "Srce i krvožilni sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Tonocardin-2-mg-tablete/14569/"
     },
     {
