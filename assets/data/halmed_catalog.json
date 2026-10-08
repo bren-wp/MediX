@@ -1,24 +1,24 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-07T11:03:27.287061+00:00",
+  "generated_at": "2026-10-08T11:20:44.776286+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ac626f262241.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ac77c8261c04.xlsx",
     "scope": "public_human_medicine_search_results"
   },
   "quality": {
-    "accepted_records": 4467,
-    "rejected_records": 1882,
+    "accepted_records": 4469,
+    "rejected_records": 1883,
     "rejected_reasons": {
       "legal_entity_as_name": 24,
-      "missing_authorization_number": 1598,
+      "missing_authorization_number": 1601,
       "missing_name": 1,
-      "revoked_authorization": 259
+      "revoked_authorization": 257
     }
   },
-  "record_count": 4467,
+  "record_count": 4469,
   "records": [
     {
       "id": "halmed-49ce253d899c5e90f7ec6628",
@@ -8375,7 +8375,7 @@
       "composition": "jedan ml koncentrata sadrži 2 mg arsenovog trioksida jedna bočica od 6 ml sadrži 12 mg arsenovog trioksida",
       "form": "Koncentrat za otopinu za infuziju",
       "strength": "2 mg",
-      "package": "HR-H-691684005-01 | 1 bočica sa 6 ml koncentrata, u kutiji | nije stavljeno u promet | - HR-H-691684005-02 | 10 bočica sa 6 ml koncentrata, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-691684005-01 | 1 bočica sa 6 ml koncentrata, u kutiji | nije stavljeno u promet | - HR-H-691684005-02 | 10 bočica sa 6 ml koncentrata, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Tillomed Malta Limited, San Gwann, Malta",
       "holder": "Tillomed Malta Limited, Tower Business Centre 2nd floor, Tower Street, SWATAR, BIRKIRKARA, Malta",
       "decision_date": "02.10.2025.",
@@ -8388,8 +8388,8 @@
       "advertising": "zabranjeno",
       "atc_code": "L01XX27",
       "category": "Antineoplastici i imunomodulatori",
-      "market_status": "nije stavljeno u promet",
-      "shortage_status": "",
+      "market_status": "stavljeno u promet",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Arsenov-trioksid-Tillomed-2-mg-ml-koncentrat-za-otopinu-za-infuziju/17889/"
     },
     {
@@ -25553,6 +25553,58 @@
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Daforbis-5-mg-filmom-oblozene-tablete/17019/"
     },
     {
+      "id": "halmed-5d1290b16c3818d557a2fbc6",
+      "name": "Daforbis Plus 5 mg/1000 mg filmom obložene tablete",
+      "previous_name": "",
+      "authorization_number": "HR-H-234265605",
+      "active_ingredient": "dapagliflozin; metforminklorid",
+      "composition": "jedna tableta sadrži 5 mg dapagliflozina i 1000 mg metforminklorida",
+      "form": "Filmom obložena tableta",
+      "strength": "5 mg",
+      "package": "HR-H-234265605-01 | 56 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-234265605-02 | 56 tableta u blisteru s jediničnom dozom, u kutiji | nije stavljeno u promet | - HR-H-234265605-03 | 60 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-234265605-04 | 196 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
+      "manufacturer": "Mylan Hungary Kft, Komárom, Mađarska<br/>Viatris Germany GmbH, Bad Homburg, Hesse, Njemačka",
+      "holder": "Viatris Limited, Damastown Industrial Park, Mulhuddart, Dublin, Irska",
+      "decision_date": "02.10.2026.",
+      "authorization_expiry": "02.10.2031.",
+      "class": "UP/I-530-09/25-01/93",
+      "urbroj": "381-12-01/286-26-11",
+      "rx_status": "na recept",
+      "prescribing_mode": "ponovljivi recept",
+      "dispensing_place": "u ljekarni",
+      "advertising": "zabranjeno",
+      "atc_code": "A10BD15",
+      "category": "Probavni sustav i metabolizam",
+      "market_status": "nije stavljeno u promet",
+      "shortage_status": "",
+      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Daforbis-Plus-5-mg-1000-mg-filmom-oblozene-tablete/18310/"
+    },
+    {
+      "id": "halmed-ec922b608dc7265bc04ea466",
+      "name": "Daforbis Plus 5 mg/850 mg filmom obložene tablete",
+      "previous_name": "",
+      "authorization_number": "HR-H-328120686",
+      "active_ingredient": "dapagliflozin; metforminklorid",
+      "composition": "jedna tableta sadrži 5 mg dapagliflozina i 850 mg metforminklorida",
+      "form": "Filmom obložena tableta",
+      "strength": "5 mg",
+      "package": "HR-H-328120686-01 | 56 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-328120686-02 | 56 tableta u blisteru s jediničnom dozom, u kutiji | nije stavljeno u promet | - HR-H-328120686-03 | 60 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-328120686-04 | 196 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
+      "manufacturer": "Mylan Hungary Kft, Komárom, Mađarska<br/>Viatris Germany GmbH, Bad Homburg, Hesse, Njemačka",
+      "holder": "Viatris Limited, Damastown Industrial Park, Mulhuddart, Dublin, Irska",
+      "decision_date": "02.10.2026.",
+      "authorization_expiry": "02.10.2031.",
+      "class": "UP/I-530-09/25-01/92",
+      "urbroj": "381-12-01/286-26-13",
+      "rx_status": "na recept",
+      "prescribing_mode": "ponovljivi recept",
+      "dispensing_place": "u ljekarni",
+      "advertising": "zabranjeno",
+      "atc_code": "A10BD15",
+      "category": "Probavni sustav i metabolizam",
+      "market_status": "nije stavljeno u promet",
+      "shortage_status": "",
+      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Daforbis-Plus-5-mg-850-mg-filmom-oblozene-tablete/18309/"
+    },
+    {
       "id": "halmed-cbce79e8033a06b8fb2243ae",
       "name": "Daglyfy 100 mg/10 mg filmom obložene tablete",
       "previous_name": "",
@@ -33205,7 +33257,7 @@
       "composition": "jedan transdermalni flaster (10,5 cm2) sadrži 4,2 mg fentanila (brzina otpuštanja je 25 µg/h što odgovara 0,6 mg/24 h)",
       "form": "transdermalni flaster",
       "strength": "25 mikrograma",
-      "package": "HR-H-222344953-01 | 5 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | stavljeno u promet | nema nestašice HR-H-222344953-02 | 3 transdermalna flastera pojedinačno pakirana u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-03 | 4 transdermalna flastera pojedinačno pakirana u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-04 | 8 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-05 | 10 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-06 | 16 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-07 | 20 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-08 | 30 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-222344953-01 | 5 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | stavljeno u promet | u tijeku HR-H-222344953-02 | 3 transdermalna flastera pojedinačno pakirana u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-03 | 4 transdermalna flastera pojedinačno pakirana u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-04 | 8 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-05 | 10 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-06 | 16 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-07 | 20 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | - HR-H-222344953-08 | 30 transdermalnih flastera pojedinačno pakiranih u zaštitnu vrećicu, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "Janssen Pharmaceutica N.V., Beerse, Belgija",
       "holder": "Johnson & Johnson S.E. d.o.o., Oreškovićeva 6h, Zagreb, Hrvatska",
       "decision_date": "15.02.2017.",
@@ -33219,7 +33271,7 @@
       "atc_code": "N02AB03",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "shortage_status": "u tijeku",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Durogesic-25-mikrograma-sat-transdermalni-flaster/13408/"
     },
     {
@@ -37131,7 +37183,7 @@
       "composition": "1 ml sadrži 1 mg adrenalina (epinefrina). Pojedinačna doza (0,3 ml) sadrži 0,3 mg (300 mikrograma) adrenalina",
       "form": "otopina za injekciju u napunjenoj brizgalici",
       "strength": "0,3 mg",
-      "package": "HR-H-299251328-01 | 1 naprava za automatsko injektiranje s 2 ml otopine, u kutiji | stavljeno u promet | nema nestašice HR-H-299251328-02 | 2 naprave za automatsko injektiranje s 2 ml otopine, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-299251328-01 | 1 naprava za automatsko injektiranje s 2 ml otopine, u kutiji | stavljeno u promet | u tijeku HR-H-299251328-02 | 2 naprave za automatsko injektiranje s 2 ml otopine, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "Meda Pharma GmbH & Co. KG, Bad Homburg, Njemačka",
       "holder": "Viatris Hrvatska d.o.o., Koranska 2, Zagreb, Hrvatska",
       "decision_date": "16.03.2021.",
@@ -37145,7 +37197,7 @@
       "atc_code": "C01CA24",
       "category": "Srce i krvožilni sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "shortage_status": "u tijeku",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/EpiPen-03-mg-otopina-za-injekciju-u-napunjenoj-brizgalici/14374/"
     },
     {
@@ -53876,7 +53928,7 @@
       "form": "Prašak za otopinu za injekciju / infuziju",
       "strength": "80 mg",
       "package": "HR-H-829639898-01 | 1 bočica sa praškom, u kutiji | nije stavljeno u promet | - HR-H-829639898-02 | 10 bočica s praškom, u kutiji | nije stavljeno u promet | -",
-      "manufacturer": "Laboratori Fundacio Dau, Barcelona, Španjolska<br/>Accord Healthcare Polska Sp. z o.o., Pabianice, Poljska",
+      "manufacturer": "Laboratori Fundacio Dau, Barcelona, Španjolska<br/>Accord Healthcare Polska Sp. z o.o., Pabianice, Poljska<br/>Accord Healthcare Single Member S.A., Lamia, Grčka",
       "holder": "Accord Healthcare Polska Sp. z o.o., Ul. Tasmowa 7, Mazowieckie, Varšava, Poljska",
       "decision_date": "19.04.2024.",
       "authorization_expiry": "19.04.2029.",
@@ -53902,7 +53954,7 @@
       "form": "Prašak za otopinu za injekciju / infuziju",
       "strength": "160 mg",
       "package": "HR-H-221754286-01 | 1 bočica s praškom, u kutiji | nije stavljeno u promet | - HR-H-221754286-02 | 10 bočica s praškom, u kutiji | stavljeno u promet | nema nestašice",
-      "manufacturer": "Accord Healthcare Polska Sp. z o.o., Pabianice, Poljska<br/>Laboratori Fundacio Dau, Barcelona, Španjolska",
+      "manufacturer": "Accord Healthcare Polska Sp. z o.o., Pabianice, Poljska<br/>Laboratori Fundacio Dau, Barcelona, Španjolska<br/>Accord Healthcare Single Member S.A., Lamia, Grčka",
       "holder": "Accord Healthcare Polska Sp. z o.o., Ul. Tasmowa 7, Mazowieckie, Varšava, Poljska",
       "decision_date": "19.04.2024.",
       "authorization_expiry": "19.04.2029.",
@@ -54109,7 +54161,7 @@
       "composition": "jedna tableta sadrži 1,25 mg bisoprololfumarata",
       "form": "tableta",
       "strength": "1,25 mg",
-      "package": "HR-H-732086654-01 | 20 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku",
+      "package": "HR-H-732086654-01 | 20 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Pliva Hrvatska d.o.o., Zagreb, Hrvatska Chanelle Medical, Loughrea, Co. Galway, Irska",
       "holder": "Pliva Hrvatska d.o.o., Prilaz baruna Filipovića 25, Zagreb, Hrvatska",
       "decision_date": "13.09.2019.",
@@ -54123,7 +54175,7 @@
       "atc_code": "C07AB07",
       "category": "Srce i krvožilni sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "u tijeku",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Kordobis-125-mg-tablete/10184/"
     },
     {
@@ -62951,7 +63003,7 @@
       "strength": "500 mg",
       "package": "HR-H-962744878-01 | 10 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-962744878-02 | 20 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-962744878-03 | 30 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-962744878-04 | 60 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-962744878-05 | 100 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "Medochemie Ltd., Agios Athanassios, Limassol, Cipar",
-      "holder": "Medochemie Ltd., Constatinoupoleos Str. 1-10, Limassol, Cipar",
+      "holder": "Medochemie Ltd., Konstantinoupoleos 1-10, Limassol, Cipar",
       "decision_date": "20.05.2025.",
       "authorization_expiry": "20.05.2030.",
       "class": "UP/I-530-09/23-01/279",
@@ -83541,7 +83593,7 @@
       "composition": "1 g masti sadrži 100 000 IU nistatina, 1 tableta za rodnicu sadrži 100 000 IU nistatina",
       "form": "Mast + tableta za rodnicu",
       "strength": "000 IU",
-      "package": "HR-H-081769049-01 | 1 tuba sa 25 g masti, 6 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-081769049-01 | 1 tuba sa 25 g masti, 6 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Dr. Pfleger Arzneimittel GmbH, Bamberg, Njemačka",
       "holder": "Proximum d.o.o., Vodnikova 5, Zagreb, Hrvatska",
       "decision_date": "05.11.2025.",
@@ -83554,8 +83606,8 @@
       "advertising": "dopušteno",
       "atc_code": "G01AA01",
       "category": "Mokraćni i spolni sustav",
-      "market_status": "nije stavljeno u promet",
-      "shortage_status": "",
+      "market_status": "stavljeno u promet",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Pronigyn-100-000-IU-g-mast-i-100-000-IU-tablete-za-rodnicu/17935/"
     },
     {
@@ -98387,7 +98439,7 @@
       "composition": "1 ml otopine sadrži 100 mg sugamadeksa (u obliku sugamadeksnatrija)",
       "form": "otopina za injekciju",
       "strength": "100 mg",
-      "package": "HR-H-899515195-01 | 1 bočica s 2 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-899515195-02 | 1 bočica s 5 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-899515195-03 | 10 bočica s 2 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-899515195-04 | 10 bočica s 5 ml otopine, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-899515195-01 | 1 bočica s 2 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-899515195-02 | 1 bočica s 5 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-899515195-03 | 10 bočica s 2 ml otopine, u kutiji | stavljeno u promet | nema nestašice HR-H-899515195-04 | 10 bočica s 5 ml otopine, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "Accord Healthcare Polska Sp. z o.o., Pabianice, Poljska<br/>Laboratori Fundacio Dau, Barcelona, Španjolska<br/>Accord Healthcare Single Member S.A., Lamia, Grčka",
       "holder": "Accord Healthcare Polska Sp. z o.o., Ul. Tasmowa 7, Mazowieckie, Varšava, Poljska",
       "decision_date": "22.11.2024.",
@@ -98400,8 +98452,8 @@
       "advertising": "zabranjeno",
       "atc_code": "V03AB35",
       "category": "Razni pripravci (ATK V)",
-      "market_status": "nije stavljeno u promet",
-      "shortage_status": "",
+      "market_status": "stavljeno u promet",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Sugamadeks-Accord-100-mg-ml-otopina-za-injekciju/17505/"
     },
     {
@@ -103732,7 +103784,7 @@
       "category": "Antineoplastici i imunomodulatori",
       "market_status": "nije stavljeno u promet",
       "shortage_status": "",
-      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Tofacitinib-Devatis-10-mg-filmom-oblozene-tablete-/18308/"
+      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Tofacitinib-Devatis-10-mg-filmom-oblozene-tablete/18308/"
     },
     {
       "id": "halmed-67e18aedbe6403495b80164b",
@@ -103758,7 +103810,7 @@
       "category": "Antineoplastici i imunomodulatori",
       "market_status": "nije stavljeno u promet",
       "shortage_status": "",
-      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Tofacitinib-Devatis-5-mg-filmom-oblozene-tablete-/18307/"
+      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Tofacitinib-Devatis-5-mg-filmom-oblozene-tablete/18307/"
     },
     {
       "id": "halmed-ed8fb8d9284468771f0a1fb9",
@@ -114533,7 +114585,7 @@
       "composition": "jedna tableta sadrži 50 mg mirabegrona",
       "form": "Tableta s produljenim oslobađanjem",
       "strength": "50 mg",
-      "package": "HR-H-270534437-01 | 30 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-270534437-02 | 90 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-270534437-03 | 100 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-270534437-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-270534437-02 | 90 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-270534437-03 | 100 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "Belupo lijekovi i kozmetika d.d., Koprivnica, Hrvatska",
       "holder": "Belupo lijekovi i kozmetika d.d., Ulica Danica 5, Koprivnica, Hrvatska",
       "decision_date": "22.01.2026.",
@@ -114546,8 +114598,8 @@
       "advertising": "zabranjeno",
       "atc_code": "G04BD12",
       "category": "Mokraćni i spolni sustav",
-      "market_status": "nije stavljeno u promet",
-      "shortage_status": "",
+      "market_status": "stavljeno u promet",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Zerjaq-50-mg-tablete-s-produljenim-oslobadanjem/17982/"
     },
     {
