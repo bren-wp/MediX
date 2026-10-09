@@ -19,7 +19,7 @@ class TherapyScreen extends StatelessWidget {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: MedixColors.surface,
-      builder: (_) => _AddTherapySheet(state: state),
+      builder: (_) => _TherapyEditorSheet(state: state),
     );
   }
 
@@ -105,6 +105,19 @@ class _TherapyCard extends StatelessWidget {
 
   final TherapyEntry entry;
   final MedixState state;
+
+  Future<void> _edit(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: MedixColors.surface,
+      builder: (_) => _TherapyEditorSheet(
+        state: state,
+        entry: entry,
+      ),
+    );
+  }
 
   Future<void> _confirmRemove(BuildContext context) async {
     final shouldRemove = await showDialog<bool>(
@@ -237,6 +250,12 @@ class _TherapyCard extends StatelessWidget {
                 },
               ),
               IconButton(
+                tooltip: 'Uredi terapiju',
+                onPressed: () => _edit(context),
+                icon: const Icon(Icons.edit_outlined),
+                color: MedixColors.cyan,
+              ),
+              IconButton(
                 tooltip: 'Obriši terapiju',
                 onPressed: () => _confirmRemove(context),
                 icon: const Icon(Icons.delete_outline),
@@ -250,29 +269,58 @@ class _TherapyCard extends StatelessWidget {
   }
 }
 
-class _AddTherapySheet extends StatefulWidget {
-  const _AddTherapySheet({
+class _TherapyEditorSheet extends StatefulWidget {
+  const _TherapyEditorSheet({
     required this.state,
+    this.entry,
   });
 
   final MedixState state;
+  final TherapyEntry? entry;
 
   @override
-  State<_AddTherapySheet> createState() => _AddTherapySheetState();
+  State<_TherapyEditorSheet> createState() => _TherapyEditorSheetState();
 }
 
-class _AddTherapySheetState extends State<_AddTherapySheet> {
+class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
   final doseController = TextEditingController();
   final List<TimeOfDay> times = <TimeOfDay>[];
-  final Set<int> weekdays = <int>{1, 2, 3, 4, 5, 6, 7};
+  final Set<int> weekdays = <int>{};
   String? medicationId;
+
+  bool get isEditing => widget.entry != null;
 
   @override
   void initState() {
     super.initState();
-    if (widget.state.repository.medications.isNotEmpty) {
-      medicationId = widget.state.repository.medications.first.id;
+    final entry = widget.entry;
+    if (entry != null) {
+      medicationId = entry.medicationId;
+      doseController.text = entry.doseDescription;
+      weekdays.addAll(entry.weekdays);
+      times.addAll(entry.times.map(_parseTime).whereType<TimeOfDay>());
+    } else {
+      weekdays.addAll(const [1, 2, 3, 4, 5, 6, 7]);
+      if (widget.state.repository.medications.isNotEmpty) {
+        medicationId = widget.state.repository.medications.first.id;
+      }
     }
+  }
+
+  TimeOfDay? _parseTime(String value) {
+    final parts = value.split(':');
+    if (parts.length != 2) return null;
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null ||
+        minute == null ||
+        hour < 0 ||
+        hour > 23 ||
+        minute < 0 ||
+        minute > 59) {
+      return null;
+    }
+    return TimeOfDay(hour: hour, minute: minute);
   }
 
   @override
@@ -296,7 +344,13 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
           item.minute == selected.minute,
     );
     if (!alreadyExists) {
-      setState(() => times.add(selected));
+      setState(() {
+        times.add(selected);
+        times.sort(
+          (a, b) => (a.hour * 60 + a.minute)
+              .compareTo(b.hour * 60 + b.minute),
+        );
+      });
     }
   }
 
@@ -331,12 +385,33 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
     final formattedTimes =
         times.map((time) => _formatTime(context, time)).toList();
 
-    widget.state.addTherapy(
-      medicationId: medicationId!,
-      doseDescription: doseController.text,
-      times: formattedTimes,
-      weekdays: weekdays.toList()..sort(),
-    );
+    final entry = widget.entry;
+    final saved = entry == null
+        ? (() {
+            widget.state.addTherapy(
+              medicationId: medicationId!,
+              doseDescription: doseController.text,
+              times: formattedTimes,
+              weekdays: weekdays.toList()..sort(),
+            );
+            return true;
+          })()
+        : widget.state.updateTherapy(
+            therapyId: entry.id,
+            medicationId: medicationId!,
+            doseDescription: doseController.text,
+            times: formattedTimes,
+            weekdays: weekdays.toList()..sort(),
+          );
+
+    if (!saved) {
+      messenger.showSnackBar(
+        const SnackBar(
+          content: Text('Terapiju nije moguće spremiti. Provjerite podatke.'),
+        ),
+      );
+      return;
+    }
 
     Navigator.of(context).pop();
 
@@ -362,9 +437,9 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Dodaj terapiju',
-              style: TextStyle(
+            Text(
+              isEditing ? 'Uredi terapiju' : 'Dodaj terapiju',
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
               ),
@@ -492,7 +567,7 @@ class _AddTherapySheetState extends State<_AddTherapySheet> {
               child: FilledButton.icon(
                 onPressed: _save,
                 icon: const Icon(Icons.check_rounded),
-                label: const Text('Spremi terapiju'),
+                label: Text(isEditing ? 'Spremi promjene' : 'Spremi terapiju'),
               ),
             ),
           ],
