@@ -64,6 +64,10 @@ TECHNICAL_NAMES = {
     "nije navedeno",
     "nepoznato",
 }
+SUSPICIOUS_NAME_RE = re.compile(
+    r"^(?:[-–—./\\]+|\d+)$|(?:https?://|www\.|@)",
+    re.IGNORECASE,
+)
 
 REQUIRED_HEADERS = {
     "Naziv",
@@ -173,6 +177,8 @@ def identity_issue(record: dict) -> str | None:
     normalized_name = name.casefold()
     if normalized_name in TECHNICAL_NAMES:
         return "technical_placeholder_name"
+    if SUSPICIOUS_NAME_RE.search(name):
+        return "suspicious_name"
 
     holder = normalized(record.get("holder"))
     manufacturer = normalized(record.get("manufacturer"))
@@ -362,7 +368,7 @@ def main() -> int:
     session.headers.update(
         {
             "User-Agent": (
-                "MediX-catalog-sync/0.3.1 "
+                "MediX-catalog-sync/0.3.4 "
                 "(public HALMED human-medicine catalog synchronization; "
                 "https://github.com/bren-wp/MediX)"
             )
@@ -406,6 +412,10 @@ def main() -> int:
             "search_action": action,
             "export_url": export_url,
             "scope": "public_human_medicine_search_results",
+            "medicine_name_field": "Naziv",
+            "medicine_name_policy": (
+                "copied from the HALMED Naziv column; whitespace normalized only"
+            ),
         },
         "quality": {
             "accepted_records": len(records),
