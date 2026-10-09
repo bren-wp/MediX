@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.3</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
+  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.4</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
 </p>
 
 <p align="center">
@@ -57,7 +57,7 @@ Rezultati se rangiraju iz lokalnog kataloga prema nazivu, djelatnoj tvari, ATK �
 
 ## 🧮 Klinički alati
 
-MediX 0.3.3 uključuje devet brzih kalkulatora i bodovnih sustava:
+MediX 0.3.4 uključuje devet brzih kalkulatora i bodovnih sustava:
 
 **BMI · BSA Mosteller · eGFR CKD-EPI 2021 · CHA₂DS₂-VASc · HAS-BLED · Glasgow Coma Scale · originalni MELD · PERC · Wells PE**
 
@@ -98,6 +98,8 @@ CI pipeline provjerava kod i generira:
 
 Release candidate build prolazi `flutter analyze`, testove, release APK i release AAB korake prije objave artefakata.
 
+Privatni produkcijski keystore učitava se samo kada je lokalno ili u CI okruženju dostupan `android/key.properties`. Bez privatnog ključa release-candidate pipeline namjerno koristi postojeći debug signing kako bi build ostao provjerljiv bez pohrane tajni u repozitorij.
+
 > Produkcijsko potpisivanje za trgovinu zahtijeva privatni release keystore. Privatni ključevi se ne pohranjuju u repozitorij.
 
 ## 🛠️ Tehnologija
@@ -106,8 +108,9 @@ Release candidate build prolazi `flutter analyze`, testove, release APK i releas
 - Android package: `com.brendigo.medix`
 - lokalna pohrana favorita i terapije
 - lokalne Android obavijesti i tjedni raspored podsjetnika
+- uređivanje postojećih terapijskih planova bez brisanja unosa
 - verzionirani offline katalozi
-- automatizirane provjere kvalitete i build pipeline
+- automatizirane provjere kvalitete, provjera izvora službenog naziva lijeka i build pipeline
 
 ## 🧭 Smjer razvoja
 
@@ -116,6 +119,6 @@ MediX se razvija prema jednoj aplikaciji za profesionalni rad s lijekovima: **š
 ---
 
 <p align="center">
-  <strong>MediX 0.3.3</strong><br>
+  <strong>MediX 0.3.4</strong><br>
   Vaš vodič kroz lijekove.
 </p>
