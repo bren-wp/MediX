@@ -178,6 +178,49 @@ class MedixState extends ChangeNotifier {
     _syncReminders();
   }
 
+  bool updateTherapy({
+    required String therapyId,
+    required String medicationId,
+    required String doseDescription,
+    required List<String> times,
+    required List<int> weekdays,
+  }) {
+    final index = _therapy.indexWhere((entry) => entry.id == therapyId);
+    final normalizedTimes = times
+        .map((time) => time.trim())
+        .where((time) => time.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+    final normalizedWeekdays = weekdays
+        .where((day) => day >= 1 && day <= 7)
+        .toSet()
+        .toList()
+      ..sort();
+
+    if (index == -1 ||
+        medicationById(medicationId) == null ||
+        doseDescription.trim().isEmpty ||
+        normalizedTimes.isEmpty ||
+        normalizedWeekdays.isEmpty) {
+      return false;
+    }
+
+    final current = _therapy[index];
+    _therapy[index] = TherapyEntry(
+      id: current.id,
+      medicationId: medicationId,
+      doseDescription: doseDescription.trim(),
+      times: normalizedTimes,
+      weekdays: normalizedWeekdays,
+      isActive: current.isActive,
+    );
+    notifyListeners();
+    _saveTherapy();
+    _syncReminders();
+    return true;
+  }
+
   void toggleTherapy(String therapyId) {
     final index = _therapy.indexWhere((entry) => entry.id == therapyId);
     if (index == -1) {

@@ -2,7 +2,24 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
-## [0.3.3] - u razvoju
+## [0.3.4] - u razvoju
+
+### Dodano
+- potpuno uređivanje postojećeg terapijskog plana: lijek, opis doze, dani i vremena
+- sigurna Android release-signing konfiguracija koja automatski koristi privatni keystore samo kada je dostupan
+- eksplicitna HALMED provenance oznaka da naziv lijeka dolazi iz službenog stupca `Naziv`
+
+### Poboljšano
+- vremena terapije se nakon odabira odmah sortiraju kronološki
+- izmjene terapije prolaze istu normalizaciju i validaciju kao novi unos te ponovno sinkroniziraju lokalne podsjetnike
+- validator odbija dodatne sumnjive identitete lijekova poput URL/e-mail, brojčanih i interpunkcijskih placeholder zapisa
+- HALMED sinkronizacijski identitet i User-Agent ažurirani su za v0.3.4 ciklus
+- uklonjeni su preostali generički Flutter TODO komentari iz Android release konfiguracije
+
+### Testovi
+- pokrivena uspješna izmjena terapije i zaštita od nevaljanog uređivanja bez mutacije postojećeg plana
+
+## [0.3.3] - 2026-10-03
 
 ### Dodano
 - terapijski raspored po danima u tjednu s Android podsjetnicima koji prate odabrane dane

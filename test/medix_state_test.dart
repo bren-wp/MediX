@@ -77,6 +77,54 @@ void main() {
       expect(state.therapy, isEmpty);
     });
 
+    test('updates and normalizes an existing therapy plan', () {
+      state.addTherapy(
+        medicationId: 'paracetamol-500',
+        doseDescription: '1 tableta',
+        times: const ['08:00'],
+      );
+
+      final id = state.therapy.single.id;
+      final updated = state.updateTherapy(
+        therapyId: id,
+        medicationId: 'ibuprofen-400',
+        doseDescription: ' 2 tablete ',
+        times: const ['20:00', '08:00', '20:00'],
+        weekdays: const [5, 1, 5, 3],
+      );
+
+      expect(updated, isTrue);
+      expect(state.therapy.single.id, id);
+      expect(state.therapy.single.medicationId, 'ibuprofen-400');
+      expect(state.therapy.single.doseDescription, '2 tablete');
+      expect(state.therapy.single.times, const ['08:00', '20:00']);
+      expect(state.therapy.single.weekdays, const [1, 3, 5]);
+      expect(state.therapy.single.isActive, isTrue);
+    });
+
+    test('rejects invalid therapy edits without mutating the plan', () {
+      state.addTherapy(
+        medicationId: 'paracetamol-500',
+        doseDescription: '1 tableta',
+        times: const ['08:00'],
+      );
+
+      final before = state.therapy.single;
+      final updated = state.updateTherapy(
+        therapyId: before.id,
+        medicationId: 'missing',
+        doseDescription: '',
+        times: const [],
+        weekdays: const [],
+      );
+
+      expect(updated, isFalse);
+      expect(state.therapy.single.medicationId, before.medicationId);
+      expect(state.therapy.single.doseDescription, before.doseDescription);
+      expect(state.therapy.single.times, before.times);
+      expect(state.therapy.single.weekdays, before.weekdays);
+    });
+
     test('toggles and removes therapy plan', () {
       state.addTherapy(
         medicationId: 'ibuprofen-400',

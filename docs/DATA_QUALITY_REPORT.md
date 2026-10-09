@@ -2,7 +2,7 @@
 
 Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 
-- HALMED generirano: 2026-10-08T11:20:44.776286+00:00
+- HALMED generirano: 2026-10-09T01:34:28.035333+00:00
 - Prihvaćeni HALMED zapisi: 4469
 - Jedinstveni nazivi: 4468
 - Jedinstvene djelatne tvari: 1043
@@ -20,7 +20,7 @@ Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 - Bez ATK: 1
 - Bez pakiranja: 0
 - Odbačeni HALMED zapisi: 1883
-- HZZO enrichment zapisi: 3769
+- HZZO enrichment zapisi: 3785
 - Cjenovni zapisi: 5341
 
 ## Razlozi odbacivanja
@@ -37,6 +37,8 @@ Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 - naziv ne smije biti jednak nositelju ili proizvođaču
 - pravna osoba ne smije biti identitet lijeka
 - tehnički/header placeholderi nisu dopušteni kao naziv
+- URL/e-mail, brojčani i interpunkcijski placeholderi nisu dopušteni kao naziv
+- izvor naziva mora biti eksplicitno vezan uz službeni HALMED stupac `Naziv`
 - ATK je validiran kada je naveden
 - duplicate ID i duplicate identitet zaustavljaju validaciju
 - regresijski zapis `A1 d.o.o.` ne smije postojati

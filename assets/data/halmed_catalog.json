@@ -1,12 +1,14 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-08T11:20:44.776286+00:00",
+  "generated_at": "2026-10-09T01:34:28.035333+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ac77c8261c04.xlsx",
-    "scope": "public_human_medicine_search_results"
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ac844970f3bc.xlsx",
+    "scope": "public_human_medicine_search_results",
+    "medicine_name_field": "Naziv",
+    "medicine_name_policy": "copied from the HALMED Naziv column; whitespace normalized only"
   },
   "quality": {
     "accepted_records": 4469,
@@ -27903,11 +27905,11 @@
       "strength": "4 mg",
       "package": "HR-H-195627237-01 | 3 ampule s 1 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-195627237-02 | 10 ampula s 1 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-195627237-03 | 25 ampula s 1 ml otopine, u kutiji | stavljeno u promet | nema nestašice HR-H-195627237-04 | 50 ampula s 1 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-195627237-05 | 100 ampula s 1 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-195627237-06 | 5 ampula s 2 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-195627237-07 | 10 ampula s 2 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-195627237-08 | 25 ampula s 2 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-195627237-09 | 50 ampula s 2 ml otopine, u kutiji | nije stavljeno u promet | - HR-H-195627237-10 | 100 ampula s 2 ml otopine, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "AS Kalceks, Riga, Latvija",
-      "holder": "AS Kalceks, Krustpils iela 53, Riga, Latvija",
-      "decision_date": "01.12.2021.",
-      "authorization_expiry": "01.12.2026.",
-      "class": "UP/I-530-09/20-01/252",
-      "urbroj": "381-12-01/154-21-05",
+      "holder": "AS Kalceks, Krustpils iela 71E, Riga, Latvija",
+      "decision_date": "07.10.2026.",
+      "authorization_expiry": "neograničen",
+      "class": "UP/I-530-09/25-02/245",
+      "urbroj": "381-12-01/171-26-06",
       "rx_status": "na recept",
       "prescribing_mode": "ograničeni recept",
       "dispensing_place": "u ljekarni",
