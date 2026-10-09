@@ -26,6 +26,10 @@ TECHNICAL_NAMES = {
     "nije navedeno",
     "nepoznato",
 }
+SUSPICIOUS_NAME_RE = re.compile(
+    r"^(?:[-–—./\\]+|\d+)$|(?:https?://|www\.|@)",
+    re.IGNORECASE,
+)
 
 
 def load(path: Path) -> dict:
@@ -59,6 +63,14 @@ def is_valid_atc(value: object | None) -> bool:
 
 
 def validate_halmed(data: dict, minimum: int) -> dict:
+    source = data.get("source")
+    if not isinstance(source, dict):
+        raise RuntimeError("HALMED source metadata is missing.")
+    if clean(source.get("medicine_name_field")) != "Naziv":
+        raise RuntimeError(
+            "HALMED medicine-name provenance is not explicitly bound to the Naziv column."
+        )
+
     records = data.get("records")
     if not isinstance(records, list):
         raise RuntimeError("HALMED records is not a list.")
@@ -102,6 +114,7 @@ def validate_halmed(data: dict, minimum: int) -> dict:
             or (holder and normalized_name == holder)
             or (manufacturer and normalized_name == manufacturer)
             or LEGAL_ENTITY_RE.search(name)
+            or SUSPICIOUS_NAME_RE.search(name)
         ):
             invalid_names.append(name)
 
@@ -270,6 +283,8 @@ Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 - naziv ne smije biti jednak nositelju ili proizvođaču
 - pravna osoba ne smije biti identitet lijeka
 - tehnički/header placeholderi nisu dopušteni kao naziv
+- URL/e-mail, brojčani i interpunkcijski placeholderi nisu dopušteni kao naziv
+- izvor naziva mora biti eksplicitno vezan uz službeni HALMED stupac `Naziv`
 - ATK je validiran kada je naveden
 - duplicate ID i duplicate identitet zaustavljaju validaciju
 - regresijski zapis `A1 d.o.o.` ne smije postojati
