@@ -34,6 +34,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Audit production Dart sources
+        run: python3 tool/audit_dart_reachability.py
+
       - name: Analyze
         run: flutter analyze
 
