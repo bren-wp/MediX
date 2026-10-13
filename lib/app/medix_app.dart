@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 
 import '../core/theme/medix_theme.dart';
+import '../core/localization/medix_localizations.dart';
 import '../data/medication_repository.dart';
 import '../features/home/app_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
@@ -128,24 +130,45 @@ class _MedixAppState extends State<MedixApp> {
   @override
   Widget build(BuildContext context) {
     final currentState = state;
+    if (currentState == null) {
+      return _materialApp(
+        localeCode: MedixLanguages.primaryCode,
+        home: _dataLoadFailed
+            ? _DataLoadErrorScreen(onRetry: _retryLoad)
+            : const _SplashScreen(),
+      );
+    }
 
+    return AnimatedBuilder(
+      animation: currentState,
+      builder: (context, _) {
+        return _materialApp(
+          localeCode: currentState.localeCode,
+          home: currentState.onboardingCompleted
+              ? AppShell(state: currentState)
+              : OnboardingScreen(state: currentState),
+        );
+      },
+    );
+  }
+
+  Widget _materialApp({
+    required String localeCode,
+    required Widget home,
+  }) {
     return MaterialApp(
       title: 'MediX',
       debugShowCheckedModeBanner: false,
       theme: MedixTheme.dark(),
-      home: currentState == null
-          ? _dataLoadFailed
-              ? _DataLoadErrorScreen(onRetry: _retryLoad)
-              : const _SplashScreen()
-          : AnimatedBuilder(
-              animation: currentState,
-              builder: (context, _) {
-                if (!currentState.onboardingCompleted) {
-                  return OnboardingScreen(state: currentState);
-                }
-                return AppShell(state: currentState);
-              },
-            ),
+      locale: Locale(MedixLanguages.normalize(localeCode)),
+      supportedLocales: MedixLanguages.locales,
+      localizationsDelegates: const [
+        MedixLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      home: home,
     );
   }
 }
