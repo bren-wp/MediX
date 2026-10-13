@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/app_info.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_brand.dart';
@@ -19,6 +20,7 @@ import '../therapy/calendar_screen.dart';
 import 'about_screen.dart';
 import 'privacy_screen.dart';
 import 'sources_screen.dart';
+import 'settings_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({
@@ -36,8 +38,9 @@ class MoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
     return MedixPage(
-      appBar: AppBar(title: const Text('Više')),
+      appBar: AppBar(title: Text(loc.t('more'))),
       safeArea: false,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
@@ -47,7 +50,7 @@ class MoreScreen extends StatelessWidget {
             child: MedixBrand(compact: true),
           ),
           const SizedBox(height: 18),
-          const _SectionTitle('Profesionalni alati'),
+          _SectionTitle(loc.t('professionalTools')),
           _MenuItem(
             icon: Icons.auto_awesome_rounded,
             title: 'MediX Smart',
@@ -119,7 +122,7 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const _SectionTitle('Terapija i sigurnost'),
+          _SectionTitle(loc.t('therapySafety')),
           _MenuItem(
             icon: Icons.calendar_month_outlined,
             title: 'Kalendar terapije',
@@ -167,7 +170,7 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const _SectionTitle('Dodatno'),
+          _SectionTitle(loc.t('additional')),
           _MenuItem(
             icon: Icons.local_pharmacy_outlined,
             title: 'Ljekarne u blizini',
@@ -189,9 +192,19 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           _MenuItem(
+            icon: Icons.settings_outlined,
+            title: loc.t('settings'),
+            subtitle: loc.t('languageSubtitle'),
+            color: MedixColors.primary,
+            onTap: () => _push(
+              context,
+              SettingsScreen(state: state),
+            ),
+          ),
+          _MenuItem(
             icon: Icons.shield_outlined,
-            title: 'Sigurnost i privatnost',
-            subtitle: 'Lokalna terapija i favoriti · bez obveznog računa',
+            title: loc.t('securityPrivacy'),
+            subtitle: loc.t('securityPrivacySubtitle'),
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -200,8 +213,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.verified_user_outlined,
-            title: 'Službeni izvori podataka',
-            subtitle: 'HALMED, HZZO i izvori službenih cjenovnih podataka',
+            title: loc.t('officialSources'),
+            subtitle: loc.t('officialSourcesSubtitle'),
             color: MedixColors.cyan,
             onTap: () => _push(
               context,
@@ -210,7 +223,7 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.info_outline_rounded,
-            title: 'O aplikaciji',
+            title: loc.t('about'),
             subtitle: 'MediX ${MedixAppInfo.version}',
             color: MedixColors.primary,
             onTap: () => _push(
