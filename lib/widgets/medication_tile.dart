@@ -117,7 +117,7 @@ class MedicationTile extends StatelessWidget {
                           ),
                         if (medication.marketState ==
                             MedicationMarketState.temporaryInterruption)
-                          const _InfoChip(
+                          _InfoChip(
                             label: Localizations.localeOf(context).languageCode == 'hr'
                                 ? 'Prekid opskrbe'
                                 : 'Supply interruption',
@@ -125,7 +125,7 @@ class MedicationTile extends StatelessWidget {
                           )
                         else if (medication.marketState ==
                             MedicationMarketState.notMarketed)
-                          const _InfoChip(
+                          _InfoChip(
                             label: Localizations.localeOf(context).languageCode == 'hr'
                                 ? 'Nije u prometu'
                                 : 'Not marketed',
@@ -133,7 +133,7 @@ class MedicationTile extends StatelessWidget {
                           ),
                         if (medication.shortageState ==
                             MedicationShortageState.reported)
-                          const _InfoChip(
+                          _InfoChip(
                             label: Localizations.localeOf(context).languageCode == 'hr'
                                 ? 'Nestašica'
                                 : 'Shortage',
