@@ -60,11 +60,7 @@ class MedixExportService {
     final path = await createZipFile(state);
     return await _navigationChannel.invokeMethod<bool>(
           'shareFile',
-          <String, String>{
-            'path': path,
-            'mimeType': 'application/zip',
-            'title': 'MediX data export',
-          },
+          <String, String>{'path': path},
         ) ??
         false;
   }
