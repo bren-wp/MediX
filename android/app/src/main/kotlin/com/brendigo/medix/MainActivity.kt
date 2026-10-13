@@ -1,11 +1,14 @@
 package com.brendigo.medix
 
 import android.content.ActivityNotFoundException
+import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
+import androidx.core.content.FileProvider
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.File
 
 class MainActivity : FlutterActivity() {
     private val navigationChannel = "com.brendigo.medix/navigation"
@@ -18,10 +21,19 @@ class MainActivity : FlutterActivity() {
             navigationChannel,
         ).setMethodCallHandler { call, result ->
             when (call.method) {
-                "openNearbyPharmacies" -> {
-                    result.success(openNearbyPharmacies())
+                "openNearbyPharmacies" -> result.success(openNearbyPharmacies())
+                "openExternalUrl" -> {
+                    val url = call.argument<String>("url")
+                    result.success(url != null && openExternalUrl(url))
                 }
-
+                "shareFile" -> {
+                    val path = call.argument<String>("path")
+                    val mimeType = call.argument<String>("mimeType") ?: "application/octet-stream"
+                    val title = call.argument<String>("title") ?: "MediX"
+                    result.success(
+                        path != null && shareFile(path, mimeType, title),
+                    )
+                }
                 else -> result.notImplemented()
             }
         }
@@ -37,16 +49,56 @@ class MainActivity : FlutterActivity() {
             startActivity(geoIntent)
             return true
         } catch (_: ActivityNotFoundException) {
-            // Fall through to a regular HTTPS maps search.
         }
 
-        val webIntent = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse("https://www.google.com/maps/search/ljekarna"),
+        return openExternalUrl(
+            "https://www.google.com/maps/search/ljekarna",
         )
+    }
+
+    private fun openExternalUrl(value: String): Boolean {
+        val uri = try {
+            Uri.parse(value)
+        } catch (_: Exception) {
+            return false
+        }
+        if (uri.scheme != "https" && uri.scheme != "http") return false
 
         return try {
-            startActivity(webIntent)
+            startActivity(Intent(Intent.ACTION_VIEW, uri))
+            true
+        } catch (_: ActivityNotFoundException) {
+            false
+        }
+    }
+
+    private fun shareFile(
+        path: String,
+        mimeType: String,
+        title: String,
+    ): Boolean {
+        val file = File(path)
+        if (!file.exists() || !file.isFile) return false
+
+        val uri = try {
+            FileProvider.getUriForFile(
+                this,
+                "${applicationContext.packageName}.files",
+                file,
+            )
+        } catch (_: IllegalArgumentException) {
+            return false
+        }
+
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = mimeType
+            putExtra(Intent.EXTRA_STREAM, uri)
+            clipData = ClipData.newRawUri("MediX export", uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        return try {
+            startActivity(Intent.createChooser(shareIntent, title))
             true
         } catch (_: ActivityNotFoundException) {
             false
