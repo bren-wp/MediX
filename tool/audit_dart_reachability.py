@@ -24,10 +24,12 @@ REFERENCE = re.compile(
 def resolve_import(source: str, uri: str) -> str | None:
     if uri.startswith("package:medix/"):
         return posixpath.normpath("lib/" + uri[len("package:medix/"):])
-    if uri.startswith("./") or uri.startswith("../"):
-        return posixpath.normpath(posixpath.join(posixpath.dirname(source), uri))
     if uri.startswith("lib/"):
         return posixpath.normpath(uri)
+    if ":" not in uri:
+        # Dart relative imports may start with a filename or directory;
+        # "./" is optional (for example: "app/medix_app.dart").
+        return posixpath.normpath(posixpath.join(posixpath.dirname(source), uri))
     return None
 
 
