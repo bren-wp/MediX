@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../data/medication_query.dart';
 import '../../models/medication.dart';
 import '../../state/medix_state.dart';
@@ -113,6 +114,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return AnimatedBuilder(
       animation: widget.state,
       builder: (context, _) {
+        final loc = MedixLocalizations.of(context);
         final effectiveQuery = query.copyWith(text: controller.text);
         final results = applyMedicationQuery(
           widget.state.repository.medications,
@@ -122,10 +124,10 @@ class _SearchScreenState extends State<SearchScreen> {
         return MedixPage(
           safeArea: false,
           appBar: AppBar(
-            title: const Text('Pretraga lijekova'),
+            title: Text(loc.t('searchTitle')),
             actions: [
               IconButton(
-                tooltip: 'Usporedi lijekove',
+                tooltip: loc.t('compareMedicines'),
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
@@ -138,7 +140,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 icon: const Icon(Icons.compare_arrows_rounded),
               ),
               PopupMenuButton<MedicationSort>(
-                tooltip: 'Sortiranje',
+                tooltip: loc.t('sort'),
                 initialValue: query.sort,
                 onSelected: _setSort,
                 icon: const Icon(Icons.sort_rounded),
@@ -176,13 +178,12 @@ class _SearchScreenState extends State<SearchScreen> {
                   onChanged: (_) => setState(() {}),
                   textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
-                    hintText:
-                        'Naziv, djelatna tvar, ATK, pakiranje...',
+                    hintText: loc.t('searchHint'),
                     prefixIcon: const Icon(Icons.search_rounded),
                     suffixIcon: controller.text.isEmpty
                         ? null
                         : IconButton(
-                            tooltip: 'Očisti pretragu',
+                            tooltip: loc.t('clearSearch'),
                             onPressed: () {
                               controller.clear();
                               setState(() {});
@@ -198,7 +199,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        _resultLabel(results.length),
+                        results.length == 1
+                            ? loc.t('resultOne')
+                            : loc.tArgs('results', {'count': results.length}),
                         style: const TextStyle(
                           color: MedixColors.textSecondary,
                           fontWeight: FontWeight.w700,
@@ -215,9 +218,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       label: Text(
                         query.hasFilters
-                            ? 'Filteri · ' +
-                                _activeFilterCount(query).toString()
-                            : 'Filteri',
+                            ? '${loc.t('filters')} · ${_activeFilterCount(query)}'
+                            : loc.t('filters'),
                       ),
                     ),
                   ],
@@ -237,10 +239,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 child: results.isEmpty
                     ? MedixEmptyState(
                         icon: Icons.search_off_rounded,
-                        title: 'Nema podudarnih lijekova',
-                        message:
-                            'Promijenite upit ili uklonite dio filtera.',
-                        actionLabel: 'Poništi pretragu i filtere',
+                        title: loc.t('noResultsTitle'),
+                        message: loc.t('noResultsBody'),
+                        actionLabel: loc.t('resetSearch'),
                         onAction: () {
                           controller.clear();
                           setState(() {
@@ -297,7 +298,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (current.dispensing != DispensingFilter.all) {
       addChip(
-        _dispensingLabel(current.dispensing),
+        _dispensingLabel(current.dispensing, hr: Localizations.localeOf(context).languageCode == 'hr'),
         () => setState(
           () => query = query.copyWith(
             dispensing: DispensingFilter.all,
@@ -308,7 +309,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (current.reimbursement != ReimbursementFilter.all) {
       addChip(
-        _reimbursementLabel(current.reimbursement),
+        _reimbursementLabel(current.reimbursement, hr: Localizations.localeOf(context).languageCode == 'hr'),
         () => setState(
           () => query = query.copyWith(
             reimbursement: ReimbursementFilter.all,
@@ -319,7 +320,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (current.price != PriceFilter.all) {
       addChip(
-        _priceLabel(current.price),
+        _priceLabel(current.price, hr: Localizations.localeOf(context).languageCode == 'hr'),
         () => setState(
           () => query = query.copyWith(price: PriceFilter.all),
         ),
@@ -328,7 +329,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (current.market != MarketFilter.all) {
       addChip(
-        _marketLabel(current.market),
+        _marketLabel(current.market, hr: Localizations.localeOf(context).languageCode == 'hr'),
         () => setState(
           () => query = query.copyWith(market: MarketFilter.all),
         ),
@@ -337,7 +338,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (current.shortage != ShortageFilter.all) {
       addChip(
-        _shortageLabel(current.shortage),
+        _shortageLabel(current.shortage, hr: Localizations.localeOf(context).languageCode == 'hr'),
         () => setState(
           () => query = query.copyWith(shortage: ShortageFilter.all),
         ),
@@ -374,10 +375,6 @@ class _SearchScreenState extends State<SearchScreen> {
     return chips;
   }
 
-  String _resultLabel(int count) {
-    if (count == 1) return '1 rezultat';
-    return '$count rezultata';
-  }
 }
 
 class _FilterSheet extends StatefulWidget {
@@ -414,6 +411,8 @@ class _FilterSheetState extends State<_FilterSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
+    final hr = Localizations.localeOf(context).languageCode == 'hr';
     final bottom = MediaQuery.viewInsetsOf(context).bottom;
 
     return Padding(
@@ -426,7 +425,7 @@ class _FilterSheetState extends State<_FilterSheet> {
               children: [
                 const Expanded(
                   child: Text(
-                    'Napredni filteri',
+                    loc.t('advancedFilters'),
                     style: TextStyle(
                       fontSize: 23,
                       fontWeight: FontWeight.w900,
@@ -435,38 +434,38 @@ class _FilterSheetState extends State<_FilterSheet> {
                 ),
                 TextButton(
                   onPressed: _reset,
-                  child: const Text('Poništi'),
+                  child: Text(loc.t('reset')),
                 ),
               ],
             ),
             const SizedBox(height: 4),
-            const Text(
-              'Kombinirajte više kriterija za precizan pregled kataloga.',
+            Text(
+              loc.t('filterDescription'),
               style: TextStyle(
                 color: MedixColors.textSecondary,
                 height: 1.4,
               ),
             ),
             const SizedBox(height: 18),
-            const _SectionLabel('Režim izdavanja'),
+            _SectionLabel(loc.t('dispensing')),
             SegmentedButton<DispensingFilter>(
               showSelectedIcon: false,
               segments: const [
                 ButtonSegment(
                   value: DispensingFilter.all,
-                  label: Text('Sve'),
+                  label: Text(loc.t('all')),
                 ),
                 ButtonSegment(
                   value: DispensingFilter.prescription,
-                  label: Text('Recept'),
+                  label: Text(loc.t('prescription')),
                 ),
                 ButtonSegment(
                   value: DispensingFilter.otc,
-                  label: Text('Bez recepta'),
+                  label: Text(loc.t('otc')),
                 ),
                 ButtonSegment(
                   value: DispensingFilter.unknown,
-                  label: Text('Nije navedeno'),
+                  label: Text(loc.t('unknown')),
                 ),
               ],
               selected: {value.dispensing},
@@ -480,10 +479,10 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 16),
             _Dropdown<ReimbursementFilter>(
-              label: 'Status liste',
+              label: loc.t('listStatus'),
               value: value.reimbursement,
               items: ReimbursementFilter.values,
-              itemLabel: _reimbursementLabel,
+              itemLabel: (item) => _reimbursementLabel(item, hr: hr),
               onChanged: (next) {
                 setState(
                   () => value = value.copyWith(
@@ -494,10 +493,10 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             _Dropdown<PriceFilter>(
-              label: 'Cijena',
+              label: loc.t('price'),
               value: value.price,
               items: PriceFilter.values,
-              itemLabel: _priceLabel,
+              itemLabel: (item) => _priceLabel(item, hr: hr),
               onChanged: (next) {
                 setState(
                   () => value = value.copyWith(price: next),
@@ -506,10 +505,10 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             _Dropdown<MarketFilter>(
-              label: 'Status na tržištu',
+              label: loc.t('marketStatus'),
               value: value.market,
               items: MarketFilter.values,
-              itemLabel: _marketLabel,
+              itemLabel: (item) => _marketLabel(item, hr: hr),
               onChanged: (next) {
                 setState(
                   () => value = value.copyWith(market: next),
@@ -518,10 +517,10 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             _Dropdown<ShortageFilter>(
-              label: 'Nestašica',
+              label: loc.t('shortage'),
               value: value.shortage,
               items: ShortageFilter.values,
-              itemLabel: _shortageLabel,
+              itemLabel: (item) => _shortageLabel(item, hr: hr),
               onChanged: (next) {
                 setState(
                   () => value = value.copyWith(shortage: next),
@@ -534,11 +533,11 @@ class _FilterSheetState extends State<_FilterSheet> {
               initialValue: value.atcGroup,
               isExpanded: true,
               decoration:
-                  const InputDecoration(labelText: 'ATK skupina'),
+                  InputDecoration(labelText: loc.t('atcGroup')),
               items: [
                 const DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('Sve ATK skupine'),
+                  child: Text(loc.t('allAtc')),
                 ),
                 ...widget.atcGroups.map(
                   (group) => DropdownMenuItem<String?>(
@@ -564,11 +563,11 @@ class _FilterSheetState extends State<_FilterSheet> {
               initialValue: value.form,
               isExpanded: true,
               decoration:
-                  const InputDecoration(labelText: 'Farmaceutski oblik'),
+                  InputDecoration(labelText: loc.t('form')),
               items: [
                 const DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('Svi oblici'),
+                  child: Text(loc.t('allForms')),
                 ),
                 ...widget.forms.map(
                   (form) => DropdownMenuItem<String?>(
@@ -593,13 +592,13 @@ class _FilterSheetState extends State<_FilterSheet> {
               key: ValueKey(value.holder),
               initialValue: value.holder,
               isExpanded: true,
-              decoration: const InputDecoration(
-                labelText: 'Nositelj / proizvođač',
+              decoration: InputDecoration(
+                labelText: loc.t('holderManufacturer'),
               ),
               items: [
                 const DropdownMenuItem<String?>(
                   value: null,
-                  child: Text('Svi'),
+                  child: Text(loc.t('all')),
                 ),
                 ...widget.holders.map(
                   (holder) => DropdownMenuItem<String?>(
@@ -625,7 +624,7 @@ class _FilterSheetState extends State<_FilterSheet> {
               child: FilledButton.icon(
                 onPressed: () => Navigator.of(context).pop(value),
                 icon: const Icon(Icons.check_rounded),
-                label: const Text('Primijeni filtere'),
+                label: Text(loc.t('applyFilters')),
               ),
             ),
           ],
@@ -706,50 +705,50 @@ int _activeFilterCount(MedicationQuery query) {
   return count;
 }
 
-String _dispensingLabel(DispensingFilter value) {
+String _dispensingLabel(DispensingFilter value, {required bool hr}) {
   return switch (value) {
-    DispensingFilter.all => 'Svi režimi',
-    DispensingFilter.prescription => 'Na recept',
-    DispensingFilter.otc => 'Bez recepta',
-    DispensingFilter.unknown => 'Režim nije naveden',
+    DispensingFilter.all => hr ? 'Svi režimi' : 'All dispensing modes',
+    DispensingFilter.prescription => hr ? 'Na recept' : 'Prescription',
+    DispensingFilter.otc => hr ? 'Bez recepta' : 'Non-prescription',
+    DispensingFilter.unknown => hr ? 'Režim nije naveden' : 'Not specified',
   };
 }
 
-String _reimbursementLabel(ReimbursementFilter value) {
+String _reimbursementLabel(ReimbursementFilter value, {required bool hr}) {
   return switch (value) {
-    ReimbursementFilter.all => 'Svi statusi',
-    ReimbursementFilter.listed => 'Na listi',
-    ReimbursementFilter.basic => 'Osnovna lista',
-    ReimbursementFilter.supplementary => 'Dopunska lista',
-    ReimbursementFilter.notListed => 'Nije na listi',
+    ReimbursementFilter.all => hr ? 'Svi statusi' : 'All statuses',
+    ReimbursementFilter.listed => hr ? 'Na listi' : 'Listed',
+    ReimbursementFilter.basic => hr ? 'Osnovna lista' : 'Basic list',
+    ReimbursementFilter.supplementary => hr ? 'Dopunska lista' : 'Supplementary list',
+    ReimbursementFilter.notListed => hr ? 'Nije na listi' : 'Not listed',
   };
 }
 
-String _priceLabel(PriceFilter value) {
+String _priceLabel(PriceFilter value, {required bool hr}) {
   return switch (value) {
-    PriceFilter.all => 'Sve cijene',
-    PriceFilter.anyPrice => 'Ima cjenovni podatak',
-    PriceFilter.copay => 'Ima doplatu',
-    PriceFilter.wholesale => 'Ima veleprodajnu cijenu',
+    PriceFilter.all => hr ? 'Sve cijene' : 'All prices',
+    PriceFilter.anyPrice => hr ? 'Ima cjenovni podatak' : 'Has price data',
+    PriceFilter.copay => hr ? 'Ima doplatu' : 'Has copay',
+    PriceFilter.wholesale => hr ? 'Ima veleprodajnu cijenu' : 'Has wholesale price',
   };
 }
 
-String _marketLabel(MarketFilter value) {
+String _marketLabel(MarketFilter value, {required bool hr}) {
   return switch (value) {
-    MarketFilter.all => 'Svi tržišni statusi',
-    MarketFilter.marketed => 'Stavljeno u promet',
-    MarketFilter.notMarketed => 'Nije stavljeno u promet',
-    MarketFilter.temporaryInterruption => 'Privremeni prekid opskrbe',
-    MarketFilter.unknown => 'Status tržišta nije naveden',
+    MarketFilter.all => hr ? 'Svi tržišni statusi' : 'All market statuses',
+    MarketFilter.marketed => hr ? 'Stavljeno u promet' : 'Marketed',
+    MarketFilter.notMarketed => hr ? 'Nije stavljeno u promet' : 'Not marketed',
+    MarketFilter.temporaryInterruption => hr ? 'Privremeni prekid opskrbe' : 'Temporary supply interruption',
+    MarketFilter.unknown => hr ? 'Status tržišta nije naveden' : 'Market status not specified',
   };
 }
 
-String _shortageLabel(ShortageFilter value) {
+String _shortageLabel(ShortageFilter value, {required bool hr}) {
   return switch (value) {
-    ShortageFilter.all => 'Svi statusi nestašice',
-    ShortageFilter.reported => 'Prijavljena nestašica',
-    ShortageFilter.noneReported => 'Nema evidentirane nestašice',
-    ShortageFilter.unknown => 'Status nestašice nije naveden',
+    ShortageFilter.all => hr ? 'Svi statusi nestašice' : 'All shortage statuses',
+    ShortageFilter.reported => hr ? 'Prijavljena nestašica' : 'Reported shortage',
+    ShortageFilter.noneReported => hr ? 'Nema evidentirane nestašice' : 'No recorded shortage',
+    ShortageFilter.unknown => hr ? 'Status nestašice nije naveden' : 'Shortage status not specified',
   };
 }
 
