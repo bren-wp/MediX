@@ -14,6 +14,14 @@ void main() {
       state.dispose();
     });
 
+    test('changes locale and normalizes unsupported language codes', () async {
+      await state.setLocale('hr');
+      expect(state.localeCode, 'hr');
+
+      await state.setLocale('unsupported');
+      expect(state.localeCode, 'en');
+    });
+
     test('toggles favorites', () {
       state.toggleFavorite('paracetamol-500');
 
