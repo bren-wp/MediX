@@ -178,32 +178,33 @@ class _SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
     return Scaffold(
       backgroundColor: MedixColors.background,
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: MedixColors.pageGradient,
         ),
-        child: const SafeArea(
+        child: SafeArea(
           child: Center(
             child: Padding(
-              padding: EdgeInsets.all(28),
+              padding: const EdgeInsets.all(28),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  MedixBrand(centered: true),
-                  SizedBox(height: 42),
-                  LinearProgressIndicator(
+                  const MedixBrand(centered: true),
+                  const SizedBox(height: 42),
+                  const LinearProgressIndicator(
                     minHeight: 4,
                     borderRadius: BorderRadius.all(Radius.circular(999)),
                     color: MedixColors.cyan,
                     backgroundColor: MedixColors.surfaceElevated,
                   ),
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
                   Text(
-                    'Učitavanje provjerenih podataka o lijekovima…',
+                    loc.t('loading'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: MedixColors.textSecondary,
                       fontSize: 12,
                     ),
@@ -228,14 +229,14 @@ class _DataLoadErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
     return MedixPage(
       child: MedixEmptyState(
         icon: Icons.error_outline_rounded,
-        title: 'Službeni podaci nisu učitani',
-        message:
-            'MediX neće prikazati demo ili zamjenske lijekove. Provjerite instalaciju aplikacije i pokušajte ponovno učitati provjerene kataloge.',
+        title: loc.t('dataErrorTitle'),
+        message: loc.t('dataErrorBody'),
         color: MedixColors.warning,
-        actionLabel: 'Pokušaj ponovno',
+        actionLabel: loc.t('retry'),
         onAction: onRetry,
       ),
     );
