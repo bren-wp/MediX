@@ -242,7 +242,7 @@ class _TherapyCard extends StatelessWidget {
                         await state.requestReminderPermissions();
                     if (!allowed && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
                             loc.t('remindersDenied'),
                           ),
