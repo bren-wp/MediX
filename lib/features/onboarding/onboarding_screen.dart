@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_brand.dart';
 
@@ -20,32 +21,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final controller = PageController();
   int page = 0;
 
-  static const slides = <_OnboardingSlide>[
-    _OnboardingSlide(
-      title: 'Baza lijekova\nna jednom mjestu',
-      subtitle:
-          'Brza pretraga, detaljan pregled službenih podataka i jasan prikaz cijena i HZZO statusa.',
-      icon: Icons.medication_rounded,
-      secondaryIcon: Icons.search_rounded,
-      color: MedixColors.cyan,
-    ),
-    _OnboardingSlide(
-      title: 'Provjerite\ninterakcije lijekova',
-      subtitle:
-          'Usporedite terapiju i prepoznajte situacije koje zahtijevaju dodatnu stručnu provjeru.',
-      icon: Icons.health_and_safety_rounded,
-      secondaryIcon: Icons.hub_outlined,
-      color: MedixColors.primary,
-    ),
-    _OnboardingSlide(
-      title: 'Brinite o svom\nzdravlju',
-      subtitle:
-          'Spremite favorite, vodite terapiju, pratite raspored i koristite lokalne podsjetnike.',
-      icon: Icons.calendar_month_rounded,
-      secondaryIcon: Icons.notifications_active_outlined,
-      color: MedixColors.warning,
-    ),
-  ];
+  List<_OnboardingSlide> _slides(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
+    return [
+      _OnboardingSlide(
+        title: loc.t('onboarding1Title'),
+        subtitle: loc.t('onboarding1Body'),
+        icon: Icons.medication_rounded,
+        secondaryIcon: Icons.search_rounded,
+        color: MedixColors.cyan,
+      ),
+      _OnboardingSlide(
+        title: loc.t('onboarding2Title'),
+        subtitle: loc.t('onboarding2Body'),
+        icon: Icons.health_and_safety_rounded,
+        secondaryIcon: Icons.hub_outlined,
+        color: MedixColors.primary,
+      ),
+      _OnboardingSlide(
+        title: loc.t('onboarding3Title'),
+        subtitle: loc.t('onboarding3Body'),
+        icon: Icons.calendar_month_rounded,
+        secondaryIcon: Icons.notifications_active_outlined,
+        color: MedixColors.warning,
+      ),
+    ];
+  }
 
   @override
   void dispose() {
@@ -58,6 +59,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _next() {
+    final slides = _slides(context);
     if (page == slides.length - 1) {
       _complete();
       return;
@@ -70,6 +72,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
+    final slides = _slides(context);
     return Scaffold(
       backgroundColor: MedixColors.background,
       body: DecoratedBox(
@@ -87,7 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     const Spacer(),
                     TextButton(
                       onPressed: _complete,
-                      child: const Text('Preskoči'),
+                      child: Text(loc.t('skip')),
                     ),
                   ],
                 ),
@@ -129,7 +133,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       child: FilledButton(
                         onPressed: _next,
                         child: Text(
-                          page == slides.length - 1 ? 'Započni' : 'Dalje',
+                          page == slides.length - 1
+                              ? loc.t('start')
+                              : loc.t('next'),
                         ),
                       ),
                     ),
