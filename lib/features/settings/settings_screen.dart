@@ -51,8 +51,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       SnackBar(
         content: Text(
           allowed
-              ? 'Therapy reminder permissions are enabled.'
-              : 'Reminder permissions were not granted.',
+              ? (Localizations.localeOf(context).languageCode == 'hr'
+                  ? 'Dozvole podsjetnika su uključene.'
+                  : 'Therapy reminder permissions are enabled.')
+              : (Localizations.localeOf(context).languageCode == 'hr'
+                  ? 'Dozvole podsjetnika nisu odobrene.'
+                  : 'Reminder permissions were not granted.'),
         ),
       ),
     );
