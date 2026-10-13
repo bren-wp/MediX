@@ -17,7 +17,9 @@ Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 - preciznije su predstavljena ograničenja interakcija i jezične podrške
 
 ### Provjere
+- CI audit dostupnosti svih produkcijskih Dart izvora iz `lib/main.dart` nadopunjuje `flutter analyze`
 - regresijski testovi izolacije izvoza, FileProvider konfiguracije i zaštite osjetljivih terapijskih podataka
+- widget testovi za klik kroz Postavke → Privatnost i promjenu jezika
 
 ## [0.3.5] - 2026-10-13
 
