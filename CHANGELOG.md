@@ -2,7 +2,26 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
-## [0.3.5] - u razvoju
+## [0.3.6] - u razvoju
+
+### Privatnost i sigurnost
+- FileProvider više ne dijeli cijelu predmemoriju nego isključivo direktorij MediX ZIP izvoza
+- Android dijeljenje verificira kanonsku putanju, naziv i ekstenziju ZIP-a i odbija druge datoteke
+- automatsko čišćenje prethodnih izvoza starijih od 24 sata bez pristupa drugim privremenim datotekama
+- HTTPS je obavezan za poveznice koje MediX otvara izvana
+- uklonjeni su nepotrebni parametri iz Flutter/Android mosta za dijeljenje datoteka
+
+### Korisničko iskustvo i sadržaj
+- README redizajniran kao premium produktna prezentacija na engleskom jeziku
+- iskorišteni su postojeći originalni MediX vizualni materijali bez izmišljenih screenshotova
+- preciznije su predstavljena ograničenja interakcija i jezične podrške
+
+### Provjere
+- CI audit dostupnosti svih produkcijskih Dart izvora iz `lib/main.dart` nadopunjuje `flutter analyze`
+- regresijski testovi izolacije izvoza, FileProvider konfiguracije i zaštite osjetljivih terapijskih podataka
+- widget testovi za klik kroz Postavke → Privatnost i promjenu jezika
+
+## [0.3.5] - 2026-10-13
 
 ### Dodano
 - Postavke s trajnim odabirom jezika, dozvolama podsjetnika, izvozom, pravnim poveznicama i Brendigo autorstvom

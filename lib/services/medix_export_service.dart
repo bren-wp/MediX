@@ -27,26 +27,40 @@ class MedixExportService {
 
   Future<String> createZipFile(MedixState state) async {
     final bytes = await buildZip(state);
-    final directory = await getTemporaryDirectory();
-    final timestamp = DateTime.now().toUtc().toIso8601String()
-        .replaceAll(':', '-')
-        .replaceAll('.', '-');
-    final file = File(
-      '${directory.path}/MediX-export-$timestamp.zip',
-    );
+    final cache = await getTemporaryDirectory();
+    final directory = Directory('${cache.path}/medix-exports');
+    await directory.create(recursive: true);
+    await _removeOldExports(directory);
+    final timestamp = DateTime.now().toUtc().microsecondsSinceEpoch;
+    final file = File('${directory.path}/MediX-export-$timestamp.zip');
     await file.writeAsBytes(bytes, flush: true);
     return file.path;
+  }
+
+  Future<void> _removeOldExports(Directory directory) async {
+    final cutoff = DateTime.now().subtract(const Duration(hours: 24));
+    await for (final entry in directory.list(followLinks: false)) {
+      if (entry is! File ||
+          !entry.uri.pathSegments.last.startsWith('MediX-export-') ||
+          !entry.path.endsWith('.zip')) {
+        continue;
+      }
+      try {
+        final modified = await entry.lastModified();
+        if (modified.isBefore(cutoff)) {
+          await entry.delete();
+        }
+      } on FileSystemException {
+        // A failed cache cleanup must never destroy an export request.
+      }
+    }
   }
 
   Future<bool> exportAndShare(MedixState state) async {
     final path = await createZipFile(state);
     return await _navigationChannel.invokeMethod<bool>(
           'shareFile',
-          <String, String>{
-            'path': path,
-            'mimeType': 'application/zip',
-            'title': 'MediX data export',
-          },
+          <String, String>{'path': path},
         ) ??
         false;
   }

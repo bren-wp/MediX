@@ -9,6 +9,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
+import java.io.IOException
 
 class MainActivity : FlutterActivity() {
     private val navigationChannel = "com.brendigo.medix/navigation"
@@ -28,11 +29,7 @@ class MainActivity : FlutterActivity() {
                 }
                 "shareFile" -> {
                     val path = call.argument<String>("path")
-                    val mimeType = call.argument<String>("mimeType") ?: "application/octet-stream"
-                    val title = call.argument<String>("title") ?: "MediX"
-                    result.success(
-                        path != null && shareFile(path, mimeType, title),
-                    )
+                    result.success(path != null && shareExportZip(path))
                 }
                 else -> result.notImplemented()
             }
@@ -62,7 +59,7 @@ class MainActivity : FlutterActivity() {
         } catch (_: Exception) {
             return false
         }
-        if (uri.scheme != "https" && uri.scheme != "http") return false
+        if (uri.scheme != "https") return false
 
         return try {
             startActivity(Intent(Intent.ACTION_VIEW, uri))
@@ -72,13 +69,22 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun shareFile(
-        path: String,
-        mimeType: String,
-        title: String,
-    ): Boolean {
-        val file = File(path)
-        if (!file.exists() || !file.isFile) return false
+    private fun shareExportZip(path: String): Boolean {
+        val exportDirectory: File
+        val file: File
+        try {
+            exportDirectory = File(cacheDir, "medix-exports").canonicalFile
+            file = File(path).canonicalFile
+        } catch (_: IOException) {
+            return false
+        }
+        if (!file.isFile ||
+            !file.name.startsWith("MediX-export-") ||
+            !file.name.endsWith(".zip") ||
+            file.parentFile != exportDirectory
+        ) {
+            return false
+        }
 
         val uri = try {
             FileProvider.getUriForFile(
@@ -91,14 +97,14 @@ class MainActivity : FlutterActivity() {
         }
 
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = mimeType
+            type = "application/zip"
             putExtra(Intent.EXTRA_STREAM, uri)
             clipData = ClipData.newRawUri("MediX export", uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
         return try {
-            startActivity(Intent.createChooser(shareIntent, title))
+            startActivity(Intent.createChooser(shareIntent, "Share MediX export"))
             true
         } catch (_: ActivityNotFoundException) {
             false
