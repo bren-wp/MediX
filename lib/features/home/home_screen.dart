@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../models/medication.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medication_tile.dart';
@@ -48,6 +49,7 @@ class HomeScreen extends StatelessWidget {
     return AnimatedBuilder(
       animation: state,
       builder: (context, _) {
+        final loc = MedixLocalizations.of(context);
         final displayed = state.recent.isEmpty
             ? state.repository.medications.take(4).toList()
             : state.recent.take(4).toList();
@@ -64,30 +66,30 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 18),
               Semantics(
                 button: true,
-                label: 'Pretraži lijekove',
+                label: loc.t('search'),
                 child: MedixSectionCard(
                   onTap: onSearchRequested,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 12,
                   ),
-                  child: const Row(
+                  child: Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.search_rounded,
                         color: MedixColors.textSecondary,
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Naziv, djelatna tvar, ATK, pakiranje...',
-                          style: TextStyle(
+                          loc.t('searchHint'),
+                          style: const TextStyle(
                             color: MedixColors.textMuted,
                             fontSize: 14,
                           ),
                         ),
                       ),
-                      MedixIconBubble(
+                      const MedixIconBubble(
                         icon: Icons.tune_rounded,
                         color: MedixColors.cyan,
                         size: 34,
@@ -113,14 +115,14 @@ class HomeScreen extends StatelessWidget {
                     children: [
                   _HomeAction(
                     icon: Icons.medication_rounded,
-                    title: 'Svi lijekovi',
+                    title: loc.t('allMedicines'),
                     subtitle: 'A – Ž',
                     color: MedixColors.cyan,
                     onTap: onSearchRequested,
                   ),
                   _HomeAction(
                     icon: Icons.description_outlined,
-                    title: 'Na recept',
+                    title: loc.t('prescription'),
                     color: MedixColors.primary,
                     onTap: () => _push(
                       context,
@@ -135,7 +137,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _HomeAction(
                     icon: Icons.shopping_cart_outlined,
-                    title: 'Bez recepta',
+                    title: loc.t('otc'),
                     color: MedixColors.warning,
                     onTap: () => _push(
                       context,
@@ -150,7 +152,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _HomeAction(
                     icon: Icons.inventory_2_outlined,
-                    title: 'U prometu',
+                    title: loc.t('marketed'),
                     subtitle: 'HALMED',
                     color: MedixColors.success,
                     onTap: () => _push(
@@ -168,7 +170,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _HomeAction(
                     icon: Icons.hub_outlined,
-                    title: 'Djelatne tvari',
+                    title: loc.t('ingredients'),
                     color: MedixColors.primary,
                     onTap: () => _push(
                       context,
@@ -177,7 +179,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _HomeAction(
                     icon: Icons.apartment_rounded,
-                    title: 'Proizvođači',
+                    title: loc.t('manufacturers'),
                     color: MedixColors.cyanSoft,
                     onTap: () => _push(
                       context,
@@ -189,9 +191,9 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 22),
-              const Text(
-                'Brzi stručni alati',
-                style: TextStyle(
+              Text(
+                loc.t('quickTools'),
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
                 ),
@@ -214,7 +216,7 @@ class HomeScreen extends StatelessWidget {
                   _ProfessionalAction(
                     icon: Icons.auto_awesome_rounded,
                     title: 'MediX Smart',
-                    subtitle: 'Pametna pretraga',
+                    subtitle: state.localeCode == 'hr' ? 'Pametna pretraga' : 'Smart search',
                     color: MedixColors.cyan,
                     onTap: () => _push(
                       context,
@@ -223,8 +225,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _ProfessionalAction(
                     icon: Icons.hub_outlined,
-                    title: 'Interakcije',
-                    subtitle: 'Provjera terapije',
+                    title: state.localeCode == 'hr' ? 'Interakcije' : 'Interactions',
+                    subtitle: state.localeCode == 'hr' ? 'Provjera terapije' : 'Therapy review',
                     color: MedixColors.danger,
                     onTap: () => _push(
                       context,
@@ -233,8 +235,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _ProfessionalAction(
                     icon: Icons.calculate_outlined,
-                    title: 'Klinički alati',
-                    subtitle: '9 kalkulatora',
+                    title: state.localeCode == 'hr' ? 'Klinički alati' : 'Clinical tools',
+                    subtitle: state.localeCode == 'hr' ? '9 kalkulatora' : '9 calculators',
                     color: MedixColors.primary,
                     onTap: () => _push(
                       context,
@@ -244,7 +246,7 @@ class HomeScreen extends StatelessWidget {
                   _ProfessionalAction(
                     icon: Icons.account_tree_outlined,
                     title: 'ATK i MKB-10',
-                    subtitle: 'Klasifikacije',
+                    subtitle: state.localeCode == 'hr' ? 'Klasifikacije' : 'Classifications',
                     color: MedixColors.purple,
                     onTap: () => _push(
                       context,
@@ -258,10 +260,10 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 22),
               Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Kategorije lijekova',
-                      style: TextStyle(
+                      loc.t('categories'),
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                       ),
@@ -272,7 +274,7 @@ class HomeScreen extends StatelessWidget {
                       context,
                       CategoriesScreen(state: state),
                     ),
-                    child: const Text('Prikaži sve'),
+                    child: Text(loc.t('viewAll')),
                   ),
                 ],
               ),
@@ -316,8 +318,8 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 22),
               Text(
                 state.recent.isEmpty
-                    ? 'Lijekovi iz baze'
-                    : 'Nedavno pregledano',
+                    ? loc.t('database')
+                    : loc.t('recent'),
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
