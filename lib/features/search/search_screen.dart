@@ -423,7 +423,7 @@ class _FilterSheetState extends State<_FilterSheet> {
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     loc.t('advancedFilters'),
                     style: TextStyle(
@@ -450,7 +450,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             _SectionLabel(loc.t('dispensing')),
             SegmentedButton<DispensingFilter>(
               showSelectedIcon: false,
-              segments: const [
+              segments: [
                 ButtonSegment(
                   value: DispensingFilter.all,
                   label: Text(loc.t('all')),
@@ -535,7 +535,7 @@ class _FilterSheetState extends State<_FilterSheet> {
               decoration:
                   InputDecoration(labelText: loc.t('atcGroup')),
               items: [
-                const DropdownMenuItem<String?>(
+                DropdownMenuItem<String?>(
                   value: null,
                   child: Text(loc.t('allAtc')),
                 ),
@@ -565,7 +565,7 @@ class _FilterSheetState extends State<_FilterSheet> {
               decoration:
                   InputDecoration(labelText: loc.t('form')),
               items: [
-                const DropdownMenuItem<String?>(
+                DropdownMenuItem<String?>(
                   value: null,
                   child: Text(loc.t('allForms')),
                 ),
@@ -596,7 +596,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                 labelText: loc.t('holderManufacturer'),
               ),
               items: [
-                const DropdownMenuItem<String?>(
+                DropdownMenuItem<String?>(
                   value: null,
                   child: Text(loc.t('all')),
                 ),
