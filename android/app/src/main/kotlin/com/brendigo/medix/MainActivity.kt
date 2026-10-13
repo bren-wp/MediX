@@ -9,6 +9,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
+import java.io.IOException
 
 class MainActivity : FlutterActivity() {
     private val navigationChannel = "com.brendigo.medix/navigation"
@@ -58,7 +59,7 @@ class MainActivity : FlutterActivity() {
         } catch (_: Exception) {
             return false
         }
-        if (uri.scheme != "https" && uri.scheme != "http") return false
+        if (uri.scheme != "https") return false
 
         return try {
             startActivity(Intent(Intent.ACTION_VIEW, uri))
@@ -69,8 +70,14 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun shareExportZip(path: String): Boolean {
-        val exportDirectory = File(cacheDir, "medix-exports").canonicalFile
-        val file = File(path).canonicalFile
+        val exportDirectory: File
+        val file: File
+        try {
+            exportDirectory = File(cacheDir, "medix-exports").canonicalFile
+            file = File(path).canonicalFile
+        } catch (_: IOException) {
+            return false
+        }
         if (!file.isFile ||
             !file.name.startsWith("MediX-export-") ||
             !file.name.endsWith(".zip") ||
