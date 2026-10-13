@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../data/medication_repository.dart';
+import '../core/localization/medix_localizations.dart';
 import '../models/medication.dart';
 import '../models/therapy_entry.dart';
 import '../services/preferences_store.dart';
@@ -23,10 +24,12 @@ class MedixState extends ChangeNotifier {
   final List<String> _recentIds = <String>[];
   final List<TherapyEntry> _therapy = <TherapyEntry>[];
   bool _onboardingCompleted = false;
+  String _localeCode = MedixLanguages.primaryCode;
 
   Set<String> get favoriteIds => Set.unmodifiable(_favoriteIds);
   List<TherapyEntry> get therapy => List.unmodifiable(_therapy);
   bool get onboardingCompleted => _onboardingCompleted;
+  String get localeCode => _localeCode;
 
   Future<void> restore() async {
     final storage = persistence;
@@ -57,6 +60,7 @@ class MedixState extends ChangeNotifier {
       );
 
     _onboardingCompleted = stored.onboardingCompleted;
+    _localeCode = MedixLanguages.normalize(stored.localeCode);
     notifyListeners();
     _syncReminders();
   }
@@ -65,6 +69,17 @@ class MedixState extends ChangeNotifier {
     final scheduler = reminders;
     if (scheduler == null) return false;
     return scheduler.requestPermissions();
+  }
+
+  Future<void> setLocale(String code) async {
+    final normalized = MedixLanguages.normalize(code);
+    if (_localeCode == normalized) return;
+    _localeCode = normalized;
+    notifyListeners();
+    final storage = persistence;
+    if (storage != null) {
+      await storage.saveLocale(normalized);
+    }
   }
 
   Future<void> completeOnboarding() async {
