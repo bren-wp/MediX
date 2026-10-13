@@ -27,6 +27,7 @@ void main() {
         home: SettingsScreen(state: state),
       ),
     );
+    await tester.pumpAndSettle();
 
     expect(find.text('Settings'), findsOneWidget);
     expect(find.text('English'), findsOneWidget);
@@ -57,6 +58,7 @@ void main() {
         home: SettingsScreen(state: state),
       ),
     );
+    await tester.pumpAndSettle();
 
     await tester.tap(find.byType(DropdownButtonFormField<String>));
     await tester.pumpAndSettle();
