@@ -2,7 +2,31 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
-## [0.3.4] - u razvoju
+## [0.3.5] - u razvoju
+
+### Dodano
+- Postavke s trajnim odabirom jezika, dozvolama podsjetnika, izvozom, pravnim poveznicama i Brendigo autorstvom
+- 24 podržana jezika s engleskim kao primarnim jezikom aplikacije
+- lokalni izvoz terapije, favorita i podataka o aplikaciji u PDF dokumente unutar ZIP arhive
+- Android FileProvider dijeljenje exporta bez široke storage dozvole
+- zaseban Google Play production AAB workflow s privatnim upload keystoreom iz GitHub Secrets
+- zasebna Android themed monochrome launcher ikona
+
+### Poboljšano
+- Android build cilja API 36
+- cloud backup lokalne terapije je isključen, a cleartext promet zabranjen
+- onboarding, glavna navigacija, početni discovery i ključne postavke koriste lokalizacijski sloj
+- About i Privacy sadržaj zamijenjen je produkcijskim, marketinški uređenim tekstom
+- medicinski disclaimer usklađen je s Google Play smjernicama za zdravstvene aplikacije
+- CI više ne regenerira Android host projekt prije smoke builda
+- launcher adaptive ikona dodatno je ispolirana
+
+### Testovi
+- provjera da je engleski primaran i da je dostupno više od 20 jezika
+- provjera lokalnog ZIP izvoza s tri valjana PDF dokumenta
+- provjera promjene i normalizacije spremljenog jezika
+
+## [0.3.4] - 2026-10-09
 
 ### Dodano
 - potpuno uređivanje postojećeg terapijskog plana: lijek, opis doze, dani i vremena

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/therapy_entry.dart';
+import '../core/localization/medix_localizations.dart';
 
 class MedixStoredState {
   const MedixStoredState({
@@ -10,12 +11,14 @@ class MedixStoredState {
     required this.recentIds,
     required this.therapy,
     required this.onboardingCompleted,
+    required this.localeCode,
   });
 
   final Set<String> favoriteIds;
   final List<String> recentIds;
   final List<TherapyEntry> therapy;
   final bool onboardingCompleted;
+  final String localeCode;
 }
 
 abstract interface class MedixPersistence {
@@ -24,6 +27,7 @@ abstract interface class MedixPersistence {
   Future<void> saveRecent(List<String> ids);
   Future<void> saveTherapy(List<TherapyEntry> therapy);
   Future<void> setOnboardingCompleted(bool value);
+  Future<void> saveLocale(String code);
 }
 
 class MedixPreferences implements MedixPersistence {
@@ -31,6 +35,7 @@ class MedixPreferences implements MedixPersistence {
   static const _recentKey = 'medix.recent_ids.v1';
   static const _therapyKey = 'medix.therapy.v1';
   static const _onboardingKey = 'medix.onboarding_completed.v1';
+  static const _localeKey = 'medix.locale.v1';
 
   @override
   Future<MedixStoredState> load() async {
@@ -97,6 +102,7 @@ class MedixPreferences implements MedixPersistence {
       recentIds: recent,
       therapy: therapy,
       onboardingCompleted: prefs.getBool(_onboardingKey) ?? false,
+      localeCode: MedixLanguages.normalize(prefs.getString(_localeKey)),
     );
   }
 
@@ -137,5 +143,11 @@ class MedixPreferences implements MedixPersistence {
   Future<void> setOnboardingCompleted(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_onboardingKey, value);
+  }
+
+  @override
+  Future<void> saveLocale(String code) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_localeKey, MedixLanguages.normalize(code));
   }
 }

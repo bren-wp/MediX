@@ -1,0 +1,91 @@
+name: Google Play production AAB
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: medix-google-play-production
+  cancel-in-progress: false
+
+jobs:
+  play:
+    name: Build signed Google Play AAB
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Test
+        run: flutter test
+
+      - name: Verify Google Play API baseline
+        shell: bash
+        run: |
+          grep -q 'compileSdk = 36' android/app/build.gradle.kts
+          grep -q 'targetSdk = 36' android/app/build.gradle.kts
+          grep -q 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
+          grep -q 'android:usesCleartextTraffic="false"' android/app/src/main/AndroidManifest.xml
+
+      - name: Configure private upload signing
+        env:
+          MEDIX_UPLOAD_KEYSTORE_BASE64: ${{ secrets.MEDIX_UPLOAD_KEYSTORE_BASE64 }}
+          MEDIX_UPLOAD_KEY_ALIAS: ${{ secrets.MEDIX_UPLOAD_KEY_ALIAS }}
+          MEDIX_UPLOAD_KEY_PASSWORD: ${{ secrets.MEDIX_UPLOAD_KEY_PASSWORD }}
+          MEDIX_UPLOAD_STORE_PASSWORD: ${{ secrets.MEDIX_UPLOAD_STORE_PASSWORD }}
+        shell: bash
+        run: |
+          for name in             MEDIX_UPLOAD_KEYSTORE_BASE64             MEDIX_UPLOAD_KEY_ALIAS             MEDIX_UPLOAD_KEY_PASSWORD             MEDIX_UPLOAD_STORE_PASSWORD
+          do
+            if [ -z "${!name}" ]; then
+              echo "Missing required production signing secret: $name" >&2
+              exit 1
+            fi
+          done
+
+          KEYSTORE="$RUNNER_TEMP/medix-upload.jks"
+          printf '%s' "$MEDIX_UPLOAD_KEYSTORE_BASE64" | base64 --decode > "$KEYSTORE"
+          test -s "$KEYSTORE"
+
+          cat > android/key.properties <<EOF
+          storeFile=$KEYSTORE
+          storePassword=$MEDIX_UPLOAD_STORE_PASSWORD
+          keyAlias=$MEDIX_UPLOAD_KEY_ALIAS
+          keyPassword=$MEDIX_UPLOAD_KEY_PASSWORD
+          EOF
+
+      - name: Build signed production AAB
+        run: flutter build appbundle --release
+
+      - name: Verify signed bundle
+        shell: bash
+        run: |
+          AAB="build/app/outputs/bundle/release/app-release.aab"
+          test -s "$AAB"
+          jarsigner -verify -strict "$AAB"
+          sha256sum "$AAB" | tee build/app/outputs/bundle/release/SHA256SUMS.txt
+
+      - name: Upload Google Play bundle
+        uses: actions/upload-artifact@v7
+        with:
+          name: MediX-Google-Play-AAB
+          path: |
+            build/app/outputs/bundle/release/app-release.aab
+            build/app/outputs/bundle/release/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30

@@ -1,4 +1,4 @@
 abstract final class MedixAppInfo {
-  static const version = '0.3.4';
-  static const displayVersion = '0.3.4+7';
+  static const version = '0.3.5';
+  static const displayVersion = '0.3.5+8';
 }

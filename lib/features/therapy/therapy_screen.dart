@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../models/therapy_entry.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_page.dart';
@@ -28,22 +29,22 @@ class TherapyScreen extends StatelessWidget {
     return AnimatedBuilder(
       animation: state,
       builder: (context, _) {
+        final loc = MedixLocalizations.of(context);
         return MedixPage(
           safeArea: false,
           appBar: AppBar(
-            title: const Text('Moja terapija'),
+            title: Text(loc.t('therapyTitle')),
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _addTherapy(context),
             icon: const Icon(Icons.add_rounded),
-            label: const Text('Dodaj terapiju'),
+            label: Text(loc.t('addTherapy')),
           ),
           child: state.therapy.isEmpty
-              ? const MedixEmptyState(
+              ? MedixEmptyState(
                   icon: Icons.event_available_outlined,
-                  title: 'Nema spremljene terapije',
-                  message:
-                      'Dodajte lijek, opis doze i vrijeme uzimanja. Plan se čuva lokalno na uređaju i može koristiti Android podsjetnike.',
+                  title: loc.t('noTherapyTitle'),
+                  message: loc.t('noTherapyBody'),
                 )
               : ListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
@@ -72,20 +73,21 @@ class _LocalDataNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MedixSectionCard(
+    final loc = MedixLocalizations.of(context);
+    return MedixSectionCard(
       accent: MedixColors.cyan,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MedixIconBubble(
+          const MedixIconBubble(
             icon: Icons.notifications_active_outlined,
             color: MedixColors.cyan,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Terapija ostaje lokalno na uređaju. Android obavijesti i alarm dozvole traže se tek kada korisnik spremi ili aktivira podsjetnik.',
-              style: TextStyle(
+              loc.t('therapyNotice'),
+              style: const TextStyle(
                 color: MedixColors.textSecondary,
                 height: 1.4,
               ),
@@ -123,18 +125,18 @@ class _TherapyCard extends StatelessWidget {
     final shouldRemove = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Ukloniti terapiju?'),
-        content: const Text(
-          'Ovaj unos i njegovi lokalni podsjetnici bit će uklonjeni.',
+        title: Text(MedixLocalizations.of(dialogContext).t('removeTherapyQuestion')),
+        content: Text(
+          MedixLocalizations.of(dialogContext).t('removeTherapyBody'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: const Text('Odustani'),
+            child: Text(MedixLocalizations.of(dialogContext).t('cancel')),
           ),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text('Ukloni'),
+            child: Text(MedixLocalizations.of(dialogContext).t('remove')),
           ),
         ],
       ),
@@ -147,6 +149,8 @@ class _TherapyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
+    final hr = Localizations.localeOf(context).languageCode == 'hr';
     final medication = state.medicationById(entry.medicationId);
     if (medication == null) {
       return const SizedBox.shrink();
@@ -184,7 +188,7 @@ class _TherapyCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 7),
                 Text(
-                  _weekdaySummary(entry.weekdays),
+                  _weekdaySummary(entry.weekdays, hr: hr),
                   style: const TextStyle(
                     color: MedixColors.cyanSoft,
                     fontSize: 11,
@@ -238,9 +242,9 @@ class _TherapyCard extends StatelessWidget {
                         await state.requestReminderPermissions();
                     if (!allowed && context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
+                        SnackBar(
                           content: Text(
-                            'Terapija je aktivna, ali Android obavijesti nisu odobrene.',
+                            loc.t('remindersDenied'),
                           ),
                         ),
                       );
@@ -250,13 +254,13 @@ class _TherapyCard extends StatelessWidget {
                 },
               ),
               IconButton(
-                tooltip: 'Uredi terapiju',
+                tooltip: loc.t('editTherapy'),
                 onPressed: () => _edit(context),
                 icon: const Icon(Icons.edit_outlined),
                 color: MedixColors.cyan,
               ),
               IconButton(
-                tooltip: 'Obriši terapiju',
+                tooltip: loc.t('removeTherapy'),
                 onPressed: () => _confirmRemove(context),
                 icon: const Icon(Icons.delete_outline),
                 color: MedixColors.danger,
@@ -367,10 +371,8 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
         times.isEmpty ||
         weekdays.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Odaberite lijek, opišite dozu, dane i dodajte vrijeme.',
-          ),
+        SnackBar(
+          content: Text(MedixLocalizations.of(context).t('therapyInvalid')),
         ),
       );
       return;
@@ -406,8 +408,8 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
 
     if (!saved) {
       messenger.showSnackBar(
-        const SnackBar(
-          content: Text('Terapiju nije moguće spremiti. Provjerite podatke.'),
+        SnackBar(
+          content: Text(MedixLocalizations.of(context).t('therapySaveFailed')),
         ),
       );
       return;
@@ -417,10 +419,8 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
 
     if (!notificationsAllowed) {
       messenger.showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Terapija je spremljena, ali Android obavijesti nisu odobrene.',
-          ),
+        SnackBar(
+          content: Text(MedixLocalizations.of(context).t('therapySavedNoNotifications')),
         ),
       );
     }
@@ -428,6 +428,8 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
+    final hr = Localizations.localeOf(context).languageCode == 'hr';
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
     final medications = widget.state.repository.medications;
 
@@ -438,16 +440,16 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              isEditing ? 'Uredi terapiju' : 'Dodaj terapiju',
+              isEditing ? loc.t('editTherapy') : loc.t('addTherapy'),
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
               ),
             ),
             const SizedBox(height: 7),
-            const Text(
-              'Unesite plan prema uputi liječnika, ljekarnika ili službenoj uputi lijeka.',
-              style: TextStyle(
+            Text(
+              loc.t('therapyFormIntro'),
+              style: const TextStyle(
                 color: MedixColors.textSecondary,
                 height: 1.4,
               ),
@@ -455,9 +457,9 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
             const SizedBox(height: 20),
             DropdownButtonFormField<String>(
               initialValue: medicationId,
-              decoration: const InputDecoration(
-                labelText: 'Lijek',
-                prefixIcon: Icon(Icons.medication_outlined),
+              decoration: InputDecoration(
+                labelText: loc.t('medicine'),
+                prefixIcon: const Icon(Icons.medication_outlined),
               ),
               items: medications
                   .map(
@@ -479,16 +481,16 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
             const SizedBox(height: 12),
             TextField(
               controller: doseController,
-              decoration: const InputDecoration(
-                labelText: 'Opis doze',
-                hintText: 'npr. 1 tableta',
-                prefixIcon: Icon(Icons.medication_liquid_outlined),
+              decoration: InputDecoration(
+                labelText: loc.t('doseDescription'),
+                hintText: loc.t('doseExample'),
+                prefixIcon: const Icon(Icons.medication_liquid_outlined),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Dani uzimanja',
-              style: TextStyle(fontWeight: FontWeight.w800),
+            Text(
+              loc.t('days'),
+              style: const TextStyle(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
             Wrap(
@@ -497,7 +499,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
               children: List.generate(7, (index) {
                 final day = index + 1;
                 return FilterChip(
-                  label: Text(_weekdayShortLabel(day)),
+                  label: Text(_weekdayShortLabel(day, hr: hr)),
                   selected: weekdays.contains(day),
                   onSelected: (selected) {
                     setState(() {
@@ -512,11 +514,11 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
               }),
             ),
             if (weekdays.isEmpty)
-              const Padding(
-                padding: EdgeInsets.only(top: 7),
+              Padding(
+                padding: const EdgeInsets.only(top: 7),
                 child: Text(
-                  'Odaberite barem jedan dan.',
-                  style: TextStyle(
+                  loc.t('selectDay'),
+                  style: const TextStyle(
                     color: MedixColors.warning,
                     fontSize: 11,
                   ),
@@ -525,25 +527,25 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
             const SizedBox(height: 16),
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Vrijeme uzimanja',
-                    style: TextStyle(fontWeight: FontWeight.w800),
+                    loc.t('times'),
+                    style: const TextStyle(fontWeight: FontWeight.w800),
                   ),
                 ),
                 TextButton.icon(
                   onPressed: _addTime,
                   icon: const Icon(Icons.add_alarm),
-                  label: const Text('Dodaj vrijeme'),
+                  label: Text(loc.t('addTime')),
                 ),
               ],
             ),
             if (times.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: Text(
-                  'Još nije dodano vrijeme.',
-                  style: TextStyle(
+                  loc.t('noTime'),
+                  style: const TextStyle(
                     color: MedixColors.textSecondary,
                   ),
                 ),
@@ -567,7 +569,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
               child: FilledButton.icon(
                 onPressed: _save,
                 icon: const Icon(Icons.check_rounded),
-                label: Text(isEditing ? 'Spremi promjene' : 'Spremi terapiju'),
+                label: Text(isEditing ? loc.t('saveChanges') : loc.t('saveTherapy')),
               ),
             ),
           ],
@@ -578,20 +580,20 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
 }
 
 
-String _weekdayShortLabel(int weekday) {
+String _weekdayShortLabel(int weekday, {required bool hr}) {
   return switch (weekday) {
-    1 => 'Pon',
-    2 => 'Uto',
-    3 => 'Sri',
-    4 => 'Čet',
-    5 => 'Pet',
-    6 => 'Sub',
-    7 => 'Ned',
+    1 => hr ? 'Pon' : 'Mon',
+    2 => hr ? 'Uto' : 'Tue',
+    3 => hr ? 'Sri' : 'Wed',
+    4 => hr ? 'Čet' : 'Thu',
+    5 => hr ? 'Pet' : 'Fri',
+    6 => hr ? 'Sub' : 'Sat',
+    7 => hr ? 'Ned' : 'Sun',
     _ => '—',
   };
 }
 
-String _weekdaySummary(List<int> weekdays) {
+String _weekdaySummary(List<int> weekdays, {required bool hr}) {
   final normalized = weekdays
       .where((day) => day >= 1 && day <= 7)
       .toSet()
@@ -599,7 +601,7 @@ String _weekdaySummary(List<int> weekdays) {
     ..sort();
 
   if (normalized.length == 7) {
-    return 'Svaki dan';
+    return hr ? 'Svaki dan' : 'Every day';
   }
-  return normalized.map(_weekdayShortLabel).join(', ');
+  return normalized.map((day) => _weekdayShortLabel(day, hr: hr)).join(', ');
 }

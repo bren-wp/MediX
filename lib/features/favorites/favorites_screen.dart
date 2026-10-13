@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medication_tile.dart';
 import '../../widgets/medix_page.dart';
@@ -19,17 +20,17 @@ class FavoritesScreen extends StatelessWidget {
     return AnimatedBuilder(
       animation: state,
       builder: (context, _) {
+        final loc = MedixLocalizations.of(context);
         final favorites = state.favorites;
 
         return MedixPage(
           safeArea: false,
-          appBar: AppBar(title: const Text('Favoriti')),
+          appBar: AppBar(title: Text(loc.t('favorites'))),
           child: favorites.isEmpty
-              ? const MedixEmptyState(
+              ? MedixEmptyState(
                   icon: Icons.favorite_border_rounded,
-                  title: 'Još nema favorita',
-                  message:
-                      'Dodajte lijek dodirom na ikonu srca kako biste ga brzo pronašli kasnije.',
+                  title: loc.t('favoritesEmptyTitle'),
+                  message: loc.t('favoritesEmptyBody'),
                   color: MedixColors.danger,
                 )
               : ListView.separated(

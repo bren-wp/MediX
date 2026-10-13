@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/app_info.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_brand.dart';
@@ -19,6 +20,7 @@ import '../therapy/calendar_screen.dart';
 import 'about_screen.dart';
 import 'privacy_screen.dart';
 import 'sources_screen.dart';
+import 'settings_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({
@@ -36,8 +38,10 @@ class MoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
+    final hr = Localizations.localeOf(context).languageCode == 'hr';
     return MedixPage(
-      appBar: AppBar(title: const Text('Više')),
+      appBar: AppBar(title: Text(loc.t('more'))),
       safeArea: false,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
@@ -47,11 +51,13 @@ class MoreScreen extends StatelessWidget {
             child: MedixBrand(compact: true),
           ),
           const SizedBox(height: 18),
-          const _SectionTitle('Profesionalni alati'),
+          _SectionTitle(loc.t('professionalTools')),
           _MenuItem(
             icon: Icons.auto_awesome_rounded,
             title: 'MediX Smart',
-            subtitle: 'Pametna pretraga lijekova prirodnim upitom',
+            subtitle: hr
+                ? 'Pametna pretraga lijekova prirodnim upitom'
+                : 'Smart medicine search with natural-language queries',
             color: MedixColors.cyan,
             onTap: () => _push(
               context,
@@ -60,8 +66,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.hub_outlined,
-            title: 'Provjera interakcija',
-            subtitle: 'Usporedite lijekove i terapiju',
+            title: hr ? 'Provjera interakcija' : 'Interaction checker',
+            subtitle: hr
+                ? 'Usporedite lijekove i terapiju'
+                : 'Review medicines and therapy together',
             color: MedixColors.danger,
             onTap: () => _push(
               context,
@@ -70,8 +78,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.compare_arrows_rounded,
-            title: 'Usporedba lijekova',
-            subtitle: 'Usporedite 2 do 4 lijeka i pakiranja',
+            title: hr ? 'Usporedba lijekova' : 'Compare medicines',
+            subtitle: hr
+                ? 'Usporedite 2 do 4 lijeka i pakiranja'
+                : 'Compare 2 to 4 medicines and packages',
             color: MedixColors.cyan,
             onTap: () => _push(
               context,
@@ -80,8 +90,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.calculate_outlined,
-            title: 'Klinički alati',
-            subtitle: 'BMI, BSA, eGFR, GCS, CHA₂DS₂-VASc i više',
+            title: hr ? 'Klinički alati' : 'Clinical tools',
+            subtitle: hr
+                ? 'BMI, BSA, eGFR, GCS, CHA₂DS₂-VASc i više'
+                : 'BMI, BSA, eGFR, GCS, CHA₂DS₂-VASc and more',
             color: MedixColors.primary,
             onTap: () => _push(
               context,
@@ -90,8 +102,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.account_tree_outlined,
-            title: 'ATK i MKB-10',
-            subtitle: 'Klasifikacije lijekova i dijagnoza',
+            title: hr ? 'ATK i MKB-10' : 'ATC & ICD-10',
+            subtitle: hr
+                ? 'Klasifikacije lijekova i dijagnoza'
+                : 'Medicine and diagnosis classifications',
             color: MedixColors.purple,
             onTap: () => _push(
               context,
@@ -100,8 +114,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.swap_horiz_rounded,
-            title: 'Paralelni i srodni lijekovi',
-            subtitle: 'Pregled po djelatnoj tvari',
+            title: hr ? 'Paralelni i srodni lijekovi' : 'Related medicines',
+            subtitle: hr
+                ? 'Pregled po djelatnoj tvari'
+                : 'Explore medicines by active ingredient',
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -110,8 +126,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.euro_rounded,
-            title: 'Cijene i pakiranja',
-            subtitle: 'Pretraživ pregled dostupnih cjenovnih zapisa',
+            title: hr ? 'Cijene i pakiranja' : 'Prices & packages',
+            subtitle: hr
+                ? 'Pretraživ pregled dostupnih cjenovnih zapisa'
+                : 'Search available pricing records',
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -119,11 +137,13 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const _SectionTitle('Terapija i sigurnost'),
+          _SectionTitle(loc.t('therapySafety')),
           _MenuItem(
             icon: Icons.calendar_month_outlined,
-            title: 'Kalendar terapije',
-            subtitle: 'Dnevni raspored i lokalni podsjetnici',
+            title: hr ? 'Kalendar terapije' : 'Therapy calendar',
+            subtitle: hr
+                ? 'Dnevni raspored i podsjetnici na uređaju'
+                : 'Daily schedule and on-device reminders',
             color: MedixColors.primary,
             onTap: () => _push(
               context,
@@ -132,8 +152,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.pregnant_woman_rounded,
-            title: 'Trudnoća i dojenje',
-            subtitle: 'Brzi pregled posebnih upozorenja',
+            title: hr ? 'Trudnoća i dojenje' : 'Pregnancy & breastfeeding',
+            subtitle: hr
+                ? 'Brzi pregled posebnih upozorenja'
+                : 'Focused safety considerations',
             color: MedixColors.purple,
             onTap: () => _push(
               context,
@@ -144,8 +166,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.child_care_rounded,
-            title: 'Djeca',
-            subtitle: 'Pedijatrijski sigurnosni pregled',
+            title: hr ? 'Djeca' : 'Children',
+            subtitle: hr
+                ? 'Pedijatrijski sigurnosni pregled'
+                : 'Pediatric safety overview',
             color: MedixColors.warning,
             onTap: () => _push(
               context,
@@ -156,8 +180,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.elderly_rounded,
-            title: 'Starije osobe',
-            subtitle: 'Politerapija i posebna upozorenja',
+            title: hr ? 'Starije osobe' : 'Older adults',
+            subtitle: hr
+                ? 'Politerapija i posebna upozorenja'
+                : 'Polypharmacy and safety considerations',
             color: MedixColors.cyan,
             onTap: () => _push(
               context,
@@ -167,11 +193,13 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          const _SectionTitle('Dodatno'),
+          _SectionTitle(loc.t('additional')),
           _MenuItem(
             icon: Icons.local_pharmacy_outlined,
-            title: 'Ljekarne u blizini',
-            subtitle: 'Otvori pretragu ljekarni u aplikaciji za karte',
+            title: hr ? 'Ljekarne u blizini' : 'Nearby pharmacies',
+            subtitle: hr
+                ? 'Otvori pretragu ljekarni u aplikaciji za karte'
+                : 'Open a pharmacy search in your maps app',
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -180,8 +208,10 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.school_outlined,
-            title: 'Edukacija i vodiči',
-            subtitle: 'Kratki vodiči za sigurnije korištenje MediX alata',
+            title: hr ? 'Edukacija i vodiči' : 'Education & guides',
+            subtitle: hr
+                ? 'Kratki vodiči za sigurnije korištenje MediX alata'
+                : 'Practical guides for getting more from MediX',
             color: MedixColors.warning,
             onTap: () => _push(
               context,
@@ -189,9 +219,19 @@ class MoreScreen extends StatelessWidget {
             ),
           ),
           _MenuItem(
+            icon: Icons.settings_outlined,
+            title: loc.t('settings'),
+            subtitle: loc.t('languageSubtitle'),
+            color: MedixColors.primary,
+            onTap: () => _push(
+              context,
+              SettingsScreen(state: state),
+            ),
+          ),
+          _MenuItem(
             icon: Icons.shield_outlined,
-            title: 'Sigurnost i privatnost',
-            subtitle: 'Lokalna terapija i favoriti · bez obveznog računa',
+            title: loc.t('securityPrivacy'),
+            subtitle: loc.t('securityPrivacySubtitle'),
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -200,8 +240,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.verified_user_outlined,
-            title: 'Službeni izvori podataka',
-            subtitle: 'HALMED, HZZO i izvori službenih cjenovnih podataka',
+            title: loc.t('officialSources'),
+            subtitle: loc.t('officialSourcesSubtitle'),
             color: MedixColors.cyan,
             onTap: () => _push(
               context,
@@ -210,7 +250,7 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.info_outline_rounded,
-            title: 'O aplikaciji',
+            title: loc.t('about'),
             subtitle: 'MediX ${MedixAppInfo.version}',
             color: MedixColors.primary,
             onTap: () => _push(

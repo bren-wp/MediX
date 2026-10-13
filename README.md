@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.4</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
+  <strong>Android</strong> · <strong>Flutter</strong> · <strong>MediX 0.3.5</strong> · <strong>Bez obvezne registracije</strong> · <strong>Offline-first katalog</strong>
 </p>
 
 <p align="center">
@@ -57,7 +57,7 @@ Rezultati se rangiraju iz lokalnog kataloga prema nazivu, djelatnoj tvari, ATK �
 
 ## 🧮 Klinički alati
 
-MediX 0.3.4 uključuje devet brzih kalkulatora i bodovnih sustava:
+MediX 0.3.5 uključuje devet brzih kalkulatora i bodovnih sustava:
 
 **BMI · BSA Mosteller · eGFR CKD-EPI 2021 · CHA₂DS₂-VASc · HAS-BLED · Glasgow Coma Scale · originalni MELD · PERC · Wells PE**
 
@@ -71,6 +71,16 @@ MediX objedinjuje farmakološku i dijagnostičku klasifikaciju:
 - **39.559 MKB-10 zapisa** u lokalnoj bazi
 - trenutna pretraga bez čekanja mreže
 - jednostavno prebacivanje ATK ↔ MKB-10
+
+## 🌍 Jezici i postavke
+
+MediX 0.3.5 uvodi **24 podržana jezika** s engleskim kao primarnim jezikom aplikacije. Hrvatski je dostupan iz Postavki, a odabrani jezik ostaje spremljen lokalno na uređaju.
+
+Postavke objedinjuju jezik, dozvole podsjetnika, lokalni PDF→ZIP izvoz, sigurnost i privatnost, pravne poveznice, verziju aplikacije i autora **Brendigo**.
+
+## 📦 Privatni PDF → ZIP izvoz
+
+Korisnik može izraditi lokalnu ZIP arhivu koja sadrži PDF dokumente za terapijski plan, favorite i podatke o aplikaciji. Izvoz se generira u privremenoj memoriji aplikacije i dijeli kroz Androidov sustav za dijeljenje, bez zahtjeva za širokim pristupom datotekama.
 
 ## 🔐 Privatnost bez nepotrebnog računa
 
@@ -89,6 +99,19 @@ MediX koristi vlastiti dark navy/cyan identitet:
 
 Dizajn nije generički medical template — cijeli vizualni jezik pripada MediX brendu.
 
+## ✅ Google Play production baseline
+
+- Android 16 / **target API 36**
+- privatni upload keystore ostaje izvan repozitorija
+- zaseban `Google Play production AAB` workflow zahtijeva GitHub Secrets i provjerava potpis AAB-a
+- `android:allowBackup="false"` za lokalne terapijske podatke
+- cleartext promet je isključen
+- FileProvider izlaže samo privremene export datoteke
+- javna politika privatnosti: https://brendigo.com/politika-privatnosti/
+- uvjeti korištenja: https://brendigo.com/uvjeti-koristenja/
+
+MediX je zdravstvena informacijska aplikacija, nije medicinski uređaj i ne postavlja dijagnozu niti zamjenjuje zdravstvenog stručnjaka.
+
 ## 📦 Android buildovi
 
 CI pipeline provjerava kod i generira:
@@ -106,9 +129,11 @@ Privatni produkcijski keystore učitava se samo kada je lokalno ili u CI okruže
 
 - Flutter / Dart
 - Android package: `com.brendigo.medix`
-- lokalna pohrana favorita i terapije
+- lokalna pohrana favorita, terapije i jezičnih postavki
 - lokalne Android obavijesti i tjedni raspored podsjetnika
 - uređivanje postojećih terapijskih planova bez brisanja unosa
+- lokalni PDF→ZIP izvoz bez cloud uploada
+- 24 jezika s engleskim kao primarnim
 - verzionirani offline katalozi
 - automatizirane provjere kvalitete, provjera izvora službenog naziva lijeka i build pipeline
 
@@ -119,6 +144,6 @@ MediX se razvija prema jednoj aplikaciji za profesionalni rad s lijekovima: **š
 ---
 
 <p align="center">
-  <strong>MediX 0.3.4</strong><br>
+  <strong>MediX 0.3.5</strong><br>
   Vaš vodič kroz lijekove.
 </p>

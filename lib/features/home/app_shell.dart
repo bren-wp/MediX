@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../state/medix_state.dart';
 import '../favorites/favorites_screen.dart';
 import '../search/search_screen.dart';
@@ -41,6 +42,7 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
     return Scaffold(
       backgroundColor: MedixColors.background,
       body: IndexedStack(
@@ -50,29 +52,29 @@ class _AppShellState extends State<AppShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (value) => setState(() => index = value),
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded),
-            label: 'Početna',
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home_rounded),
+            label: loc.t('home'),
           ),
           NavigationDestination(
-            icon: Icon(Icons.search),
-            label: 'Pretraga',
+            icon: const Icon(Icons.search),
+            label: loc.t('search'),
           ),
           NavigationDestination(
-            icon: Icon(Icons.event_note_outlined),
-            selectedIcon: Icon(Icons.event_note_rounded),
-            label: 'Terapija',
+            icon: const Icon(Icons.event_note_outlined),
+            selectedIcon: const Icon(Icons.event_note_rounded),
+            label: loc.t('therapy'),
           ),
           NavigationDestination(
-            icon: Icon(Icons.favorite_border),
-            selectedIcon: Icon(Icons.favorite),
-            label: 'Favoriti',
+            icon: const Icon(Icons.favorite_border),
+            selectedIcon: const Icon(Icons.favorite),
+            label: loc.t('favorites'),
           ),
           NavigationDestination(
-            icon: Icon(Icons.tune_rounded),
-            label: 'Više',
+            icon: const Icon(Icons.tune_rounded),
+            label: loc.t('more'),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/medix_theme.dart';
+import '../core/localization/medix_localizations.dart';
 import '../models/medication.dart';
 
 class MedicationTile extends StatelessWidget {
@@ -19,6 +20,7 @@ class MedicationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = MedixLocalizations.of(context);
     final subtitle = medication.compactSubtitle;
     final ingredient = medication.activeIngredient.trim();
 
@@ -94,10 +96,10 @@ class MedicationTile extends StatelessWidget {
                       children: [
                         _InfoChip(
                           label: medication.requiresPrescription == true
-                              ? 'Na recept'
+                              ? loc.t('prescription')
                               : medication.requiresPrescription == false
-                                  ? 'Bez recepta'
-                                  : 'Izdavanje: —',
+                                  ? loc.t('otc')
+                                  : loc.t('unknown'),
                           icon: medication.requiresPrescription == true
                               ? Icons.description_outlined
                               : medication.requiresPrescription == false
@@ -115,20 +117,26 @@ class MedicationTile extends StatelessWidget {
                           ),
                         if (medication.marketState ==
                             MedicationMarketState.temporaryInterruption)
-                          const _InfoChip(
-                            label: 'Prekid opskrbe',
+                          _InfoChip(
+                            label: Localizations.localeOf(context).languageCode == 'hr'
+                                ? 'Prekid opskrbe'
+                                : 'Supply interruption',
                             icon: Icons.pause_circle_outline_rounded,
                           )
                         else if (medication.marketState ==
                             MedicationMarketState.notMarketed)
-                          const _InfoChip(
-                            label: 'Nije u prometu',
+                          _InfoChip(
+                            label: Localizations.localeOf(context).languageCode == 'hr'
+                                ? 'Nije u prometu'
+                                : 'Not marketed',
                             icon: Icons.remove_circle_outline_rounded,
                           ),
                         if (medication.shortageState ==
                             MedicationShortageState.reported)
-                          const _InfoChip(
-                            label: 'Nestašica',
+                          _InfoChip(
+                            label: Localizations.localeOf(context).languageCode == 'hr'
+                                ? 'Nestašica'
+                                : 'Shortage',
                             icon: Icons.warning_amber_rounded,
                           ),
                       ],
@@ -138,8 +146,12 @@ class MedicationTile extends StatelessWidget {
               ),
               IconButton(
                 tooltip: isFavorite
-                    ? 'Ukloni iz favorita'
-                    : 'Dodaj u favorite',
+                    ? (Localizations.localeOf(context).languageCode == 'hr'
+                        ? 'Ukloni iz favorita'
+                        : 'Remove from favorites')
+                    : (Localizations.localeOf(context).languageCode == 'hr'
+                        ? 'Dodaj u favorite'
+                        : 'Add to favorites'),
                 visualDensity: VisualDensity.compact,
                 onPressed: onFavorite,
                 icon: Icon(
