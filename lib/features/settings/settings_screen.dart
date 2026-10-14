@@ -44,6 +44,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _requestNotifications() async {
     if (requestingNotifications) return;
     setState(() => requestingNotifications = true);
+    final loc = MedixLocalizations.of(context);
     var allowed = false;
     try {
       allowed = await widget.state.requestReminderPermissions();
