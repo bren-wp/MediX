@@ -83,6 +83,7 @@ void main() {
           'id': entry.$1,
           'name': 'Lijek ${entry.$1}',
           'active_ingredient': 'testna tvar',
+          'authorization_number': 'HR-H-${entry.$1}',
           'rx_status': entry.$2,
           'atc_code': 'A01AA01',
           'strength': '10 mg',
