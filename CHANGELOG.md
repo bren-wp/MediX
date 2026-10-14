@@ -2,6 +2,22 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.13] - 2026-10-14
+
+### Sigurnije prepoznavanje izdavanja lijekova
+- uvoz HALMED i HZZO zapisa sada koristi zajednički parser statusa izdavanja, bez duplicirane heuristike
+- podržane službene oznake `BR` i `BRX` za bezreceptno izdavanje te `R` i `RS` za izdavanje na recept
+- podržan jasan tekst "bez recepta", "na recept" i "uz recept", uz zadržavanje izvornog statusa u stručnim metapodacima
+- negirani, proturječni ili neprepoznati tekstovi ostaju **nepotvrđeni**, umjesto da se lijek pogrešno svrsta u bezreceptne
+- kod nepotvrđenog statusa usporedba i kopirani sažetak prikazuju da izdavanje nije potvrđeno
+- postojeći brzi filtri i profesionalna pretraga koriste isti konzervativni podatak o izdavanju
+
+### Kvaliteta i provjere
+- testovi za `BR/BRX/R/RS`, jasno napisane režime izdavanja, negacije, kontradikcije i nepoznate oznake
+- integracijski test pretraživanja HALMED zapisa s potvrđenim i nepotvrđenim statusima
+- postojeće provjere HZZO doplata, pakiranja, cjenika i službenih izvora ostaju aktivne
+- obvezan Flutter analyze, svi testovi, Dart dead-code audit i Android APK/AAB build prije izdanja
+
 ## [0.3.12] - 2026-10-14
 
 ### Sigurna usporedba lijekova

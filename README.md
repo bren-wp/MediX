@@ -49,6 +49,12 @@ The medicine identity comes from the **official HALMED medicine catalog**. HZZO 
 | 💶 | **Prices & packages** | Review available price and reimbursement information with clear distinctions between price types. |
 | 🏥 | **Find pharmacies** | Continue your pharmacy search in your preferred Android maps app. |
 
+## 🩺 Prescription status, with evidence
+
+MediX recognizes documented Croatian dispensing codes **BR / BRX** (without prescription) and **R / RS** (prescription), as well as unambiguous status text in official records. Contradictory, negated or unrecognized labels are **not guessed**: they remain unverified in the search filters, medicine profiles and comparisons. The exact incoming source text remains available in the professional metadata for verification.
+
+The medicine's dispensing status is distinct from reimbursement and individual insurance coverage. Always check the latest official documentation for the exact medicine and package.
+
 ## ↔️ Safer comparisons and transparent wholesale price lists
 
 Compare up to four medicines, including prescription, package, HZZO list, effective-date and price-source differences. Only verified HZZO copayments and finite nonnegative EUR wholesale amounts are displayed. A medicine without a confirmed HZZO record is **not automatically outside coverage**.
