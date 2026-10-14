@@ -2,6 +2,26 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.8] - 2026-10-14
+
+### Jednostavniji profesionalni pregled lijekova
+- najvažnije informacije na početku detalja: izdavanje na recept ili bez recepta, HZZO status i službeno potvrđena doplata
+- različiti pojmovi jasno odvojeni: Osnovna/Dopunska lista HZZO-a, obvezno i dopunsko zdravstveno osiguranje
+- nepoznati status liste ne znači automatski da lijek nije pokriven
+- maloprodajna i najviša veleprodajna cijena prikazuju se odvojeno, bez izmišljenih iznosa i jamstava o osobnom iznosu za plaćanje
+- provjerena HZZO doplata može biti vidljiva već u rezultatu pretrage
+- direktna poveznica na HZZO službene liste lijekova za dodatnu provjeru
+
+### UI/UX i pristupačnost
+- uklonjena nepotrebno velika dekorativna ilustracija u detaljima lijeka
+- regulatorni/stručni i dodatni cjenovni podaci grupirani u proširive sekcije
+- engleski i hrvatski tekstovi o osiguranju i plaćanju, uz postojeći engleski fallback
+
+### Validacija i testovi
+- validacija cijena i valute prije prikaza, bez implicitnog izračuna cijene s dopunskim osiguranjem
+- regresijski testovi zabrane prikaza HZZO doplate za nepoznate i pogrešne statuse lista
+- widget test sa scenarijem nepoznate pokrivenosti i OTC lijeka
+
 ## [0.3.7] - 2026-10-14
 
 ### Terapija i podsjetnici
