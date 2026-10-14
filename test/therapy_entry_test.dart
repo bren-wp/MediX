@@ -2,6 +2,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:medix/models/therapy_entry.dart';
 
 void main() {
+  test('normalizes valid times and rejects out-of-range clock values', () {
+    expect(
+      TherapyEntry.normalizeTimes(
+        const ['8:00', '08:00', '23:59', ' 00:01 ', '24:00', '09:60', '-1:00', '12:5', 'hello'],
+      ),
+      const ['00:01', '08:00', '23:59'],
+    );
+  });
+
   test('therapy entry applies only to configured weekdays', () {
     const entry = TherapyEntry(
       id: 'therapy-1',

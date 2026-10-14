@@ -30,6 +30,7 @@ class TherapyScreen extends StatelessWidget {
       animation: state,
       builder: (context, _) {
         final loc = MedixLocalizations.of(context);
+        final entries = state.therapy;
         return MedixPage(
           safeArea: false,
           appBar: AppBar(
@@ -40,27 +41,30 @@ class TherapyScreen extends StatelessWidget {
             icon: const Icon(Icons.add_rounded),
             label: Text(loc.t('addTherapy')),
           ),
-          child: state.therapy.isEmpty
+          child: entries.isEmpty
               ? MedixEmptyState(
                   icon: Icons.event_available_outlined,
                   title: loc.t('noTherapyTitle'),
                   message: loc.t('noTherapyBody'),
                 )
-              : ListView(
+              : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-                  children: [
-                    const _LocalDataNotice(),
-                    const SizedBox(height: 14),
-                    ...state.therapy.map(
-                      (entry) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _TherapyCard(
-                          entry: entry,
-                          state: state,
-                        ),
+                  itemCount: entries.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return const Padding(
+                        padding: EdgeInsets.only(bottom: 14),
+                        child: _LocalDataNotice(),
+                      );
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: _TherapyCard(
+                        entry: entries[index - 1],
+                        state: state,
                       ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
         );
       },

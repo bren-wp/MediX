@@ -1,4 +1,27 @@
 class TherapyEntry {
+  /// Accept valid clock values only and keep them in canonical HH:mm form.
+  static final RegExp _clockPattern = RegExp(r'^(\d{1,2}):(\d{2})$');
+
+  static List<String> normalizeTimes(Iterable<String> values) {
+    final normalized = <String>{};
+    for (final raw in values) {
+      final match = _clockPattern.firstMatch(raw.trim());
+      if (match == null) continue;
+      final hour = int.tryParse(match.group(1)!);
+      final minute = int.tryParse(match.group(2)!);
+      if (hour == null || minute == null ||
+          hour > 23 || minute > 59) {
+        continue;
+      }
+      normalized.add(
+        hour.toString().padLeft(2, '0') +
+            ':' +
+            minute.toString().padLeft(2, '0'),
+      );
+    }
+    return normalized.toList()..sort();
+  }
+
   const TherapyEntry({
     required this.id,
     required this.medicationId,

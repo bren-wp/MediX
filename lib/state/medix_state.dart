@@ -23,6 +23,10 @@ class MedixState extends ChangeNotifier {
   final Set<String> _favoriteIds = <String>{};
   final List<String> _recentIds = <String>[];
   final List<TherapyEntry> _therapy = <TherapyEntry>[];
+  late final Map<String, Medication> _medicationsById = {
+    for (final medication in repository.medications) medication.id: medication,
+  };
+  Future<void> _reminderSync = Future<void>.value();
   bool _onboardingCompleted = false;
   String _localeCode = MedixLanguages.primaryCode;
 
@@ -37,7 +41,7 @@ class MedixState extends ChangeNotifier {
 
     final stored = await storage.load();
     final validMedicationIds =
-        repository.medications.map((item) => item.id).toSet();
+        _medicationsById.keys.toSet();
 
     _favoriteIds
       ..clear()
@@ -68,7 +72,9 @@ class MedixState extends ChangeNotifier {
   Future<bool> requestReminderPermissions() async {
     final scheduler = reminders;
     if (scheduler == null) return false;
-    return scheduler.requestPermissions();
+    final allowed = await scheduler.requestPermissions();
+    if (allowed) _syncReminders();
+    return allowed;
   }
 
   Future<void> setLocale(String code) async {
@@ -110,14 +116,7 @@ class MedixState extends ChangeNotifier {
         .toList(growable: false);
   }
 
-  Medication? medicationById(String id) {
-    for (final medication in repository.medications) {
-      if (medication.id == id) {
-        return medication;
-      }
-    }
-    return null;
-  }
+  Medication? medicationById(String id) => _medicationsById[id];
 
   bool isFavorite(String medicationId) {
     return _favoriteIds.contains(medicationId);
@@ -159,12 +158,7 @@ class MedixState extends ChangeNotifier {
     required List<String> times,
     List<int> weekdays = const [1, 2, 3, 4, 5, 6, 7],
   }) {
-    final normalizedTimes = times
-        .map((time) => time.trim())
-        .where((time) => time.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort();
+    final normalizedTimes = TherapyEntry.normalizeTimes(times);
     final normalizedWeekdays = weekdays
         .where((day) => day >= 1 && day <= 7)
         .toSet()
@@ -201,12 +195,7 @@ class MedixState extends ChangeNotifier {
     required List<int> weekdays,
   }) {
     final index = _therapy.indexWhere((entry) => entry.id == therapyId);
-    final normalizedTimes = times
-        .map((time) => time.trim())
-        .where((time) => time.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort();
+    final normalizedTimes = TherapyEntry.normalizeTimes(times);
     final normalizedWeekdays = weekdays
         .where((day) => day >= 1 && day <= 7)
         .toSet()
@@ -261,14 +250,22 @@ class MedixState extends ChangeNotifier {
 
   void _syncReminders() {
     final scheduler = reminders;
-    if (scheduler != null) {
-      unawaited(
-        scheduler.syncTherapy(
-          therapy: List<TherapyEntry>.unmodifiable(_therapy),
+    if (scheduler == null) return;
+
+    // A reminder rebuild cancels pending alarms before adding new ones.
+    // Serialize rebuilds so an older edit cannot overwrite newer alarms.
+    final snapshot = List<TherapyEntry>.unmodifiable(_therapy);
+    _reminderSync = _reminderSync.then((_) async {
+      try {
+        await scheduler.syncTherapy(
+          therapy: snapshot,
           medicationById: medicationById,
-        ),
-      );
-    }
+        );
+      } catch (_) {
+        // Avoid leaking health data or unhandled async errors into logs.
+        debugPrint('MediX: reminder synchronization failed.');
+      }
+    });
   }
 
   void _saveTherapy() {

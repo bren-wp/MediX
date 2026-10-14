@@ -48,7 +48,7 @@ The medicine identity comes from the **official HALMED medicine catalog**. HZZO 
 
 ## 📅 A calmer way to organize therapy
 
-**Make your schedule work for you.** Add medicines, record your instructions, select the right days of the week and set reminder times. Review upcoming doses in the therapy calendar, and update your plan without starting again.
+**Make your schedule work for you.** Add medicines, record your instructions, select the right days of the week and set reminder times. Review upcoming doses in the therapy calendar, pause reminders when needed, and update your plan without starting again. MediX validates reminder times before saving and keeps rapid schedule changes in order.
 
 Your personal therapy information remains on your device. You do not need an account to use the core MediX experience.
 
@@ -73,7 +73,7 @@ Exports are created on your device and shared through the Android share sheet. N
 
 MediX does not require a user account. It keeps favorites, therapy entries and personal preferences on your device, while Android permissions are requested for features that need them. You control when to share your exported data.
 
-Read the [Privacy Policy](https://brendigo.com/politika-privatnosti/) and [Terms of Use](https://brendigo.com/uvjeti-koristenja/).
+Read the MediX-specific [Privacy Policy](docs/PRIVACY_POLICY.md) and [Terms of Use](docs/TERMS_OF_USE.md).
 
 ## 🎨 A distinctive MediX experience
 

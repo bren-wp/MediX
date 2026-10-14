@@ -44,19 +44,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _requestNotifications() async {
     if (requestingNotifications) return;
     setState(() => requestingNotifications = true);
-    final allowed = await widget.state.requestReminderPermissions();
+    final loc = MedixLocalizations.of(context);
+    var allowed = false;
+    try {
+      allowed = await widget.state.requestReminderPermissions();
+    } catch (_) {
+      // Permission platform failures should not leave Settings in a busy state.
+    }
     if (!mounted) return;
     setState(() => requestingNotifications = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          allowed
-              ? (Localizations.localeOf(context).languageCode == 'hr'
-                  ? 'Dozvole podsjetnika su uključene.'
-                  : 'Therapy reminder permissions are enabled.')
-              : (Localizations.localeOf(context).languageCode == 'hr'
-                  ? 'Dozvole podsjetnika nisu odobrene.'
-                  : 'Reminder permissions were not granted.'),
+          loc.t(allowed ? 'remindersEnabled' : 'remindersPermissionDenied'),
         ),
       ),
     );
@@ -157,12 +157,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 14),
           const Divider(),
           TextButton.icon(
-            onPressed: () => _openUrl('https://brendigo.com/politika-privatnosti/'),
+            onPressed: () => _openUrl(MedixAppInfo.privacyPolicyUrl),
             icon: const Icon(Icons.open_in_new_rounded, size: 17),
             label: Text(loc.t('privacy')),
           ),
           TextButton.icon(
-            onPressed: () => _openUrl('https://brendigo.com/uvjeti-koristenja/'),
+            onPressed: () => _openUrl(MedixAppInfo.termsOfUseUrl),
             icon: const Icon(Icons.open_in_new_rounded, size: 17),
             label: Text(loc.t('terms')),
           ),

@@ -9,6 +9,18 @@ void main() {
     expect(MedixLanguages.isSupported('hr'), isTrue);
   });
 
+  test('notification feedback has English fallback and Croatian translation', () {
+    final english = MedixLocalizations(const Locale('en'));
+    final croatian = MedixLocalizations(const Locale('hr'));
+    final german = MedixLocalizations(const Locale('de'));
+
+    for (final key in const ['remindersEnabled', 'remindersPermissionDenied']) {
+      expect(english.t(key), isNot(key));
+      expect(croatian.t(key), isNot(key));
+      expect(german.t(key), english.t(key));
+    }
+  });
+
   test('every supported locale resolves primary navigation text', () {
     for (final language in MedixLanguages.supported) {
       final localization = MedixLocalizations(Locale(language.code));

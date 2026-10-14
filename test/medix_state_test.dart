@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:medix/models/medication.dart';
+import 'package:medix/models/therapy_entry.dart';
+import 'package:medix/services/notification_service.dart';
 import 'support/medication_fixtures.dart';
 import 'package:medix/state/medix_state.dart';
 
@@ -133,6 +138,43 @@ void main() {
       expect(state.therapy.single.weekdays, before.weekdays);
     });
 
+    test('rejects therapies with only invalid clock values', () {
+      state.addTherapy(
+        medicationId: 'paracetamol-500',
+        doseDescription: '1 tablet',
+        times: const ['25:00', 'invalid'],
+      );
+      expect(state.therapy, isEmpty);
+    });
+
+    test('preserves latest alarms when therapy is changed rapidly', () async {
+      final scheduler = _DelayedReminderScheduler();
+      final managed = MedixState(
+        repository: buildTestRepository(),
+        reminders: scheduler,
+      );
+      addTearDown(managed.dispose);
+
+      managed.addTherapy(
+        medicationId: 'paracetamol-500',
+        doseDescription: '1 tablet',
+        times: const ['08:00'],
+      );
+      await scheduler.started.future;
+
+      final id = managed.therapy.single.id;
+      managed.toggleTherapy(id);
+      managed.removeTherapy(id);
+      scheduler.releaseFirst.complete();
+      await scheduler.finished.future;
+
+      expect(scheduler.maxConcurrent, 1);
+      expect(scheduler.snapshots, hasLength(3));
+      expect(scheduler.snapshots[0].single.isActive, isTrue);
+      expect(scheduler.snapshots[1].single.isActive, isFalse);
+      expect(scheduler.snapshots[2], isEmpty);
+    });
+
     test('toggles and removes therapy plan', () {
       state.addTherapy(
         medicationId: 'ibuprofen-400',
@@ -150,4 +192,35 @@ void main() {
       expect(state.therapy, isEmpty);
     });
   });
+}
+
+class _DelayedReminderScheduler implements TherapyReminderScheduler {
+  final started = Completer<void>();
+  final releaseFirst = Completer<void>();
+  final finished = Completer<void>();
+  final snapshots = <List<TherapyEntry>>[];
+  int concurrent = 0;
+  int maxConcurrent = 0;
+
+  @override
+  Future<void> initialize() async {}
+
+  @override
+  Future<bool> requestPermissions() async => true;
+
+  @override
+  Future<void> syncTherapy({
+    required List<TherapyEntry> therapy,
+    required Medication? Function(String medicationId) medicationById,
+  }) async {
+    concurrent++;
+    if (concurrent > maxConcurrent) maxConcurrent = concurrent;
+    snapshots.add(List<TherapyEntry>.of(therapy));
+    if (snapshots.length == 1) {
+      started.complete();
+      await releaseFirst.future;
+    }
+    concurrent--;
+    if (snapshots.length == 3) finished.complete();
+  }
 }

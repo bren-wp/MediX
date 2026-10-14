@@ -2,7 +2,30 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
-## [0.3.6] - u razvoju
+## [0.3.7] - 2026-10-14
+
+### Terapija i podsjetnici
+- serijalizirane obnove Android alarma kako brze izmjene ili brisanje terapije ne bi vratile zastarjele rasporede
+- stroga normalizacija vremena na HH:mm pri unosu i obnovi lokalno spremljenih terapija
+- nakon odobrenja dozvola ponovno se usklađuju postojeći podsjetnici
+- ekran terapije sada lijeno prikazuje stavke velikog rasporeda
+
+### Korisničko iskustvo i performanse
+- status dozvola podsjetnika koristi centralizirane engleske i hrvatske poruke uz engleski fallback za ostale jezike
+- Postavke se oporavljaju i od pogreške Android servisa za dozvole
+- pronalaženje lijeka po ID-u koristi predizgrađeni indeks umjesto prolaska cijelog kataloga
+
+### Privatnost i pravni sadržaj
+- dodani posebni, javno dostupni MediX dokumenti o privatnosti i uvjetima korištenja, povezani s Postavkama, README-om i PDF izvozom
+- lokalna pohrana zdravstvenih podataka i ograničenja dijeljenja objašnjeni bez tvrdnji o nepostojećoj aplikacijskoj enkripciji
+
+### Regresijske provjere
+- valjanost i sortiranje vremena, uključujući odbacivanje nevaljanih vrijednosti
+- sprječavanje istodobne sinkronizacije alarma pri brzim promjenama
+- obnova vremenskih zapisa iz SharedPreferences
+- ispravnost lokalizacije poruka dozvola
+
+## [0.3.6] - 2026-10-13
 
 ### Privatnost i sigurnost
 - FileProvider više ne dijeli cijelu predmemoriju nego isključivo direktorij MediX ZIP izvoza
