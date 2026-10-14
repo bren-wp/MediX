@@ -27,6 +27,9 @@
 
 Medicines carry more than a name. MediX helps you explore the details that matter — active ingredients, strength, pharmaceutical forms, packaging, dispensing status, reimbursement information and available prices — without switching between multiple disconnected resources.
 
+**Built for clinicians, understandable to everyone.** Each medicine profile now opens with a concise prescription and HZZO coverage summary. Where a verified HZZO copayment exists for the matched original pack, its amount and source date appear clearly. Mandatory insurance, supplementary health insurance, the HZZO Supplementary List, wholesale prices and pharmacy retail prices are never conflated. Unknown coverage or retail prices stay explicitly unknown instead of becoming guessed amounts.
+
+
 The medicine identity comes from the **official HALMED medicine catalog**. HZZO reimbursement information and separate pricing sources complement those records without replacing or inventing medicine names.
 
 ## ✨ Discover what MediX can do

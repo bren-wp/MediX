@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../core/localization/medix_localizations.dart';
 import '../../models/medication.dart';
 import '../../models/medication_price.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_page.dart';
+import 'medication_access_panel.dart';
 
 class MedicationDetailScreen extends StatefulWidget {
   const MedicationDetailScreen({
@@ -105,14 +107,30 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
               const SizedBox(height: 12),
               _Badges(medication: medication),
               const SizedBox(height: 12),
+              MedicationAccessPanel(medication: medication),
+              const SizedBox(height: 12),
               _OverviewSection(medication: medication),
               const SizedBox(height: 12),
               if (_hasOfficialMetadata(medication)) ...[
-                _MetadataSection(medication: medication),
-                const SizedBox(height: 12),
+                ExpansionTile(
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+                  title: Text(
+                    MedixLocalizations.of(context).t('professionalDetails'),
+                  ),
+                  leading: const Icon(Icons.fact_check_outlined),
+                  children: [_MetadataSection(medication: medication)],
+                ),
+                const SizedBox(height: 10),
               ],
               if (medication.prices.isNotEmpty) ...[
-                _PriceSection(medication: medication),
+                ExpansionTile(
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 12),
+                  title: Text(
+                    MedixLocalizations.of(context).t('accessPriceDetails'),
+                  ),
+                  leading: const Icon(Icons.price_check_outlined),
+                  children: [_PriceSection(medication: medication)],
+                ),
                 const SizedBox(height: 12),
               ],
               _ExpandableSection(
@@ -199,105 +217,40 @@ class _Hero extends StatelessWidget {
   Widget build(BuildContext context) {
     return MedixSectionCard(
       accent: MedixColors.primary,
-      padding: const EdgeInsets.all(18),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 148,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF092B45),
-                  Color(0xFF041522),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Stack(
+          const MedixIconBubble(
+            icon: Icons.medication_outlined,
+            color: MedixColors.cyan,
+            size: 54,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Positioned(
-                  right: 20,
-                  top: 24,
-                  child: Transform.rotate(
-                    angle: -.3,
-                    child: Container(
-                      width: 116,
-                      height: 55,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF2F7FC),
-                        borderRadius: BorderRadius.circular(7),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x55000000),
-                            blurRadius: 16,
-                            offset: Offset(0, 7),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            medication.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF0B3B81),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          Text(
-                            medication.strength,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Color(0xFF0B3B81),
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
+                Text(
+                  medication.name,
+                  style: const TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.w900,
+                    height: 1.2,
+                  ),
+                ),
+                if (medication.compactSubtitle != null) ...[
+                  const SizedBox(height: 5),
+                  Text(
+                    medication.compactSubtitle!,
+                    style: const TextStyle(
+                      color: MedixColors.textSecondary,
+                      fontSize: 13,
                     ),
                   ),
-                ),
-                const Positioned(
-                  left: 24,
-                  bottom: 24,
-                  child: Icon(
-                    Icons.medication_rounded,
-                    size: 74,
-                    color: MedixColors.cyan,
-                  ),
-                ),
+                ],
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            medication.name,
-            style: const TextStyle(
-              fontSize: 27,
-              fontWeight: FontWeight.w900,
-              letterSpacing: -.6,
-            ),
-          ),
-          if (medication.compactSubtitle != null) ...[
-            const SizedBox(height: 3),
-            Text(
-              medication.compactSubtitle!,
-              style: const TextStyle(
-                color: MedixColors.textSecondary,
-                fontSize: 14,
-              ),
-            ),
-          ],
         ],
       ),
     );
