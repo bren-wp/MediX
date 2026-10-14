@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'dispensing_status_parser.dart';
 import '../models/drug_interaction.dart';
 import '../models/medication.dart';
 import '../models/medication_price.dart';
@@ -94,7 +95,9 @@ class MedicationRepository {
               ? record['category'].toString().trim()
               : _categoryForAtc(record['atc_code']?.toString()),
           requiresPrescription:
-              _requiresPrescription(record['rx_status']?.toString()),
+              DispensingStatusParser.requiresPrescription(
+                record['rx_status']?.toString(),
+              ),
           summary:
               'Podaci o lijeku i pakiranju dostupni su u lokalnom MediX katalogu. Kliničke sekcije prikazuju se samo kada su sinkronizirane za konkretni proizvod.',
           uses: const [],
@@ -190,7 +193,9 @@ class MedicationRepository {
                   ? record['category'].toString().trim()
                   : _categoryForAtc(atc),
           requiresPrescription:
-              _requiresPrescription(record['rx_status']?.toString()),
+              DispensingStatusParser.requiresPrescription(
+                record['rx_status']?.toString(),
+              ),
           summary:
               'Podaci o registriranom lijeku i pakiranju dostupni su u lokalnom MediX katalogu.',
           uses: const [],
@@ -596,25 +601,6 @@ class MedicationRepository {
     return RegExp(
       r'\b(?:d o o|d d|j d o o|obrt|ustanova|limited|ltd|gmbh|s a|b v)\b',
     ).hasMatch(normalized);
-  }
-
-  static bool? _requiresPrescription(String? value) {
-    final normalized = value?.toUpperCase().trim() ?? '';
-    if (normalized.isEmpty) return null;
-    if (normalized.contains('BEZ RECEPTA') ||
-        normalized == 'BR' ||
-        normalized.startsWith('BR ')) {
-      return false;
-    }
-    if (normalized.contains('NA RECEPT') ||
-        normalized == 'R' ||
-        normalized.startsWith('R/')) {
-      return true;
-    }
-    if (normalized == 'RS' || normalized.startsWith('RS ')) {
-      return true;
-    }
-    return null;
   }
 
   static String _normalize(String value) {
