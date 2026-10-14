@@ -58,7 +58,9 @@ class MedixPreferences implements MedixPersistence {
             final dose = map['dose']?.toString() ?? '';
             final rawTimes = map['times'];
             final times = rawTimes is List
-                ? rawTimes.map((e) => e.toString()).toList()
+                ? TherapyEntry.normalizeTimes(
+                    rawTimes.map((value) => value.toString()),
+                  )
                 : <String>[];
             final rawWeekdays = map['weekdays'];
             final weekdays = rawWeekdays is List
