@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medix/core/localization/medix_localizations.dart';
@@ -68,7 +69,12 @@ void main() {
         theme: MedixTheme.dark(),
         supportedLocales: MedixLanguages.locales,
         locale: const Locale('en'),
-        localizationsDelegates: const [MedixLocalizations.delegate],
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         home: Scaffold(
           body: SingleChildScrollView(
             child: MedicationDocumentsPanel(medication: medicine),
@@ -100,7 +106,12 @@ void main() {
         theme: MedixTheme.dark(),
         supportedLocales: MedixLanguages.locales,
         locale: const Locale('hr'),
-        localizationsDelegates: const [MedixLocalizations.delegate],
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         home: Scaffold(
           body: SingleChildScrollView(
             child: MedicationDocumentsPanel(medication: medicine),
