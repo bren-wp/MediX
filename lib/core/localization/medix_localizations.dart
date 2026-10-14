@@ -73,6 +73,12 @@ class MedixLocalizations {
 
   static const _translations = <String, Map<String, String>>{
     'en': {
+      'medicineDocumentsTitle': 'Official medicine information',
+      'medicineDocumentsIntro': 'Open available official product documents. If no direct leaflet is supplied, search HALMED using the exact product name and strength.',
+      'medicinePatientLeaflet': 'Patient leaflet',
+      'medicineProfessionalSummary': 'Professional product information',
+      'medicineOfficialSource': 'Official source',
+      'medicineHalmedRegister': 'Search HALMED database',
       'accessTitle': 'Prescription & medicine costs',
       'accessPrescriptionLabel': 'Can it be purchased without a prescription?',
       'accessPrescriptionRequired': 'Prescription required according to the medicine record.',
@@ -220,6 +226,12 @@ class MedixLocalizations {
       'byBrendigo': 'Designed and developed by Brendigo.',
     },
     'hr': {
+      'medicineDocumentsTitle': 'Službene informacije o lijeku',
+      'medicineDocumentsIntro': 'Otvorite službene dokumente kada su dostupni. Ako nema izravne upute, potražite točan naziv i jačinu lijeka u HALMED bazi.',
+      'medicinePatientLeaflet': 'Uputa o lijeku',
+      'medicineProfessionalSummary': 'Sažetak opisa svojstava lijeka',
+      'medicineOfficialSource': 'Službeni izvor',
+      'medicineHalmedRegister': 'Pretraži HALMED bazu',
       'accessTitle': 'Recept i cijena lijeka',
       'accessPrescriptionLabel': 'Može li se kupiti bez recepta?',
       'accessPrescriptionRequired': 'Izdaje se na recept prema zapisu o lijeku.',

@@ -52,7 +52,7 @@ class MedicationRepository {
 
       final copay = _asDouble(record['copay_eur']);
       final prices = <MedicationPrice>[
-        if (copay != null)
+        if (copay != null && copay.isFinite && copay >= 0)
           MedicationPrice(
             amount: copay,
             currency: 'EUR',
@@ -212,6 +212,9 @@ class MedicationRepository {
                   sourceUrl,
           shortageStatus:
               _nullableString(record['shortage_status']),
+          smpcUrl: _nullableString(record['smpc_url']),
+          patientLeafletUrl:
+              _nullableString(record['patient_leaflet_url']),
         ),
       );
     }
@@ -349,7 +352,9 @@ class MedicationRepository {
           _nullableString(record['name_and_package']) ?? '';
       final price = _asDouble(record['max_wholesale_eur']);
 
-      if (name.isEmpty || price == null) continue;
+      if (name.isEmpty || price == null || !price.isFinite || price < 0) {
+        continue;
+      }
 
       final index = _findBestMatch(
         medications,
@@ -412,6 +417,7 @@ class MedicationRepository {
     final incomingStrength = _normalize(
       _extractStrength(strengthOrPackage),
     );
+    final incomingPackCount = _extractPackCount(strengthOrPackage);
     final incomingHolder = _normalize(holder ?? '');
 
     int? bestIndex;
@@ -420,30 +426,11 @@ class MedicationRepository {
 
     for (var i = 0; i < medications.length; i++) {
       final candidate = medications[i];
-      final candidateAtc = _normalize(candidate.atcCode ?? '');
 
-      if (incomingAtc.isNotEmpty &&
-          candidateAtc.isNotEmpty &&
-          incomingAtc != candidateAtc) {
-        continue;
-      }
-
+      // Most catalog entries do not share a trade name. Reject them
+      // before parsing pharmaceutical strengths and package quantities.
       final candidateName = _normalize(candidate.name);
-      final candidateActive =
-          _normalize(candidate.activeIngredient);
-      final candidateHolder = _normalize(
-        candidate.marketingAuthorizationHolder ?? '',
-      );
-      final candidateStrength = _normalize(
-        [
-          candidate.strength,
-          candidate.packageDescription ?? '',
-          candidate.name,
-        ].join(' '),
-      );
-
       var score = 0;
-
       if (incomingName.isNotEmpty) {
         if (candidateName == incomingName) {
           score += 8;
@@ -453,6 +440,40 @@ class MedicationRepository {
         } else {
           continue;
         }
+      }
+
+      final candidateAtc = _normalize(candidate.atcCode ?? '');
+      if (incomingAtc.isNotEmpty &&
+          candidateAtc.isNotEmpty &&
+          incomingAtc != candidateAtc) {
+        continue;
+      }
+
+      final candidateActive = _normalize(candidate.activeIngredient);
+      final candidateHolder = _normalize(
+        candidate.marketingAuthorizationHolder ?? '',
+      );
+      final candidateDescription = [
+        candidate.strength,
+        candidate.packageDescription ?? '',
+        candidate.name,
+      ].join(' ');
+      final candidateStrength = _normalize(
+        _extractStrength(candidateDescription),
+      );
+      final candidatePackCount =
+          _extractPackCount(candidate.packageDescription ?? '');
+
+      // Never transfer the copayment or package price across different
+      // strengths or known package quantities. A name/ATC match alone
+      // is insufficient evidence for a price tied to a specific pack.
+      if (incomingStrength.isNotEmpty &&
+          incomingStrength != candidateStrength) {
+        continue;
+      }
+      if (incomingPackCount != null &&
+          incomingPackCount != candidatePackCount) {
+        continue;
       }
 
       if (incomingAtc.isNotEmpty &&
@@ -466,7 +487,7 @@ class MedicationRepository {
       }
 
       if (incomingStrength.isNotEmpty &&
-          candidateStrength.contains(incomingStrength)) {
+          incomingStrength == candidateStrength) {
         score += 3;
       }
 
@@ -609,6 +630,20 @@ class MedicationRepository {
       'V' => 'Razni pripravci (ATK V)',
       _ => 'Neklasificirano',
     };
+  }
+
+  /// Extract a clearly expressed count of dosage units in a pack.
+  ///
+  /// Unknown packaging is left unmatched; never infer a tablet count
+  /// from a strength, volume or authorization number.
+  static String? _extractPackCount(String description) {
+    final normalized = _normalize(description);
+    final match = RegExp(
+      r'\b(\d{1,4})\s*(?:tableta|tablete|tableti|tbl|kapsula|kapsule|'
+      r'caps|ampula|ampule|cepica|flastera|flasteri|vrecica|vrecice|'
+      r'bočica|bocica|bocice|komada|kom)\b',
+    ).firstMatch(normalized);
+    return match?.group(1);
   }
 
   static String _extractStrength(String package) {

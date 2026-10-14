@@ -4,10 +4,12 @@ import 'package:flutter/services.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../core/localization/medix_localizations.dart';
 import '../../models/medication.dart';
+import '../../models/medication_access.dart';
 import '../../models/medication_price.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_page.dart';
 import 'medication_access_panel.dart';
+import 'medication_documents_panel.dart';
 
 class MedicationDetailScreen extends StatefulWidget {
   const MedicationDetailScreen({
@@ -33,6 +35,7 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
 
   Future<void> _copySummary() async {
     final medication = widget.medication;
+    final access = MedicationAccessInfo.fromMedication(medication);
     final lines = <String>[
       medication.name,
       if (medication.compactSubtitle != null)
@@ -48,11 +51,17 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
         'Mjesto izdavanja: ' + medication.dispensingPlace!,
       if (medication.packageDescription != null)
         'Pakiranje: ' + medication.packageDescription!,
-      if (medication.hzzoCopay != null)
-        'Doplata: ' + medication.hzzoCopay!.formatted,
-      if (medication.maxWholesalePrice != null)
-        'Veleprodajna cijena: ' +
-            medication.maxWholesalePrice!.formatted,
+      if (access.copayment != null)
+        'Potvrđena HZZO doplata za pakiranje: ' +
+            access.copayment!.formatted,
+      if (access.wholesalePrice != null)
+        'Najviša veleprodajna cijena (nije maloprodajna): ' +
+            access.wholesalePrice!.formatted,
+      'Izvor podataka: ' + medication.sourceLabel,
+      'Zadnja provjera: ' +
+          medication.lastReviewed.toIso8601String().split('T').first,
+      'Iznosi nisu osobna cijena u ljekarni; '
+          'pokriće dopunskog osiguranja potrebno je potvrditi.',
     ];
 
     await Clipboard.setData(
@@ -108,6 +117,7 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
               _Badges(medication: medication),
               const SizedBox(height: 12),
               MedicationAccessPanel(medication: medication),
+              const SizedBox(height: 12),              MedicationDocumentsPanel(medication: medication),
               const SizedBox(height: 12),
               _OverviewSection(medication: medication),
               const SizedBox(height: 12),
@@ -122,7 +132,7 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
                 ),
                 const SizedBox(height: 10),
               ],
-              if (medication.prices.isNotEmpty) ...[
+              if (MedicationAccessInfo.verifiedPrices(medication).isNotEmpty) ...[
                 ExpansionTile(
                   tilePadding: const EdgeInsets.symmetric(horizontal: 12),
                   title: Text(
@@ -518,7 +528,7 @@ class _PriceSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          ...medication.prices.map(
+          ...MedicationAccessInfo.verifiedPrices(medication).map(
             (price) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: Container(
