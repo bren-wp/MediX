@@ -73,7 +73,7 @@ Exports are created on your device and shared through the Android share sheet. N
 
 MediX does not require a user account. It keeps favorites, therapy entries and personal preferences on your device, while Android permissions are requested for features that need them. You control when to share your exported data.
 
-Read the [Privacy Policy](https://brendigo.com/politika-privatnosti/) and [Terms of Use](https://brendigo.com/uvjeti-koristenja/).
+Read the MediX-specific [Privacy Policy](docs/PRIVACY_POLICY.md) and [Terms of Use](docs/TERMS_OF_USE.md).
 
 ## 🎨 A distinctive MediX experience
 
