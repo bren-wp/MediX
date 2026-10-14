@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medix/core/localization/medix_localizations.dart';
 import 'package:medix/core/theme/medix_theme.dart';
@@ -116,6 +117,43 @@ void main() {
         findsOneWidget);
     expect(find.textContaining('zero-euro cost cannot be assumed'),
         findsOneWidget);
+  });
+
+  testWidgets('HZZO source failure shows feedback instead of crashing',
+      (tester) async {
+    final medicine = testMedication(
+      id: 'offline-link',
+      name: 'Test Medicine',
+      ingredient: 'Test',
+    );
+    const channel = MethodChannel('com.brendigo.medix/navigation');
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      channel,
+      (_) async => throw PlatformException(code: 'NO_HANDLER'),
+    );
+    addTearDown(() => tester.binding.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: MedixTheme.dark(),
+        locale: const Locale('en'),
+        localizationsDelegates: const [MedixLocalizations.delegate],
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: MedicationAccessPanel(medication: medicine),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('View official HZZO medicine lists'));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('This link could not be opened on this device.'),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   test('Croatian pricing explanation has its own translation', () {
