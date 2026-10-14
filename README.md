@@ -49,6 +49,12 @@ The medicine identity comes from the **official HALMED medicine catalog**. HZZO 
 | 💶 | **Prices & packages** | Review available price and reimbursement information with clear distinctions between price types. |
 | 🏥 | **Find pharmacies** | Continue your pharmacy search in your preferred Android maps app. |
 
+## 📑 Official medicine information, without guesswork
+
+Open the current medicine record and find prescription status, HZZO coverage, packaging and available prices together. Where official links are supplied, MediX can open the patient leaflet or professional Summary of Product Characteristics. If a specific document is not available, an explicit HALMED registry link lets you verify the exact medicine and strength yourself.
+
+MediX takes a conservative approach to reimbursement data: conflicting strengths or known package counts do **not** receive another product's copayment or wholesale price. Missing prices remain marked as unavailable rather than invented. The HZZO Supplementary List and a person's supplementary health-insurance policy remain separate concepts.
+
 ## 📅 A calmer way to organize therapy
 
 **Make your schedule work for you.** Add medicines, record your instructions, select the right days of the week and set reminder times. Review upcoming doses in the therapy calendar, pause reminders when needed, and update your plan without starting again. MediX validates reminder times before saving and keeps rapid schedule changes in order.
