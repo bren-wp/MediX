@@ -115,15 +115,7 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
           final filtered = query.isEmpty
               ? data.records
               : data.records.where((row) {
-                  final haystack = [
-                    row.name,
-                    row.package,
-                    row.ingredient,
-                    row.atc,
-                    row.authorizationNumber,
-                    row.holder,
-                  ].join(' ').toLowerCase();
-                  return haystack.contains(query);
+                  return row.searchText.contains(query);
                 }).toList(growable: false);
           final visible =
               filtered.take(300).toList(growable: false);
@@ -293,22 +285,27 @@ class _PriceCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  const Text('Na veliko', style: TextStyle(
-                    color: MedixColors.textMuted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                  )),
+                  const Text(
+                    'Na veliko',
+                    style: TextStyle(
+                      color: MedixColors.textMuted,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: 2),
                   Text(
-                row.price == null
-                    ? '—'
-                    : '${row.price!.toStringAsFixed(2).replaceAll('.', ',')} €',
-                style: const TextStyle(
-                  color: MedixColors.success,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
+                    row.price == null
+                        ? '—'
+                        : '${row.price!.toStringAsFixed(2).replaceAll('.', ',')} €',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: MedixColors.success,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -392,7 +389,7 @@ class _PriceCatalog {
 }
 
 class _PriceRecord {
-  const _PriceRecord({
+  _PriceRecord({
     required this.name,
     required this.package,
     required this.ingredient,
@@ -401,8 +398,17 @@ class _PriceRecord {
     required this.holder,
     required this.price,
     required this.note,
-  });
+  }) : searchText = [
+         name,
+         package,
+         ingredient,
+         atc,
+         authorizationNumber,
+         holder,
+       ].join(' ').toLowerCase();
 
+  /// Immutable normalized search text, built once when the file is parsed.
+  final String searchText;
   final String name;
   final String package;
   final String ingredient;
