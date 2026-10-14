@@ -20,13 +20,28 @@ class MedicationAccessInfo {
   final MedicationPrice? retailPrice;
   final MedicationPrice? wholesalePrice;
 
+  /// The same conservative validation must govern both the summary and
+  /// the expandable list; hidden prices must not reappear in another view.
+  static bool isDisplayablePrice(
+    Medication medication,
+    MedicationPrice price,
+  ) =>
+      price.currency.toUpperCase() == 'EUR' &&
+      price.amount.isFinite &&
+      price.amount >= 0 &&
+      (price.kind != MedicationPriceKind.hzzoCopay ||
+          medication.reimbursementStatus ==
+              ReimbursementStatus.supplementary);
+
+  static List<MedicationPrice> verifiedPrices(Medication medication) =>
+      medication.prices
+          .where((price) => isDisplayablePrice(medication, price))
+          .toList(growable: false);
+
   static MedicationAccessInfo fromMedication(Medication medication) {
     MedicationPrice? validPrice(MedicationPriceKind kind) {
       for (final price in medication.prices) {
-        if (price.kind == kind &&
-            price.currency.toUpperCase() == 'EUR' &&
-            price.amount.isFinite &&
-            price.amount >= 0) {
+        if (price.kind == kind && isDisplayablePrice(medication, price)) {
           return price;
         }
       }
