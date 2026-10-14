@@ -57,7 +57,15 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
       if (access.wholesalePrice != null)
         'Najviša veleprodajna cijena (nije maloprodajna): ' +
             access.wholesalePrice!.formatted,
-      'Izvor podataka: ' + medication.sourceLabel,
+      'Izvor podataka o lijeku: ' + medication.sourceLabel,
+      if (access.hasConfirmedHzzoList)
+        'HZZO lista: ' + (medication.hzzoListSource ?? 'HZZO'),
+      if (access.hasConfirmedHzzoList &&
+          medication.hzzoListEffectiveDate != null)
+        'HZZO lista u primjeni od: ' +
+            medication.hzzoListEffectiveDate!
+                .toIso8601String()
+                .split('T').first,
       'Zadnja provjera: ' +
           medication.lastReviewed.toIso8601String().split('T').first,
       'Iznosi nisu osobna cijena u ljekarni; '
@@ -117,7 +125,8 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
               _Badges(medication: medication),
               const SizedBox(height: 12),
               MedicationAccessPanel(medication: medication),
-              const SizedBox(height: 12),              MedicationDocumentsPanel(medication: medication),
+              const SizedBox(height: 12),
+              MedicationDocumentsPanel(medication: medication),
               const SizedBox(height: 12),
               _OverviewSection(medication: medication),
               const SizedBox(height: 12),

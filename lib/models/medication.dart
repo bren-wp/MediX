@@ -48,6 +48,8 @@ class Medication {
     this.marketStatus,
     this.reimbursementStatus = ReimbursementStatus.none,
     this.hzzoGuidelineCode,
+    this.hzzoListSource,
+    this.hzzoListEffectiveDate,
     this.prices = const [],
     this.smpcUrl,
     this.patientLeafletUrl,
@@ -83,6 +85,10 @@ class Medication {
   final String? marketStatus;
   final ReimbursementStatus reimbursementStatus;
   final String? hzzoGuidelineCode;
+  /// Source for a confirmed HZZO list match, never an inferred policy.
+  final String? hzzoListSource;
+  /// Effective date of the matched published list, when provided by HZZO.
+  final DateTime? hzzoListEffectiveDate;
   final List<MedicationPrice> prices;
   final String? smpcUrl;
   final String? patientLeafletUrl;
@@ -201,6 +207,8 @@ class Medication {
     String? marketStatus,
     ReimbursementStatus? reimbursementStatus,
     String? hzzoGuidelineCode,
+    String? hzzoListSource,
+    DateTime? hzzoListEffectiveDate,
     List<MedicationPrice>? prices,
     String? smpcUrl,
     String? patientLeafletUrl,
@@ -242,6 +250,9 @@ class Medication {
       reimbursementStatus:
           reimbursementStatus ?? this.reimbursementStatus,
       hzzoGuidelineCode: hzzoGuidelineCode ?? this.hzzoGuidelineCode,
+      hzzoListSource: hzzoListSource ?? this.hzzoListSource,
+      hzzoListEffectiveDate:
+          hzzoListEffectiveDate ?? this.hzzoListEffectiveDate,
       prices: prices ?? this.prices,
       smpcUrl: smpcUrl ?? this.smpcUrl,
       patientLeafletUrl: patientLeafletUrl ?? this.patientLeafletUrl,

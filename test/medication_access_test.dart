@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medix/core/localization/medix_localizations.dart';
@@ -154,6 +155,72 @@ void main() {
       findsOneWidget,
     );
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('matched HZZO status shows its own source and effective date',
+      (tester) async {
+    final medicine = testMedication(
+      id: 'hzzo-dated',
+      name: 'Dated medicine',
+      ingredient: 'Active',
+    ).copyWith(
+      reimbursementStatus: ReimbursementStatus.basic,
+      hzzoListSource: 'HZZO official list',
+      hzzoListEffectiveDate: DateTime(2026, 10, 1),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: MedixTheme.dark(),
+        locale: const Locale('en'),
+        localizationsDelegates: const [MedixLocalizations.delegate],
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: MedicationAccessPanel(medication: medicine),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('HZZO official list · Effective from 01.10.2026.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('missing HZZO date is explicitly unverified',
+      (tester) async {
+    final medicine = testMedication(
+      id: 'hzzo-undated',
+      name: 'Undated medicine',
+      ingredient: 'Active',
+    ).copyWith(
+      reimbursementStatus: ReimbursementStatus.supplementary,
+      hzzoListSource: 'HZZO test',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: MedixTheme.dark(),
+        locale: const Locale('hr'),
+        supportedLocales: MedixLanguages.locales,
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: MedicationAccessPanel(medication: medicine),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Datum primjene nije potvrđen'), findsOneWidget);
+    expect(find.text('Iznos nije potvrđen'), findsOneWidget);
   });
 
   test('Croatian pricing explanation has its own translation', () {

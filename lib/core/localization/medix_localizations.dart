@@ -73,6 +73,8 @@ class MedixLocalizations {
 
   static const _translations = <String, Map<String, String>>{
     'en': {
+      'accessHzzoEffective': 'Effective from',
+      'accessHzzoDateUnknown': 'Effective date not provided',
       'quickAll': 'All',
       'quickPrescription': 'Prescription',
       'quickOtc': 'Without prescription',
@@ -239,6 +241,8 @@ class MedixLocalizations {
       'byBrendigo': 'Designed and developed by Brendigo.',
     },
     'hr': {
+      'accessHzzoEffective': 'U primjeni od',
+      'accessHzzoDateUnknown': 'Datum primjene nije potvrđen',
       'quickAll': 'Svi',
       'quickPrescription': 'Na recept',
       'quickOtc': 'Bez recepta',

@@ -53,8 +53,33 @@ void main() {
         MedicationPriceKind.hzzoCopay,
       );
       expect(medication.prices.single.amount, 4.25);
+      expect(medication.hzzoListSource, 'HZZO test');
+      expect(medication.hzzoListEffectiveDate, DateTime(2026, 10, 1));
     });
 
+
+    test('missing HZZO effective date is not invented for copayment', () {
+      final json = jsonEncode({
+        'source': {'name': 'HZZO without effective date'},
+        'records': [
+          {
+            'id': 'undated-1',
+            'name': 'Test medicine',
+            'active_ingredient': 'active',
+            'supplementary_list': true,
+            'copay_eur': 9.99,
+          },
+        ],
+      });
+      final medicine = MedicationRepository.fromOfficialJson(json)
+          .medications.single;
+      expect(medicine.reimbursementStatus,
+          ReimbursementStatus.supplementary);
+      expect(medicine.hzzoListEffectiveDate, isNull);
+      expect(medicine.hzzoListSource, 'HZZO without effective date');
+      expect(medicine.hzzoCopay, isNull);
+      expect(medicine.prices, isEmpty);
+    });
 
     test('maps HALMED identity and detailed dispensing metadata', () {
       final json = jsonEncode({

@@ -25,6 +25,15 @@ class MedicationAccessPanel extends StatelessWidget {
     final copayment = info.copayment;
     final pharmacyPrice = info.retailPrice;
     final wholesale = info.wholesalePrice;
+    final listDate = medication.hzzoListEffectiveDate;
+    final hzzoProvenance = info.hasConfirmedHzzoList
+        ? [
+            medication.hzzoListSource ?? 'HZZO',
+            listDate == null
+                ? loc.t('accessHzzoDateUnknown')
+                : '${loc.t('accessHzzoEffective')} ${_date(listDate)}',
+          ].join(' · ')
+        : null;
 
     final dispensing = switch (info.prescriptionRequired) {
       true => loc.t('accessPrescriptionRequired'),
@@ -73,6 +82,7 @@ class MedicationAccessPanel extends StatelessWidget {
             icon: Icons.health_and_safety_outlined,
             title: loc.t('accessMandatoryLabel'),
             value: coverage,
+            supporting: hzzoProvenance,
           ),
           _AccessRow(
             icon: Icons.euro_rounded,

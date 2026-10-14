@@ -85,6 +85,10 @@ void main() {
     expect(byId['correct']!.reimbursementStatus,
         ReimbursementStatus.supplementary);
     expect(byId['correct']!.hzzoCopay?.amount, 6.50);
+    expect(byId['correct']!.hzzoListSource, 'HZZO test');
+    expect(byId['correct']!.hzzoListEffectiveDate, DateTime(2026, 10, 1));
+    expect(byId['low']!.hzzoListSource, isNull);
+    expect(byId['wrong-pack']!.hzzoListEffectiveDate, isNull);
     expect(byId['correct']!.maxWholesalePrice?.amount, 23);
   });
 

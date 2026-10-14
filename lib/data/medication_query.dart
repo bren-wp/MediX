@@ -122,18 +122,44 @@ class MedicationQuery {
   }
 }
 
+/// Precomputed search text for a fixed medicine catalog.
+///
+/// Construct once for the catalog used by SearchScreen. Keys are medicine
+/// objects rather than IDs, so duplicate or missing upstream IDs cannot
+/// borrow another product's text.
+class MedicationSearchIndex {
+  MedicationSearchIndex(Iterable<Medication> medications)
+      : _searchable = {
+          for (final medication in medications)
+            medication: _searchableText(medication),
+        };
+
+  final Map<Medication, String> _searchable;
+
+  bool matches(Medication medication, List<String> tokens) {
+    final haystack = _searchable[medication] ?? _searchableText(medication);
+    return tokens.every(haystack.contains);
+  }
+}
+
 List<Medication> applyMedicationQuery(
   Iterable<Medication> medications,
-  MedicationQuery query,
-) {
+  MedicationQuery query, {
+  MedicationSearchIndex? index,
+}) {
   final normalizedText = _normalize(query.text);
+  final textTokens = normalizedText
+      .split(' ')
+      .where((token) => token.isNotEmpty)
+      .toList(growable: false);
   final normalizedAtc = query.atcGroup?.trim().toUpperCase();
   final normalizedForm = _normalize(query.form ?? '');
   final normalizedHolder = _normalize(query.holder ?? '');
 
   final result = medications.where((medication) {
-    if (normalizedText.isNotEmpty &&
-        !_matchesText(medication, normalizedText)) {
+    if (textTokens.isNotEmpty &&
+        !(index?.matches(medication, textTokens) ??
+            _matchesText(medication, textTokens))) {
       return false;
     }
 
@@ -194,8 +220,13 @@ List<Medication> applyMedicationQuery(
   return sorted;
 }
 
-bool _matchesText(Medication medication, String query) {
-  final haystack = _normalize(
+bool _matchesText(Medication medication, List<String> tokens) {
+  final haystack = _searchableText(medication);
+  return tokens.every(haystack.contains);
+}
+
+String _searchableText(Medication medication) {
+  return _normalize(
     [
       medication.name,
       medication.activeIngredient,
@@ -217,12 +248,6 @@ bool _matchesText(Medication medication, String query) {
     ].join(' '),
   );
 
-  final tokens = query
-      .split(' ')
-      .where((token) => token.isNotEmpty)
-      .toList(growable: false);
-
-  return tokens.every(haystack.contains);
 }
 
 bool _matchesDispensing(

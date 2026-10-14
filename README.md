@@ -49,6 +49,12 @@ The medicine identity comes from the **official HALMED medicine catalog**. HZZO 
 | 💶 | **Prices & packages** | Review available price and reimbursement information with clear distinctions between price types. |
 | 🏥 | **Find pharmacies** | Continue your pharmacy search in your preferred Android maps app. |
 
+## 🛡️ Source-aware clinical data
+
+MediX keeps the effective date and source of a **confirmed HZZO list match** with the specific medicine and package. When an official effective date is missing, a dated HZZO copayment is not invented. The medicine screen explains the missing date rather than passing it off as current. Official prices are historical/offline snapshots, not live pharmacy quotes.
+
+Medicine search also prepares its normalized catalog text once per search screen, making repeated queries more efficient without changing the meaning of medicines, strengths, ATC terms or filters.
+
 ## 🔎 Fast, clinically useful medicine search
 
 Search by medicine name, active ingredient, ATC code or package and use one-tap filters for prescription status, non-prescription medicines, HZZO Basic List, HZZO Supplementary List and **confirmed** HZZO copayments. Further professional filters remain available when needed.
