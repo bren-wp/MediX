@@ -59,9 +59,17 @@ class HomeScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
             children: [
-              const Align(
+              Align(
                 alignment: Alignment.center,
-                child: MedixBrand(),
+                child: LayoutBuilder(
+                  builder: (context, constraints) => FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: MedixBrand(
+                      centered: constraints.maxWidth < 390 ||
+                          MediaQuery.textScalerOf(context).scale(1) > 1.25,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 18),
               Semantics(
