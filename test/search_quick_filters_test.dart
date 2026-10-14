@@ -109,8 +109,11 @@ void main() {
       findsOneWidget,
     );
 
-    // Remove Rx only; the HZZO filter should continue to exclude results.
-    await tester.ensureVisible(rx);
+    // The horizontal quick-filter list lazily unmounts chips offscreen.
+    // Return to the beginning before tapping Rx again.
+    await tester.drag(quick, const Offset(540, 0));
+    await tester.pumpAndSettle();
+    expect(rx, findsOneWidget);
     await tester.tap(rx);
     await tester.pumpAndSettle();
     expect(find.text('Varfarin'), findsNothing);
