@@ -2,6 +2,28 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.12] - 2026-10-14
+
+### Sigurna usporedba lijekova
+- usporedba 2–4 lijeka koristi istu validaciju HZZO doplate i veleprodajne cijene kao detalj lijeka
+- doplata se ne prikazuje bez potvrđenog podudaranja s Dopunskom listom HZZO-a
+- nepotvrđen HZZO status nije prikazan kao tvrdnja da lijek nije na listi
+- usporedba navodi datum primjene HZZO liste kada je potvrđen, uz zaseban tekst za nedostajući datum
+- nazivi stupaca jasno razlikuju doplatu po originalnom pakiranju od najviše cijene na veliko
+- pretraga odabira lijekova za usporedbu koristi indeksirana polja kataloga
+
+### Pouzdaniji zasebni cjenik
+- odbacuju se negativni, ne-konačni i nevažeći iznosi; ostaju označeni kao nedostupni
+- datum objave izvora ne pretpostavlja se ako nedostaje ili je nevaljan
+- iznosi su označeni kao cijene *na veliko*, ne kao osobni trošak ili maloprodajna cijena
+- normalizirani tekst zapisa priprema se jednom pri učitavanju cjenika radi bržeg ponovnog pretraživanja
+- dotjerana tipografija i prikaz cijene na manjim ekranima
+
+### Provjere
+- regresijski testovi za usporedbu HZZO osnovne i dopunske liste, nevaljane cijene te datume
+- regresijski testovi validacije izvora, EUR iznosa i prikaza datuma objave cjenika
+- prije spajanja provjeriti Flutter analyze, sve testove, Dart audit i Android APK/AAB buildove
+
 ## [0.3.11] - 2026-10-14
 
 ### Brža pretraga iz kataloga lijekova
