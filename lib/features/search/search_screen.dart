@@ -29,10 +29,12 @@ class _SearchScreenState extends State<SearchScreen> {
   late final List<String> forms;
   late final List<String> holders;
   late final List<String> atcGroups;
+  late final MedicationSearchIndex searchIndex;
 
   @override
   void initState() {
     super.initState();
+    searchIndex = MedicationSearchIndex(widget.state.repository.medications);
 
     forms = widget.state.repository.medications
         .map((item) => item.form.trim())
@@ -133,6 +135,7 @@ class _SearchScreenState extends State<SearchScreen> {
         final results = applyMedicationQuery(
           widget.state.repository.medications,
           effectiveQuery,
+          index: searchIndex,
         );
 
         return MedixPage(
