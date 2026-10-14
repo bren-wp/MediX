@@ -15,6 +15,10 @@ Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 - Postavke se oporavljaju i od pogreške Android servisa za dozvole
 - pronalaženje lijeka po ID-u koristi predizgrađeni indeks umjesto prolaska cijelog kataloga
 
+### Privatnost i pravni sadržaj
+- dodani posebni, javno dostupni MediX dokumenti o privatnosti i uvjetima korištenja, povezani s Postavkama, README-om i PDF izvozom
+- lokalna pohrana zdravstvenih podataka i ograničenja dijeljenja objašnjeni bez tvrdnji o nepostojećoj aplikacijskoj enkripciji
+
 ### Regresijske provjere
 - valjanost i sortiranje vremena, uključujući odbacivanje nevaljanih vrijednosti
 - sprječavanje istodobne sinkronizacije alarma pri brzim promjenama
