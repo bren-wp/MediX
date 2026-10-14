@@ -450,12 +450,10 @@ class MedicationRepository {
       // strengths or known package quantities. A name/ATC match alone
       // is insufficient evidence for a price tied to a specific pack.
       if (incomingStrength.isNotEmpty &&
-          candidateStrength.isNotEmpty &&
           incomingStrength != candidateStrength) {
         continue;
       }
       if (incomingPackCount != null &&
-          candidatePackCount != null &&
           incomingPackCount != candidatePackCount) {
         continue;
       }
