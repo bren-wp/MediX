@@ -7,7 +7,7 @@ Production checklist for the Android package `com.brendigo.medix`.
 - [x] Target Android 16 / API 36.
 - [x] Build Android App Bundle (AAB).
 - [x] Analyze and test before the production bundle.
-- [x] Verify the AAB signature.
+- [ ] Verify the **production** AAB signature with the private upload keystore (release candidates may use a debug fallback).
 - [x] Keep the private upload keystore outside the repository.
 - [ ] Configure the four production signing secrets in GitHub before running the Google Play workflow.
 - [ ] Upload the resulting signed AAB to Play Console and review Play's automated device / 16 KB page-size checks.
@@ -22,7 +22,8 @@ Required secrets:
 ## Health app policy
 
 - [ ] Complete the Health apps declaration in Play Console.
-- [ ] Select the accurate health feature categories for MediX.
+- [ ] Review **Medication and Treatment Management** and **Clinical Decision Support** as likely applicable Play Console categories; confirm declarations against each shipping feature.
+- [ ] Review whether any particular calculator or clinical functionality requires medical-device regulatory classification, without relying solely on the app disclaimer.
 - [x] In-app medical disclaimer states that MediX is not a medical device and does not diagnose, treat, cure or prevent medical conditions.
 - [x] In-app guidance tells users to consult a qualified healthcare professional.
 - [ ] Include the same medical disclaimer in the Google Play store description.
@@ -30,12 +31,14 @@ Required secrets:
 ## Privacy and Data safety
 
 - [x] In-app privacy section is available without an account.
-- [x] Public privacy policy: https://brendigo.com/politika-privatnosti/
-- [x] Terms of use: https://brendigo.com/uvjeti-koristenja/
+- [x] App-specific public privacy policy source: https://github.com/bren-wp/MediX/blob/main/docs/PRIVACY_POLICY.md (verify its public URL after merge).
+- [x] App-specific terms source: https://github.com/bren-wp/MediX/blob/main/docs/TERMS_OF_USE.md (verify its public URL after merge).
 - [x] Cleartext Android traffic disabled.
 - [x] Android cloud backup disabled for local therapy state.
 - [x] Export uses app cache + FileProvider instead of broad storage access.
 - [ ] Complete Play Console Data safety declarations to match the shipping app exactly.
+- [ ] Confirm Play Console privacy-policy URL resolves publicly to the MediX-specific policy after merge.
+- [ ] Confirm the Android pre-launch report, 16 KB page-size compatibility and large-screen UX on real test devices/emulators.
 - [ ] Re-check notification/alarm permission declarations in Play Console before production rollout.
 
 ## Store listing
@@ -55,3 +58,7 @@ Do not promote a bundle to production until:
 3. Google Play production AAB workflow is green with the private upload key.
 4. Play Console policy declarations are complete.
 5. Automated Play pre-launch checks show no release-blocking findings.
+
+## iOS status
+
+- [ ] An iOS/Xcode project, macOS build, provisioning, signing and App Store Connect review have not been completed. Android CI does not validate iOS readiness.
