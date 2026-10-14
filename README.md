@@ -49,6 +49,12 @@ The medicine identity comes from the **official HALMED medicine catalog**. HZZO 
 | 💶 | **Prices & packages** | Review available price and reimbursement information with clear distinctions between price types. |
 | 🏥 | **Find pharmacies** | Continue your pharmacy search in your preferred Android maps app. |
 
+## 🔎 Fast, clinically useful medicine search
+
+Search by medicine name, active ingredient, ATC code or package and use one-tap filters for prescription status, non-prescription medicines, HZZO Basic List, HZZO Supplementary List and **confirmed** HZZO copayments. Further professional filters remain available when needed.
+
+Price sorting never ranks HZZO copayments against wholesale prices. Each is a different measure with its own ascending/descending sort. Missing or unverified HZZO list matches are labeled *not confirmed*, not *not listed*. No retail pharmacy price or individual supplementary-insurance coverage is inferred.
+
 ## 📑 Official medicine information, without guesswork
 
 Open the current medicine record and find prescription status, HZZO coverage, packaging and available prices together. Where official links are supplied, MediX can open the patient leaflet or professional Summary of Product Characteristics. If a specific document is not available, an explicit HALMED registry link lets you verify the exact medicine and strength yourself.
