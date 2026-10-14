@@ -109,6 +109,20 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() => query = query.copyWith(sort: sort));
   }
 
+  void _setQuickFilter({
+    DispensingFilter dispensing = DispensingFilter.all,
+    ReimbursementFilter reimbursement = ReimbursementFilter.all,
+    PriceFilter price = PriceFilter.all,
+  }) {
+    setState(() {
+      query = query.copyWith(
+        dispensing: dispensing,
+        reimbursement: reimbursement,
+        price: price,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -144,26 +158,34 @@ class _SearchScreenState extends State<SearchScreen> {
                 initialValue: query.sort,
                 onSelected: _setSort,
                 icon: const Icon(Icons.sort_rounded),
-                itemBuilder: (_) => const [
+                itemBuilder: (_) => [
                   PopupMenuItem(
                     value: MedicationSort.nameAsc,
-                    child: Text('Naziv A – Ž'),
+                    child: Text(loc.t('sortName')),
                   ),
                   PopupMenuItem(
                     value: MedicationSort.ingredientAsc,
-                    child: Text('Djelatna tvar A – Ž'),
+                    child: Text(loc.t('sortIngredient')),
                   ),
                   PopupMenuItem(
                     value: MedicationSort.atcAsc,
-                    child: Text('ATK šifra'),
+                    child: Text(loc.t('sortAtc')),
                   ),
                   PopupMenuItem(
-                    value: MedicationSort.priceAsc,
-                    child: Text('Cijena: niža prvo'),
+                    value: MedicationSort.copayAsc,
+                    child: Text(loc.t('sortCopayAsc')),
                   ),
                   PopupMenuItem(
-                    value: MedicationSort.priceDesc,
-                    child: Text('Cijena: viša prvo'),
+                    value: MedicationSort.copayDesc,
+                    child: Text(loc.t('sortCopayDesc')),
+                  ),
+                  PopupMenuItem(
+                    value: MedicationSort.wholesaleAsc,
+                    child: Text(loc.t('sortWholesaleAsc')),
+                  ),
+                  PopupMenuItem(
+                    value: MedicationSort.wholesaleDesc,
+                    child: Text(loc.t('sortWholesaleDesc')),
                   ),
                 ],
               ),
@@ -193,6 +215,72 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                 ),
               ),
+              SizedBox(
+                height: 46,
+                child: ListView(
+                  key: const Key('medicationQuickFilters'),
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: [
+                    _quickChoice(
+                      loc.t('quickAll'),
+                      query.dispensing == DispensingFilter.all &&
+                          query.reimbursement == ReimbursementFilter.all &&
+                          query.price == PriceFilter.all,
+                      () => _setQuickFilter(),
+                    ),
+                    _quickChoice(
+                      loc.t('quickPrescription'),
+                      query.dispensing == DispensingFilter.prescription,
+                      () => _setQuickFilter(
+                        dispensing: query.dispensing ==
+                                DispensingFilter.prescription
+                            ? DispensingFilter.all
+                            : DispensingFilter.prescription,
+                      ),
+                    ),
+                    _quickChoice(
+                      loc.t('quickOtc'),
+                      query.dispensing == DispensingFilter.otc,
+                      () => _setQuickFilter(
+                        dispensing: query.dispensing == DispensingFilter.otc
+                            ? DispensingFilter.all
+                            : DispensingFilter.otc,
+                      ),
+                    ),
+                    _quickChoice(
+                      loc.t('quickBasicList'),
+                      query.reimbursement == ReimbursementFilter.basic,
+                      () => _setQuickFilter(
+                        reimbursement: query.reimbursement ==
+                                ReimbursementFilter.basic
+                            ? ReimbursementFilter.all
+                            : ReimbursementFilter.basic,
+                      ),
+                    ),
+                    _quickChoice(
+                      loc.t('quickSupplementaryList'),
+                      query.reimbursement == ReimbursementFilter.supplementary,
+                      () => _setQuickFilter(
+                        reimbursement: query.reimbursement ==
+                                ReimbursementFilter.supplementary
+                            ? ReimbursementFilter.all
+                            : ReimbursementFilter.supplementary,
+                      ),
+                    ),
+                    _quickChoice(
+                      loc.t('quickCopay'),
+                      query.price == PriceFilter.copay,
+                      () => _setQuickFilter(
+                        price: query.price == PriceFilter.copay
+                            ? PriceFilter.all
+                            : PriceFilter.copay,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 2, 16, 6),
                 child: Row(
@@ -277,6 +365,19 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _quickChoice(String label, bool selected, VoidCallback onTap) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 7),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: selected,
+        onSelected: (_) => onTap(),
+        visualDensity: VisualDensity.compact,
+        labelStyle: const TextStyle(fontSize: 12),
+      ),
     );
   }
 
@@ -720,16 +821,20 @@ String _reimbursementLabel(ReimbursementFilter value, {required bool hr}) {
     ReimbursementFilter.listed => hr ? 'Na listi' : 'Listed',
     ReimbursementFilter.basic => hr ? 'Osnovna lista' : 'Basic list',
     ReimbursementFilter.supplementary => hr ? 'Dopunska lista' : 'Supplementary list',
-    ReimbursementFilter.notListed => hr ? 'Nije na listi' : 'Not listed',
+    ReimbursementFilter.unverified =>
+      hr ? 'HZZO status nije potvrđen' : 'HZZO status unverified',
   };
 }
 
 String _priceLabel(PriceFilter value, {required bool hr}) {
   return switch (value) {
     PriceFilter.all => hr ? 'Sve cijene' : 'All prices',
-    PriceFilter.anyPrice => hr ? 'Ima cjenovni podatak' : 'Has price data',
-    PriceFilter.copay => hr ? 'Ima doplatu' : 'Has copay',
-    PriceFilter.wholesale => hr ? 'Ima veleprodajnu cijenu' : 'Has wholesale price',
+    PriceFilter.anyPrice =>
+      hr ? 'Ima provjeren cjenovni podatak' : 'Has validated price data',
+    PriceFilter.copay =>
+      hr ? 'Potvrđena HZZO doplata' : 'Verified HZZO copayment',
+    PriceFilter.wholesale =>
+      hr ? 'Ima veleprodajnu cijenu' : 'Has wholesale price',
   };
 }
 
