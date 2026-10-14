@@ -109,6 +109,80 @@ void main() {
     ),
   ];
 
+  test('one-tap filters combine without losing clinical constraints', () {
+    const original = MedicationQuery(
+      text: 'alfa',
+      market: MarketFilter.marketed,
+      shortage: ShortageFilter.noneReported,
+      atcGroup: 'C',
+      form: 'tablete',
+      holder: 'Alfa Pharma',
+      sort: MedicationSort.atcAsc,
+    );
+
+    final combined = original
+        .toggleDispensing(DispensingFilter.prescription)
+        .toggleReimbursement(ReimbursementFilter.basic)
+        .togglePrice(PriceFilter.copay);
+
+    expect(combined.dispensing, DispensingFilter.prescription);
+    expect(combined.reimbursement, ReimbursementFilter.basic);
+    expect(combined.price, PriceFilter.copay);
+    expect(combined.text, 'alfa');
+    expect(combined.market, MarketFilter.marketed);
+    expect(combined.shortage, ShortageFilter.noneReported);
+    expect(combined.atcGroup, 'C');
+    expect(combined.form, 'tablete');
+    expect(combined.holder, 'Alfa Pharma');
+    expect(combined.sort, MedicationSort.atcAsc);
+
+    // Tapping the selected prescription chip again removes only that chip.
+    final withoutPrescription =
+        combined.toggleDispensing(DispensingFilter.prescription);
+    expect(withoutPrescription.dispensing, DispensingFilter.all);
+    expect(withoutPrescription.reimbursement, ReimbursementFilter.basic);
+    expect(withoutPrescription.price, PriceFilter.copay);
+
+    // Switching basic to supplementary must preserve copayment and Rx.
+    final withSupplementary =
+        combined.toggleReimbursement(ReimbursementFilter.supplementary);
+    expect(withSupplementary.dispensing, DispensingFilter.prescription);
+    expect(withSupplementary.reimbursement,
+        ReimbursementFilter.supplementary);
+    expect(withSupplementary.price, PriceFilter.copay);
+
+    final noCopay = combined.togglePrice(PriceFilter.copay);
+    expect(noCopay.price, PriceFilter.all);
+    expect(noCopay.dispensing, DispensingFilter.prescription);
+    expect(noCopay.reimbursement, ReimbursementFilter.basic);
+
+    final reset = combined.clearFilters();
+    expect(reset.hasFilters, isFalse);
+    expect(reset.text, original.text);
+    expect(reset.sort, original.sort);
+    expect(reset.atcGroup, isNull);
+    expect(reset.form, isNull);
+    expect(reset.holder, isNull);
+  });
+
+  test('combined prescription and HZZO filters narrow actual results', () {
+    final result = applyMedicationQuery(
+      catalog,
+      const MedicationQuery()
+          .toggleDispensing(DispensingFilter.prescription)
+          .toggleReimbursement(ReimbursementFilter.basic),
+    );
+    expect(result.map((m) => m.id), ['a']);
+
+    final incompatible = applyMedicationQuery(
+      catalog,
+      const MedicationQuery()
+          .toggleDispensing(DispensingFilter.otc)
+          .toggleReimbursement(ReimbursementFilter.basic),
+    );
+    expect(incompatible, isEmpty);
+  });
+
   test('text search is tokenized and diacritic-insensitive', () {
     final result = applyMedicationQuery(
       catalog,

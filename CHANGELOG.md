@@ -2,6 +2,26 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.14] - 2026-10-14
+
+### Jednostavnija i dosljednija pretraga lijekova
+- brzi filtri za recept, bezreceptno izdavanje, HZZO osnovnu/dopunsku listu i potvrđene doplate mogu se kombinirati
+- promjena jednog brzog filtra više ne poništava ostale liječničke kriterije niti napredne filtre
+- ponovni dodir aktivnog filtra uklanja samo taj filtar
+- gumb „Svi” uklanja i napredne filtre, ali čuva uneseni pojam pretrage i sortiranje
+- aktivnost „Svi” točno odražava sve aktivne kriterije, ne samo tri brza polja
+
+### Pristupačniji početni ekran Android aplikacije
+- šest glavnih poveznica, četiri profesionalna alata i kategorije sada koriste visinu kartica prilagođenu dostupnoj širini i veličini teksta
+- manje rizika od okomito odrezanih naslova pri povećanom Android tekstu i na mobitelima širine 320 px
+- navigacija i postojeća funkcionalnost kartica ostaju sačuvane
+
+### Regresijske provjere
+- testovi provjeravaju kombiniranje recepata, HZZO statusa i cijena bez gubitka naprednih kriterija
+- widget test provjerava istodobno aktivne brze filtre, samostalno uklanjanje i resetiranje
+- widget test otvara pretragu s početnog ekrana i otkriva RenderFlex preljeve na 320 px uz velik tekst
+- obvezni flutter analyze, testovi, Dart audit i Android APK/AAB prije spajanja i objave
+
 ## [0.3.13] - 2026-10-14
 
 ### Sigurnije prepoznavanje izdavanja lijekova

@@ -111,18 +111,21 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() => query = query.copyWith(sort: sort));
   }
 
-  void _setQuickFilter({
-    DispensingFilter dispensing = DispensingFilter.all,
-    ReimbursementFilter reimbursement = ReimbursementFilter.all,
-    PriceFilter price = PriceFilter.all,
-  }) {
-    setState(() {
-      query = query.copyWith(
-        dispensing: dispensing,
-        reimbursement: reimbursement,
-        price: price,
-      );
-    });
+  void _clearQuickFilters() {
+    // "All" also clears professional filters; retain the search text and sort.
+    setState(() => query = query.clearFilters());
+  }
+
+  void _toggleDispensing(DispensingFilter filter) {
+    setState(() => query = query.toggleDispensing(filter));
+  }
+
+  void _toggleReimbursement(ReimbursementFilter filter) {
+    setState(() => query = query.toggleReimbursement(filter));
+  }
+
+  void _togglePrice(PriceFilter filter) {
+    setState(() => query = query.togglePrice(filter));
   }
 
   @override
@@ -227,58 +230,33 @@ class _SearchScreenState extends State<SearchScreen> {
                   children: [
                     _quickChoice(
                       loc.t('quickAll'),
-                      query.dispensing == DispensingFilter.all &&
-                          query.reimbursement == ReimbursementFilter.all &&
-                          query.price == PriceFilter.all,
-                      () => _setQuickFilter(),
+                      !query.hasFilters,
+                      _clearQuickFilters,
                     ),
                     _quickChoice(
                       loc.t('quickPrescription'),
                       query.dispensing == DispensingFilter.prescription,
-                      () => _setQuickFilter(
-                        dispensing: query.dispensing ==
-                                DispensingFilter.prescription
-                            ? DispensingFilter.all
-                            : DispensingFilter.prescription,
-                      ),
+                      () => _toggleDispensing(DispensingFilter.prescription),
                     ),
                     _quickChoice(
                       loc.t('quickOtc'),
                       query.dispensing == DispensingFilter.otc,
-                      () => _setQuickFilter(
-                        dispensing: query.dispensing == DispensingFilter.otc
-                            ? DispensingFilter.all
-                            : DispensingFilter.otc,
-                      ),
+                      () => _toggleDispensing(DispensingFilter.otc),
                     ),
                     _quickChoice(
                       loc.t('quickBasicList'),
                       query.reimbursement == ReimbursementFilter.basic,
-                      () => _setQuickFilter(
-                        reimbursement: query.reimbursement ==
-                                ReimbursementFilter.basic
-                            ? ReimbursementFilter.all
-                            : ReimbursementFilter.basic,
-                      ),
+                      () => _toggleReimbursement(ReimbursementFilter.basic),
                     ),
                     _quickChoice(
                       loc.t('quickSupplementaryList'),
                       query.reimbursement == ReimbursementFilter.supplementary,
-                      () => _setQuickFilter(
-                        reimbursement: query.reimbursement ==
-                                ReimbursementFilter.supplementary
-                            ? ReimbursementFilter.all
-                            : ReimbursementFilter.supplementary,
-                      ),
+                      () => _toggleReimbursement(ReimbursementFilter.supplementary),
                     ),
                     _quickChoice(
                       loc.t('quickCopay'),
                       query.price == PriceFilter.copay,
-                      () => _setQuickFilter(
-                        price: query.price == PriceFilter.copay
-                            ? PriceFilter.all
-                            : PriceFilter.copay,
-                      ),
+                      () => _togglePrice(PriceFilter.copay),
                     ),
                   ],
                 ),

@@ -120,6 +120,24 @@ class MedicationQuery {
       sort: sort,
     );
   }
+
+  /// Toggle only the selected dimension. Other medical filters must survive:
+  /// e.g. doctors should be able to combine prescription + HZZO + copay.
+  MedicationQuery toggleDispensing(DispensingFilter selected) => copyWith(
+        dispensing:
+            dispensing == selected ? DispensingFilter.all : selected,
+      );
+
+  MedicationQuery toggleReimbursement(ReimbursementFilter selected) =>
+      copyWith(
+        reimbursement: reimbursement == selected
+            ? ReimbursementFilter.all
+            : selected,
+      );
+
+  MedicationQuery togglePrice(PriceFilter selected) => copyWith(
+        price: price == selected ? PriceFilter.all : selected,
+      );
 }
 
 /// Precomputed search text for a fixed medicine catalog.
