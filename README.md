@@ -49,6 +49,12 @@ The medicine identity comes from the **official HALMED medicine catalog**. HZZO 
 | 💶 | **Prices & packages** | Review available price and reimbursement information with clear distinctions between price types. |
 | 🏥 | **Find pharmacies** | Continue your pharmacy search in your preferred Android maps app. |
 
+## ⚡ One-tap professional medicine lookup
+
+Combine quick filters for prescription-only, OTC, HZZO list status and verified copayments without losing previous choices or deeper clinical filters. Tap an active filter to remove only that condition, or use **All** to clear all filter restrictions while preserving the search text and selected sort. This is useful when checking, for example, prescription medicines on the HZZO Supplementary List with a confirmed copayment.
+
+The home screen has adaptive tile heights for 320px Android layouts and users who enable larger system text. The same actions remain available without horizontal navigation.
+
 ## 🩺 Prescription status, with evidence
 
 MediX recognizes documented Croatian dispensing codes **BR / BRX** (without prescription) and **R / RS** (prescription), as well as unambiguous status text in official records. Contradictory, negated or unrecognized labels are **not guessed**: they remain unverified in the search filters, medicine profiles and comparisons. The exact incoming source text remains available in the professional metadata for verification.
