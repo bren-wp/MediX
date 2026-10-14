@@ -19,14 +19,9 @@ abstract final class DispensingStatusParser {
     // A negated or contradictory phrase cannot be safely promoted to
     // either prescription or non-prescription status.
     if (RegExp(
-      r'\b(?:ne|nije|nisu)\s+(?:(?:izdaje|prodaje|dostupan|dostupno|'
-      r'moze|smije|ide)\s+)?(?:se\s+)?(?:samo\s+)?'
-      r'(?:na|bez|uz)\s+recepta?\b',
+      r'\b(?:ne|nije|nisu|nema|zabranjeno)\b'
+      r'(?:\s+\w+){0,6}\s+(?:na|bez|uz)\s+recepta?\b',
     ).hasMatch(text)) {
-      return null;
-    }
-    if (RegExp(r'\bne\s+izdaje\s+se\s+(?:na|bez|uz)\s+recepta?\b')
-        .hasMatch(text)) {
       return null;
     }
 
