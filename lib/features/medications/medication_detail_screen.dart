@@ -9,6 +9,7 @@ import '../../models/medication_price.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_page.dart';
 import 'medication_access_panel.dart';
+import 'medication_documents_panel.dart';
 
 class MedicationDetailScreen extends StatefulWidget {
   const MedicationDetailScreen({
@@ -116,6 +117,7 @@ class _MedicationDetailScreenState extends State<MedicationDetailScreen> {
               _Badges(medication: medication),
               const SizedBox(height: 12),
               MedicationAccessPanel(medication: medication),
+              const SizedBox(height: 12),              MedicationDocumentsPanel(medication: medication),
               const SizedBox(height: 12),
               _OverviewSection(medication: medication),
               const SizedBox(height: 12),
