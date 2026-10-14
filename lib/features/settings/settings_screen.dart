@@ -157,12 +157,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 14),
           const Divider(),
           TextButton.icon(
-            onPressed: () => _openUrl('https://brendigo.com/politika-privatnosti/'),
+            onPressed: () => _openUrl(MedixAppInfo.privacyPolicyUrl),
             icon: const Icon(Icons.open_in_new_rounded, size: 17),
             label: Text(loc.t('privacy')),
           ),
           TextButton.icon(
-            onPressed: () => _openUrl('https://brendigo.com/uvjeti-koristenja/'),
+            onPressed: () => _openUrl(MedixAppInfo.termsOfUseUrl),
             icon: const Icon(Icons.open_in_new_rounded, size: 17),
             label: Text(loc.t('terms')),
           ),
