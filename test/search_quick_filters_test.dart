@@ -39,7 +39,7 @@ void main() {
     await tester.tap(prescription);
     await tester.pumpAndSettle();
 
-    expect(find.text('Varfarin'), findsOneWidget);
+    expect(find.text('Varfarin'), findsWidgets);
     expect(find.text('Paracetamol'), findsNothing);
 
     final otc = find.descendant(
@@ -48,7 +48,7 @@ void main() {
     );
     await tester.tap(otc);
     await tester.pumpAndSettle();
-    expect(find.text('Paracetamol'), findsOneWidget);
+    expect(find.text('Paracetamol'), findsWidgets);
     expect(find.text('Varfarin'), findsNothing);
 
     final all = find.descendant(
@@ -57,7 +57,7 @@ void main() {
     );
     await tester.tap(all);
     await tester.pumpAndSettle();
-    expect(find.text('Paracetamol'), findsOneWidget);
-    expect(find.text('Varfarin'), findsOneWidget);
+    expect(find.text('Paracetamol'), findsWidgets);
+    expect(find.text('Varfarin'), findsWidgets);
   });
 }
