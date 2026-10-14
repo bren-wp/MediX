@@ -52,7 +52,7 @@ class MedicationRepository {
 
       final copay = _asDouble(record['copay_eur']);
       final prices = <MedicationPrice>[
-        if (copay != null)
+        if (copay != null && copay.isFinite && copay >= 0)
           MedicationPrice(
             amount: copay,
             currency: 'EUR',
@@ -352,7 +352,9 @@ class MedicationRepository {
           _nullableString(record['name_and_package']) ?? '';
       final price = _asDouble(record['max_wholesale_eur']);
 
-      if (name.isEmpty || price == null) continue;
+      if (name.isEmpty || price == null || !price.isFinite || price < 0) {
+        continue;
+      }
 
       final index = _findBestMatch(
         medications,
@@ -424,17 +426,30 @@ class MedicationRepository {
 
     for (var i = 0; i < medications.length; i++) {
       final candidate = medications[i];
-      final candidateAtc = _normalize(candidate.atcCode ?? '');
 
+      // Most catalog entries do not share a trade name. Reject them
+      // before parsing pharmaceutical strengths and package quantities.
+      final candidateName = _normalize(candidate.name);
+      var score = 0;
+      if (incomingName.isNotEmpty) {
+        if (candidateName == incomingName) {
+          score += 8;
+        } else if (candidateName.startsWith('$incomingName ') ||
+            incomingName.startsWith('$candidateName ')) {
+          score += 6;
+        } else {
+          continue;
+        }
+      }
+
+      final candidateAtc = _normalize(candidate.atcCode ?? '');
       if (incomingAtc.isNotEmpty &&
           candidateAtc.isNotEmpty &&
           incomingAtc != candidateAtc) {
         continue;
       }
 
-      final candidateName = _normalize(candidate.name);
-      final candidateActive =
-          _normalize(candidate.activeIngredient);
+      final candidateActive = _normalize(candidate.activeIngredient);
       final candidateHolder = _normalize(
         candidate.marketingAuthorizationHolder ?? '',
       );
@@ -459,19 +474,6 @@ class MedicationRepository {
       if (incomingPackCount != null &&
           incomingPackCount != candidatePackCount) {
         continue;
-      }
-
-      var score = 0;
-
-      if (incomingName.isNotEmpty) {
-        if (candidateName == incomingName) {
-          score += 8;
-        } else if (candidateName.startsWith('$incomingName ') ||
-            incomingName.startsWith('$candidateName ')) {
-          score += 6;
-        } else {
-          continue;
-        }
       }
 
       if (incomingAtc.isNotEmpty &&
