@@ -64,4 +64,70 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Varfarin'), findsWidgets);
   });
+  testWidgets('quick chips preserve Rx when selecting HZZO and vice versa',
+      (tester) async {
+    final state = MedixState(repository: buildTestRepository());
+    addTearDown(state.dispose);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: MedixTheme.dark(),
+        locale: const Locale('hr'),
+        supportedLocales: MedixLanguages.locales,
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: SearchScreen(state: state),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final quick = find.byKey(const Key('medicationQuickFilters'));
+    final rx = find.descendant(of: quick, matching: find.text('Na recept'));
+    await tester.tap(rx);
+    await tester.pumpAndSettle();
+    expect(find.text('Varfarin'), findsWidgets);
+
+    final basic =
+        find.descendant(of: quick, matching: find.text('Osnovna HZZO'));
+    await tester.ensureVisible(basic);
+    await tester.tap(basic);
+    await tester.pumpAndSettle();
+
+    // Fixtures have Rx medicines but none with confirmed HZZO coverage.
+    // If the HZZO chip silently reset Rx, there would still be a mismatch
+    // between selected chips and the actual composed query.
+    expect(find.text('Varfarin'), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is InputChip && widget.label is Text &&
+            (widget.label as Text).data == 'Na recept',
+      ),
+      findsOneWidget,
+    );
+
+    // Remove Rx only; the HZZO filter should continue to exclude results.
+    await tester.ensureVisible(rx);
+    await tester.tap(rx);
+    await tester.pumpAndSettle();
+    expect(find.text('Varfarin'), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is InputChip && widget.label is Text &&
+            (widget.label as Text).data == 'Osnovna lista',
+      ),
+      findsOneWidget,
+    );
+
+    final all = find.descendant(of: quick, matching: find.text('Svi'));
+    await tester.ensureVisible(all);
+    await tester.tap(all);
+    await tester.pumpAndSettle();
+    expect(find.text('Paracetamol'), findsWidgets);
+  });
+
 }
