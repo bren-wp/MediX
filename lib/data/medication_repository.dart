@@ -412,6 +412,7 @@ class MedicationRepository {
     final incomingStrength = _normalize(
       _extractStrength(strengthOrPackage),
     );
+    final incomingPackCount = _extractPackCount(strengthOrPackage);
     final incomingHolder = _normalize(holder ?? '');
 
     int? bestIndex;
@@ -434,13 +435,30 @@ class MedicationRepository {
       final candidateHolder = _normalize(
         candidate.marketingAuthorizationHolder ?? '',
       );
+      final candidateDescription = [
+        candidate.strength,
+        candidate.packageDescription ?? '',
+        candidate.name,
+      ].join(' ');
       final candidateStrength = _normalize(
-        [
-          candidate.strength,
-          candidate.packageDescription ?? '',
-          candidate.name,
-        ].join(' '),
+        _extractStrength(candidateDescription),
       );
+      final candidatePackCount =
+          _extractPackCount(candidate.packageDescription ?? '');
+
+      // Never transfer the copayment or package price across different
+      // strengths or known package quantities. A name/ATC match alone
+      // is insufficient evidence for a price tied to a specific pack.
+      if (incomingStrength.isNotEmpty &&
+          candidateStrength.isNotEmpty &&
+          incomingStrength != candidateStrength) {
+        continue;
+      }
+      if (incomingPackCount != null &&
+          candidatePackCount != null &&
+          incomingPackCount != candidatePackCount) {
+        continue;
+      }
 
       var score = 0;
 
@@ -466,7 +484,7 @@ class MedicationRepository {
       }
 
       if (incomingStrength.isNotEmpty &&
-          candidateStrength.contains(incomingStrength)) {
+          incomingStrength == candidateStrength) {
         score += 3;
       }
 
@@ -609,6 +627,20 @@ class MedicationRepository {
       'V' => 'Razni pripravci (ATK V)',
       _ => 'Neklasificirano',
     };
+  }
+
+  /// Extract a clearly expressed count of dosage units in a pack.
+  ///
+  /// Unknown packaging is left unmatched; never infer a tablet count
+  /// from a strength, volume or authorization number.
+  static String? _extractPackCount(String description) {
+    final normalized = _normalize(description);
+    final match = RegExp(
+      r'\b(\d{1,4})\s*(?:tableta|tablete|tableti|tbl|kapsula|kapsule|'
+      r'caps|ampula|ampule|cepica|flastera|flasteri|vrecica|vrecice|'
+      r'bočica|bocica|bocice|komada|kom)\b',
+    ).firstMatch(normalized);
+    return match?.group(1);
   }
 
   static String _extractStrength(String package) {
