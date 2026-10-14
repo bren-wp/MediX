@@ -4,7 +4,6 @@ import '../../core/localization/medix_localizations.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../models/medication.dart';
 import '../../models/medication_access.dart';
-import '../../models/medication_price.dart';
 import '../../services/platform_navigation.dart';
 import '../../widgets/medix_page.dart';
 
