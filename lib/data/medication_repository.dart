@@ -212,6 +212,9 @@ class MedicationRepository {
                   sourceUrl,
           shortageStatus:
               _nullableString(record['shortage_status']),
+          smpcUrl: _nullableString(record['smpc_url']),
+          patientLeafletUrl:
+              _nullableString(record['patient_leaflet_url']),
         ),
       );
     }
