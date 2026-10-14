@@ -118,11 +118,14 @@ class Medication {
       compactSubtitle ?? 'Podaci o pakiranju nisu dostupni';
 
   String get dispensingLabel {
+    // The original text is retained in the professional metadata, but it
+    // must not be advertised as confirmed when the source is ambiguous.
+    if (requiresPrescription == null) {
+      return 'Način izdavanja nije potvrđen';
+    }
     final raw = dispensingStatus?.trim();
     if (raw != null && raw.isNotEmpty) return raw;
-    if (requiresPrescription == true) return 'na recept';
-    if (requiresPrescription == false) return 'bez recepta';
-    return 'nije navedeno';
+    return requiresPrescription! ? 'na recept' : 'bez recepta';
   }
 
   MedicationMarketState get marketState {
