@@ -103,15 +103,19 @@ class HomeScreen extends StatelessWidget {
                 builder: (context, constraints) {
                   final columns =
                       constraints.maxWidth < 430 ? 2 : 3;
-                  return GridView.count(
-                    crossAxisCount: columns,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
+                  final scale = MediaQuery.textScalerOf(context).scale(1);
+                  return GridView(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      // Fixed aspect ratios clipped longer Croatian labels and
+                      // overflowed with Android's larger accessibility text.
+                      mainAxisExtent: (columns == 2 ? 122.0 : 116.0) +
+                          (scale - 1.0).clamp(0.0, 2.0) * 52.0,
+                    ),
                     shrinkWrap: true,
-                    physics:
-                        const NeverScrollableScrollPhysics(),
-                    childAspectRatio:
-                        columns == 2 ? 1.45 : .92,
+                    physics: const NeverScrollableScrollPhysics(),
                     children: [
                   _HomeAction(
                     icon: Icons.medication_rounded,
@@ -203,15 +207,17 @@ class HomeScreen extends StatelessWidget {
                 builder: (context, constraints) {
                   final columns =
                       constraints.maxWidth < 360 ? 1 : 2;
-                  return GridView.count(
-                    crossAxisCount: columns,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
+                  final scale = MediaQuery.textScalerOf(context).scale(1);
+                  return GridView(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: columns,
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      mainAxisExtent: (columns == 1 ? 82.0 : 92.0) +
+                          (scale - 1.0).clamp(0.0, 2.0) * 34.0,
+                    ),
                     shrinkWrap: true,
-                    physics:
-                        const NeverScrollableScrollPhysics(),
-                    childAspectRatio:
-                        columns == 1 ? 4.3 : 2.1,
+                    physics: const NeverScrollableScrollPhysics(),
                     children: [
                   _ProfessionalAction(
                     icon: Icons.auto_awesome_rounded,
@@ -283,18 +289,17 @@ class HomeScreen extends StatelessWidget {
                 builder: (context, constraints) {
                   final columns =
                       constraints.maxWidth < 430 ? 2 : 3;
+                  final scale = MediaQuery.textScalerOf(context).scale(1);
                   return GridView.builder(
                     shrinkWrap: true,
-                    physics:
-                        const NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: categories.length,
-                    gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: columns,
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
-                      childAspectRatio:
-                          columns == 2 ? 1.5 : 1.06,
+                      mainAxisExtent: (columns == 2 ? 105.0 : 111.0) +
+                          (scale - 1.0).clamp(0.0, 2.0) * 40.0,
                     ),
                     itemBuilder: (context, index) {
                   final category = categories[index];
