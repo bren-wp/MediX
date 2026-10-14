@@ -182,8 +182,8 @@ class MedixExportService {
           pw.SizedBox(height: 18),
           pw.Text('Author: Brendigo'),
           pw.Text('Package: com.brendigo.medix'),
-          pw.Text('Privacy: https://brendigo.com/politika-privatnosti/'),
-          pw.Text('Terms: https://brendigo.com/uvjeti-koristenja/'),
+          pw.Text('Privacy: ${MedixAppInfo.privacyPolicyUrl}'),
+          pw.Text('Terms: ${MedixAppInfo.termsOfUseUrl}'),
           pw.SizedBox(height: 16),
           pw.Text(
             'This export is generated locally on the device. It contains only the MediX data selected by the export feature and is not uploaded by MediX.',
