@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/medix_theme.dart';
 import '../../data/medication_query.dart';
+import '../../data/medication_comparison.dart';
 import '../../models/medication.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_page.dart';
@@ -24,6 +25,13 @@ class _MedicationCompareScreenState
     extends State<MedicationCompareScreen> {
   final controller = TextEditingController();
   final List<Medication> selected = [];
+  late final MedicationSearchIndex searchIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    searchIndex = MedicationSearchIndex(widget.state.repository.medications);
+  }
 
   @override
   void dispose() {
@@ -73,6 +81,7 @@ class _MedicationCompareScreenState
     final results = applyMedicationQuery(
       widget.state.repository.medications,
       MedicationQuery(text: controller.text),
+      index: searchIndex,
     ).take(120).toList(growable: false);
 
     return MedixPage(
@@ -264,7 +273,7 @@ class _ComparisonResultScreen extends StatelessWidget {
                 SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Usporedba prikazuje administrativne i paketne podatke jedan uz drugi. Ne određuje koji je lijek prikladniji za pojedinog pacijenta.',
+                    'Usporedba prikazuje administrativne i podatke o pakiranju. HZZO doplata i najviša veleprodajna cijena različite su vrijednosti; nedostatak HZZO podudaranja ne dokazuje da lijek nije pokriven. Usporedba ne određuje prikladnost lijeka za pojedinog pacijenta.',
                     style: TextStyle(
                       color: MedixColors.textSecondary,
                       height: 1.4,
@@ -333,7 +342,11 @@ class _ComparisonTable extends StatelessWidget {
       ),
       _ComparisonRow(
         'Lista',
-        (m) => _reimbursement(m.reimbursementStatus),
+        (m) => MedicationComparisonData.reimbursement(m),
+      ),
+      _ComparisonRow(
+        'HZZO lista u primjeni od',
+        (m) => MedicationComparisonData.sourceDate(m),
       ),
       _ComparisonRow(
         'Pakiranje',
@@ -352,12 +365,12 @@ class _ComparisonTable extends StatelessWidget {
         (m) => m.route ?? '—',
       ),
       _ComparisonRow(
-        'Doplata',
-        (m) => m.hzzoCopay?.formatted ?? '—',
+        'Potvrđena HZZO doplata / pak.',
+        (m) => MedicationComparisonData.copayment(m),
       ),
       _ComparisonRow(
-        'Veleprodajna cijena',
-        (m) => m.maxWholesalePrice?.formatted ?? '—',
+        'Najviša veleprodajna cijena (nije maloprodajna)',
+        (m) => MedicationComparisonData.wholesale(m),
       ),
       _ComparisonRow(
         'Broj odobrenja',
@@ -509,10 +522,3 @@ String _valueOrDash(String value) {
       : trimmed;
 }
 
-String _reimbursement(ReimbursementStatus status) {
-  return switch (status) {
-    ReimbursementStatus.none => 'Nije na listi',
-    ReimbursementStatus.basic => 'Osnovna lista',
-    ReimbursementStatus.supplementary => 'Dopunska lista',
-  };
-}

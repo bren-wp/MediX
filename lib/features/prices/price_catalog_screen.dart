@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../data/official_price_validation.dart';
 import '../../widgets/medix_page.dart';
 
 class PriceCatalogScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
             authorizationNumber:
                 row['authorization_number']?.toString().trim() ?? '',
             holder: row['holder']?.toString().trim() ?? '',
-            price: _number(row['max_wholesale_eur']),
+            price: OfficialPriceValidation.euro(row['max_wholesale_eur']),
             note: row['note']?.toString().trim() ?? '',
           ),
         );
@@ -79,14 +80,7 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
       sourceName:
           source['name']?.toString() ?? 'HALMED / Narodne novine',
       publishedDate:
-          source['published_date']?.toString() ?? '2026-06-18',
-    );
-  }
-
-  static double? _number(Object? value) {
-    if (value is num) return value.toDouble();
-    return double.tryParse(
-      value?.toString().replaceAll(',', '.').trim() ?? '',
+          OfficialPriceValidation.publishedDate(source['published_date']),
     );
   }
 
@@ -121,15 +115,7 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
           final filtered = query.isEmpty
               ? data.records
               : data.records.where((row) {
-                  final haystack = [
-                    row.name,
-                    row.package,
-                    row.ingredient,
-                    row.atc,
-                    row.authorizationNumber,
-                    row.holder,
-                  ].join(' ').toLowerCase();
-                  return haystack.contains(query);
+                  return row.searchText.contains(query);
                 }).toList(growable: false);
           final visible =
               filtered.take(300).toList(growable: false);
@@ -178,8 +164,8 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
                       Expanded(
                         child: Text(
                           '${data.sourceName}\n'
-                          'Ažurirano: ${data.publishedDate}\n'
-                          'Prikazane vrijednosti odnose se na evidentirane cijene pakiranja i nisu nužno maloprodajne cijene ljekarni.',
+                          'Datum objave: ${data.publishedDate}\n'
+                          'Prikazuju se najviše dozvoljene cijene na veliko za navedena pakiranja, ne maloprodajne cijene ljekarni niti doplate prema osiguranju.',
                           style: const TextStyle(
                             color: MedixColors.textSecondary,
                             height: 1.4,
@@ -296,15 +282,31 @@ class _PriceCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(
-                row.price == null
-                    ? '—'
-                    : '${row.price!.toStringAsFixed(2).replaceAll('.', ',')} €',
-                style: const TextStyle(
-                  color: MedixColors.success,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text(
+                    'Na veliko',
+                    style: TextStyle(
+                      color: MedixColors.textMuted,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    row.price == null
+                        ? '—'
+                        : '${row.price!.toStringAsFixed(2).replaceAll('.', ',')} €',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: MedixColors.success,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -387,7 +389,7 @@ class _PriceCatalog {
 }
 
 class _PriceRecord {
-  const _PriceRecord({
+  _PriceRecord({
     required this.name,
     required this.package,
     required this.ingredient,
@@ -396,8 +398,17 @@ class _PriceRecord {
     required this.holder,
     required this.price,
     required this.note,
-  });
+  }) : searchText = [
+         name,
+         package,
+         ingredient,
+         atc,
+         authorizationNumber,
+         holder,
+       ].join(' ').toLowerCase();
 
+  /// Immutable normalized search text, built once when the file is parsed.
+  final String searchText;
   final String name;
   final String package;
   final String ingredient;

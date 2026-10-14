@@ -49,6 +49,12 @@ The medicine identity comes from the **official HALMED medicine catalog**. HZZO 
 | 💶 | **Prices & packages** | Review available price and reimbursement information with clear distinctions between price types. |
 | 🏥 | **Find pharmacies** | Continue your pharmacy search in your preferred Android maps app. |
 
+## ↔️ Safer comparisons and transparent wholesale price lists
+
+Compare up to four medicines, including prescription, package, HZZO list, effective-date and price-source differences. Only verified HZZO copayments and finite nonnegative EUR wholesale amounts are displayed. A medicine without a confirmed HZZO record is **not automatically outside coverage**.
+
+The separate published-price catalog explicitly identifies **maximum wholesale prices**, not personal pharmacy checkout prices. Invalid amounts and missing source dates are treated as unknown, never as zero, a fake date or a retail quote. Search entries are prepared when the catalog loads for smoother repeated lookup.
+
 ## 🛡️ Source-aware clinical data
 
 MediX keeps the effective date and source of a **confirmed HZZO list match** with the specific medicine and package. When an official effective date is missing, a dated HZZO copayment is not invented. The medicine screen explains the missing date rather than passing it off as current. Official prices are historical/offline snapshots, not live pharmacy quotes.
