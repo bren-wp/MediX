@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/theme/medix_theme.dart';
 import '../core/localization/medix_localizations.dart';
 import '../models/medication.dart';
+import '../models/medication_access.dart';
 
 class MedicationTile extends StatelessWidget {
   const MedicationTile({
@@ -23,6 +24,7 @@ class MedicationTile extends StatelessWidget {
     final loc = MedixLocalizations.of(context);
     final subtitle = medication.compactSubtitle;
     final ingredient = medication.activeIngredient.trim();
+    final copayment = MedicationAccessInfo.fromMedication(medication).copayment;
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -106,6 +108,11 @@ class MedicationTile extends StatelessWidget {
                                   ? Icons.add_circle_outline
                                   : Icons.help_outline_rounded,
                         ),
+                        if (copayment != null)
+                          _InfoChip(
+                            label: '${loc.t('accessCopaymentChip')} ${copayment.formatted}',
+                            icon: Icons.euro_rounded,
+                          ),
                         _InfoChip(
                           label: medication.category,
                           icon: Icons.category_outlined,
