@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/medix_theme.dart';
+import '../../data/official_price_validation.dart';
 import '../../widgets/medix_page.dart';
 
 class PriceCatalogScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
             authorizationNumber:
                 row['authorization_number']?.toString().trim() ?? '',
             holder: row['holder']?.toString().trim() ?? '',
-            price: _number(row['max_wholesale_eur']),
+            price: OfficialPriceValidation.euro(row['max_wholesale_eur']),
             note: row['note']?.toString().trim() ?? '',
           ),
         );
@@ -79,14 +80,7 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
       sourceName:
           source['name']?.toString() ?? 'HALMED / Narodne novine',
       publishedDate:
-          source['published_date']?.toString() ?? '2026-06-18',
-    );
-  }
-
-  static double? _number(Object? value) {
-    if (value is num) return value.toDouble();
-    return double.tryParse(
-      value?.toString().replaceAll(',', '.').trim() ?? '',
+          OfficialPriceValidation.publishedDate(source['published_date']),
     );
   }
 
@@ -178,8 +172,8 @@ class _PriceCatalogScreenState extends State<PriceCatalogScreen> {
                       Expanded(
                         child: Text(
                           '${data.sourceName}\n'
-                          'Ažurirano: ${data.publishedDate}\n'
-                          'Prikazane vrijednosti odnose se na evidentirane cijene pakiranja i nisu nužno maloprodajne cijene ljekarni.',
+                          'Datum objave: ${data.publishedDate}\n'
+                          'Prikazuju se najviše dozvoljene cijene na veliko za navedena pakiranja, ne maloprodajne cijene ljekarni niti doplate prema osiguranju.',
                           style: const TextStyle(
                             color: MedixColors.textSecondary,
                             height: 1.4,
@@ -296,7 +290,16 @@ class _PriceCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  const Text('Na veliko', style: TextStyle(
+                    color: MedixColors.textMuted,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  )),
+                  const SizedBox(height: 2),
+                  Text(
                 row.price == null
                     ? '—'
                     : '${row.price!.toStringAsFixed(2).replaceAll('.', ',')} €',
@@ -305,6 +308,8 @@ class _PriceCard extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
                 ),
+              ),
+                ],
               ),
             ],
           ),
