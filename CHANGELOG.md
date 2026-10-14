@@ -2,6 +2,26 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.11] - 2026-10-14
+
+### Brža pretraga iz kataloga lijekova
+- normalizirani pretraživi tekst svakog lijeka izračunava se jednom pri otvaranju pretrage, ne iznova pri svakom slovu
+- tekst upita rastavlja se na riječi samo jednom po pretraživanju
+- postojeći kriteriji, ATK pretraga, dijakritici, cijene i sigurnosni filtri zadržavaju isto ponašanje
+- indeksi koriste identitet zapisa i mogu sigurno pretraživati dodatni zapis koji nije unaprijed indeksiran
+
+### Provjerljivi HZZO izvori i datumi
+- nakon točnog povezivanja lijeka i pakiranja prikazuje se izvor potvrđene HZZO liste i datum primjene iz službenih podataka
+- zapis bez službenog datuma primjene ne dobiva izmišljeni datum HZZO doplate
+- HZZO status bez potvrđenog datuma jasno označava da datum nije potvrđen
+- kopirani sažetak lijeka sadrži HZZO izvor i datum primjene kada postoje
+- uklonjena pogreška oblikovanja u sastavu ekrana detalja lijeka
+
+### Provjere
+- testovi uspoređuju indeksiranu i uobičajenu pretragu kroz dijakritike, ATK, lijekove, napredne filtre i sortiranje
+- testovi provjeravaju slučajeve bez HZZO datuma te prijenos HZZO izvora isključivo na sigurno upareno pakiranje
+- Flutter analiza, svi testovi, Dart reachability audit i Android APK/AAB build obvezni su prije objave
+
 ## [0.3.10] - 2026-10-14
 
 ### Brža pretraga za liječnike i pacijente
