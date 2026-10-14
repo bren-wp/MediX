@@ -58,6 +58,10 @@ void main() {
     await tester.tap(all);
     await tester.pumpAndSettle();
     expect(find.text('Paracetamol'), findsWidgets);
+
+    // Results are lazily built; the fourth medicine is below the viewport.
+    await tester.drag(find.byType(ListView).last, const Offset(0, -400));
+    await tester.pumpAndSettle();
     expect(find.text('Varfarin'), findsWidgets);
   });
 }
