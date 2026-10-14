@@ -1,4 +1,6 @@
 import '../models/medication.dart';
+import '../models/medication_access.dart';
+
 import '../models/medication_price.dart';
 
 enum DispensingFilter {
@@ -13,7 +15,7 @@ enum ReimbursementFilter {
   listed,
   basic,
   supplementary,
-  notListed,
+  unverified,
 }
 
 enum PriceFilter {
@@ -42,8 +44,10 @@ enum MedicationSort {
   nameAsc,
   ingredientAsc,
   atcAsc,
-  priceAsc,
-  priceDesc,
+  copayAsc,
+  copayDesc,
+  wholesaleAsc,
+  wholesaleDesc,
 }
 
 class MedicationQuery {
@@ -248,7 +252,8 @@ bool _matchesReimbursement(
     ReimbursementFilter.supplementary =>
       medication.reimbursementStatus ==
           ReimbursementStatus.supplementary,
-    ReimbursementFilter.notListed => !medication.isOnHzzoList,
+    // A missing match is unverified, not proof of HZZO exclusion.
+    ReimbursementFilter.unverified => !medication.isOnHzzoList,
   };
 }
 
@@ -258,13 +263,13 @@ bool _matchesPrice(
 ) {
   return switch (filter) {
     PriceFilter.all => true,
-    PriceFilter.anyPrice => medication.prices.isNotEmpty,
-    PriceFilter.copay => medication.prices.any(
-        (item) => item.kind == MedicationPriceKind.hzzoCopay,
+    PriceFilter.anyPrice => medication.prices.any(
+        (item) => MedicationAccessInfo.isDisplayablePrice(medication, item),
       ),
-    PriceFilter.wholesale => medication.prices.any(
-        (item) => item.kind == MedicationPriceKind.maxWholesale,
-      ),
+    PriceFilter.copay =>
+      MedicationAccessInfo.fromMedication(medication).copayment != null,
+    PriceFilter.wholesale =>
+      MedicationAccessInfo.fromMedication(medication).wholesalePrice != null,
   };
 }
 
@@ -323,15 +328,31 @@ int _compare(
             .compareTo(b.atcCode ?? 'ZZZZZZ'),
         nameCompare,
       ),
-    MedicationSort.priceAsc => _comparePrice(
+    MedicationSort.copayAsc => _comparePrice(
         a,
         b,
+        kind: MedicationPriceKind.hzzoCopay,
         descending: false,
         fallback: nameCompare,
       ),
-    MedicationSort.priceDesc => _comparePrice(
+    MedicationSort.copayDesc => _comparePrice(
         a,
         b,
+        kind: MedicationPriceKind.hzzoCopay,
+        descending: true,
+        fallback: nameCompare,
+      ),
+    MedicationSort.wholesaleAsc => _comparePrice(
+        a,
+        b,
+        kind: MedicationPriceKind.maxWholesale,
+        descending: false,
+        fallback: nameCompare,
+      ),
+    MedicationSort.wholesaleDesc => _comparePrice(
+        a,
+        b,
+        kind: MedicationPriceKind.maxWholesale,
         descending: true,
         fallback: nameCompare,
       ),
@@ -341,11 +362,12 @@ int _compare(
 int _comparePrice(
   Medication a,
   Medication b, {
+  required MedicationPriceKind kind,
   required bool descending,
   required int fallback,
 }) {
-  final aPrice = _primaryPrice(a);
-  final bPrice = _primaryPrice(b);
+  final aPrice = _verifiedPrice(a, kind);
+  final bPrice = _verifiedPrice(b, kind);
 
   if (aPrice == null && bPrice == null) return fallback;
   if (aPrice == null) return 1;
@@ -356,15 +378,14 @@ int _comparePrice(
   return descending ? -compared : compared;
 }
 
-double? _primaryPrice(Medication medication) {
-  final copay = medication.hzzoCopay?.amount;
-  if (copay != null) return copay;
-
-  final wholesale = medication.maxWholesalePrice?.amount;
-  if (wholesale != null) return wholesale;
-
-  if (medication.prices.isEmpty) return null;
-  return medication.prices.first.amount;
+double? _verifiedPrice(Medication medication, MedicationPriceKind kind) {
+  final access = MedicationAccessInfo.fromMedication(medication);
+  return switch (kind) {
+    MedicationPriceKind.hzzoCopay => access.copayment?.amount,
+    MedicationPriceKind.maxWholesale => access.wholesalePrice?.amount,
+    MedicationPriceKind.hzzoReimbursement => null,
+    MedicationPriceKind.pharmacyRetail => access.retailPrice?.amount,
+  };
 }
 
 int _withNameFallback(int result, int fallback) {

@@ -223,7 +223,7 @@ void main() {
     expect(unknown.map((item) => item.id), ['d', 'c']);
   });
 
-  test('filters by available price type', () {
+  test('filters only validated prices, not a raw HZZO copay on basic list', () {
     final copay = applyMedicationQuery(
       catalog,
       const MedicationQuery(price: PriceFilter.copay),
@@ -232,17 +232,85 @@ void main() {
       catalog,
       const MedicationQuery(price: PriceFilter.wholesale),
     );
-
-    expect(copay.map((item) => item.id), ['a']);
-    expect(wholesale.map((item) => item.id), ['b']);
-  });
-
-  test('sorts known prices before missing prices', () {
-    final result = applyMedicationQuery(
+    final anyPrice = applyMedicationQuery(
       catalog,
-      const MedicationQuery(sort: MedicationSort.priceAsc),
+      const MedicationQuery(price: PriceFilter.anyPrice),
     );
 
-    expect(result.map((item) => item.id), ['a', 'b', 'd', 'c']);
+    expect(copay, isEmpty);
+    expect(wholesale.map((item) => item.id), ['b']);
+    expect(anyPrice.map((item) => item.id), ['b']);
+  });
+
+  test('unverified list filter never asserts that the medicine is not covered', () {
+    final results = applyMedicationQuery(
+      catalog,
+      const MedicationQuery(reimbursement: ReimbursementFilter.unverified),
+    );
+    expect(results.map((item) => item.id), ['d', 'c']);
+  });
+
+  test('does not compare HZZO copay with wholesale amounts', () {
+    final verifiedCopay = medication(
+      id: 'verified-copay',
+      name: 'B-Copay',
+      ingredient: 'Tvar C',
+      reimbursement: ReimbursementStatus.supplementary,
+      prices: [price(9, MedicationPriceKind.hzzoCopay)],
+    );
+    final cheaperCopay = medication(
+      id: 'cheap-copay',
+      name: 'Z-Copay',
+      ingredient: 'Tvar Z',
+      reimbursement: ReimbursementStatus.supplementary,
+      prices: [price(2, MedicationPriceKind.hzzoCopay)],
+    );
+    final medicines = [...catalog, verifiedCopay, cheaperCopay];
+
+    final copayAsc = applyMedicationQuery(
+      medicines,
+      const MedicationQuery(sort: MedicationSort.copayAsc),
+    );
+    final copayDesc = applyMedicationQuery(
+      medicines,
+      const MedicationQuery(sort: MedicationSort.copayDesc),
+    );
+    final wholesaleAsc = applyMedicationQuery(
+      medicines,
+      const MedicationQuery(sort: MedicationSort.wholesaleAsc),
+    );
+
+    expect(copayAsc.take(2).map((item) => item.id),
+        ['cheap-copay', 'verified-copay']);
+    expect(copayDesc.take(2).map((item) => item.id),
+        ['verified-copay', 'cheap-copay']);
+    expect(wholesaleAsc.first.id, 'b');
+    expect(wholesaleAsc.skip(1).every((item) => item.id != 'b'), isTrue);
+  });
+
+  test('rejects non-EUR, negative and non-finite prices in search', () {
+    final wrongCurrency = MedicationPrice(
+      amount: 3.5,
+      currency: 'HRK',
+      kind: MedicationPriceKind.hzzoCopay,
+      source: 'test',
+      validFrom: reviewed,
+    );
+    final invalid = medication(
+      id: 'invalid',
+      name: 'Invalid',
+      ingredient: 'Test',
+      reimbursement: ReimbursementStatus.supplementary,
+      prices: [
+        wrongCurrency,
+        price(-1, MedicationPriceKind.hzzoCopay),
+        price(double.nan, MedicationPriceKind.maxWholesale),
+      ],
+    );
+    final result = applyMedicationQuery(
+      [invalid],
+      const MedicationQuery(price: PriceFilter.anyPrice),
+    );
+    expect(result, isEmpty);
   });
 }

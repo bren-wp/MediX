@@ -117,9 +117,14 @@ class MedicationAccessPanel extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: TextButton.icon(
               onPressed: () async {
-                final opened = await MedixPlatformNavigation.openExternalUrl(
-                  officialHzzoListUrl,
-                );
+                var opened = false;
+                try {
+                  opened = await MedixPlatformNavigation.openExternalUrl(
+                    officialHzzoListUrl,
+                  );
+                } catch (_) {
+                  // Missing browser handlers must not crash medicine details.
+                }
                 if (!opened && context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(loc.t('openFailed'))),

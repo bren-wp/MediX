@@ -2,6 +2,24 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.10] - 2026-10-14
+
+### Brža pretraga za liječnike i pacijente
+- novi brzi filtri jednim dodirom: svi, lijekovi na recept, bez recepta, osnovna i dopunska HZZO lista, potvrđene doplate
+- filtri se kombiniraju s tekstualnom pretragom i postojećim naprednim filtrima, bez otvaranja dodatnog izbornika
+- naziv neprovjerenog HZZO statusa više ne tvrdi da lijek nije na listi
+
+### Cijene bez pogrešnih usporedbi
+- HZZO doplate i veleprodajne cijene sortiraju se zasebno, uz smjer od manjeg ili većeg iznosa
+- filtri cijena koriste iste validacije EUR iznosa i HZZO statusa kao detalj lijeka
+- nepotvrđeni, negativni i ne-konačni iznosi nisu kvalificirani za prikaz kao dostupna cijena u pretrazi
+- nedostupne cijene uvijek su iza potvrđenih za odabranu vrstu cijene
+
+### Stabilnost, jezici i testiranje
+- obrada pogreške pri otvaranju HZZO poveznice ne prekida pregled lijeka
+- hrvatske i engleske oznake brzih filtara i odvojenog sortiranja
+- regresijski testovi provjeravaju neuspoređivanje doplate i veleprodajne cijene, neprovjeren HZZO status, validaciju valuta, brze filtre i nedostupan preglednik
+
 ## [0.3.9] - 2026-10-14
 
 ### Pouzdanost podataka o cijenama i doplatama
