@@ -2,6 +2,27 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.9] - 2026-10-14
+
+### Pouzdanost podataka o cijenama i doplatama
+- HZZO doplata i HALMED veleprodajna cijena više se ne povezuju s drugim poznatim jačinama ili brojem jedinica pakiranja
+- neprovjerljiva poznata jačina ili broj jedinica zaustavljaju uparivanje, umjesto prenošenja cijene na pogrešno pakiranje
+- prvo se uspoređuje naziv lijeka pa tek potom obrađuju jačina i pakiranje kako bi uparivanje bilo učinkovitije
+- nevaljani negativni i ne-konačni ulazni iznosi ne uvoze se kao cijene
+- prošireni detalj i kopirani sažetak koriste istu validaciju dostupnih iznosa kao početni cjenovni pregled
+
+### Službeni dokumenti
+- izravne poveznice na uputu o lijeku i sažetak opisa svojstava lijeka kada ih službeni izvor dostavlja
+- provjera HTTPS-a i dopuštenih službenih domena prije prikazivanja poveznice
+- jasna poveznica na HALMED bazu za ručnu provjeru kada izravan dokument nije dostupan
+- podržana polja za dokumente u HALMED parseru bez generiranja ili izmišljanja PDF datoteka
+- engleski i hrvatski nazivi službenih dokumenata uz postojeći fallback
+
+### Testovi
+- regresijski slučajevi za različitu jačinu, količinu pakiranja i nepotpuna HALMED polja
+- testiranje odbijanja sumnjivih URL-ova i prikaza dostupnih dokumenata
+- CI analiza, testovi, audit koda te Android APK/AAB buildovi obvezni su prije objave
+
 ## [0.3.8] - 2026-10-14
 
 ### Jednostavniji profesionalni pregled lijekova
