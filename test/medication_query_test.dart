@@ -313,4 +313,45 @@ void main() {
     );
     expect(result, isEmpty);
   });
+
+  test('precomputed index returns identical results for clinical queries', () {
+    final index = MedicationSearchIndex(catalog);
+    const queries = <MedicationQuery>[
+      MedicationQuery(text: 'cisti alfa'),
+      MedicationQuery(text: 'čisti 10 mg'),
+      MedicationQuery(text: 'varfarin'),
+      MedicationQuery(text: 'C09AA01'),
+      MedicationQuery(text: 'na recept', dispensing: DispensingFilter.prescription),
+      MedicationQuery(text: 'tvar', reimbursement: ReimbursementFilter.basic),
+      MedicationQuery(text: 'tvar', sort: MedicationSort.ingredientAsc),
+      MedicationQuery(text: 'tvar', sort: MedicationSort.wholesaleAsc),
+      MedicationQuery(text: 'NO MATCH'),
+      MedicationQuery(text: ''),
+    ];
+    for (final query in queries) {
+      final original = applyMedicationQuery(catalog, query);
+      final indexed = applyMedicationQuery(catalog, query, index: index);
+      expect(
+        indexed.map((medicine) => medicine.id),
+        original.map((medicine) => medicine.id),
+        reason: 'Indexed and original queries must match: ${query.text}',
+      );
+    }
+  });
+
+  test('search index safely falls back for records added after indexing', () {
+    final index = MedicationSearchIndex(catalog);
+    final extra = medication(
+      id: 'new',
+      name: 'Novija terapija',
+      ingredient: 'nova tvar',
+    );
+    final result = applyMedicationQuery(
+      [...catalog, extra],
+      const MedicationQuery(text: 'novija'),
+      index: index,
+    );
+    expect(result.map((item) => item.id), ['new']);
+  });
+
 }
