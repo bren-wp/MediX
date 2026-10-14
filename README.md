@@ -48,7 +48,7 @@ The medicine identity comes from the **official HALMED medicine catalog**. HZZO 
 
 ## 📅 A calmer way to organize therapy
 
-**Make your schedule work for you.** Add medicines, record your instructions, select the right days of the week and set reminder times. Review upcoming doses in the therapy calendar, and update your plan without starting again.
+**Make your schedule work for you.** Add medicines, record your instructions, select the right days of the week and set reminder times. Review upcoming doses in the therapy calendar, pause reminders when needed, and update your plan without starting again. MediX validates reminder times before saving and keeps rapid schedule changes in order.
 
 Your personal therapy information remains on your device. You do not need an account to use the core MediX experience.
 
