@@ -66,6 +66,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: MedixTheme.dark(),
+        supportedLocales: MedixLanguages.locales,
         locale: const Locale('en'),
         localizationsDelegates: const [MedixLocalizations.delegate],
         home: Scaffold(
@@ -97,6 +98,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: MedixTheme.dark(),
+        supportedLocales: MedixLanguages.locales,
         locale: const Locale('hr'),
         localizationsDelegates: const [MedixLocalizations.delegate],
         home: Scaffold(
