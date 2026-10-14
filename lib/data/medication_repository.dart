@@ -25,9 +25,12 @@ class MedicationRepository {
         : <String, dynamic>{};
     final sourceName = sourceMap['name']?.toString() ?? 'catalog';
     final sourceUrl = sourceMap['url']?.toString();
-    final effectiveDate = DateTime.tryParse(
-          sourceMap['effective_date']?.toString() ?? '',
-        ) ??
+    final publishedEffectiveDate = DateTime.tryParse(
+      sourceMap['effective_date']?.toString() ?? '',
+    );
+    // Absence of a source date must not fabricate a dated HZZO copayment.
+    final effectiveDate = publishedEffectiveDate ??
+        DateTime.tryParse(decoded['generated_at']?.toString() ?? '') ??
         DateTime(2026, 10, 1);
 
     final rawRecords = decoded['records'];
@@ -52,7 +55,10 @@ class MedicationRepository {
 
       final copay = _asDouble(record['copay_eur']);
       final prices = <MedicationPrice>[
-        if (copay != null && copay.isFinite && copay >= 0)
+        if (copay != null &&
+            copay.isFinite &&
+            copay >= 0 &&
+            publishedEffectiveDate != null)
           MedicationPrice(
             amount: copay,
             currency: 'EUR',
@@ -104,6 +110,13 @@ class MedicationRepository {
           packageDescription: _nullableString(record['package']),
           reimbursementStatus: reimbursementStatus,
           hzzoGuidelineCode: _nullableString(record['guideline']),
+          hzzoListSource: reimbursementStatus != ReimbursementStatus.none
+              ? sourceName
+              : null,
+          hzzoListEffectiveDate:
+              reimbursementStatus != ReimbursementStatus.none
+                  ? publishedEffectiveDate
+                  : null,
           prices: prices,
           officialRecordUrl: sourceUrl,
         ),
@@ -306,6 +319,14 @@ class MedicationRepository {
       medications[index] = existing.copyWith(
         reimbursementStatus: incoming.reimbursementStatus,
         hzzoGuidelineCode: incoming.hzzoGuidelineCode,
+        hzzoListSource: incoming.reimbursementStatus !=
+                ReimbursementStatus.none
+            ? incoming.hzzoListSource
+            : null,
+        hzzoListEffectiveDate: incoming.reimbursementStatus !=
+                ReimbursementStatus.none
+            ? incoming.hzzoListEffectiveDate
+            : null,
         prices: mergedPrices,
         route: existing.route ?? incoming.route,
         packageDescription:
