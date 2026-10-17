@@ -1,64 +1,48 @@
-# MediX Google Play Release Checklist
+# MediX 1.0.0 — kontrolni popis za Google Play
 
-Production checklist for the Android package `com.brendigo.medix`.
+**Android paket:** `com.brendigo.medix`  
+**Verzija:** `1.0.0` · **versionCode:** `23`
 
-## Build baseline
+## Automatski provjerljivo
 
-- [x] Target Android 16 / API 36.
-- [x] Build Android App Bundle (AAB).
-- [x] Analyze and test before the production bundle.
-- [ ] Verify the **production** AAB signature with the private upload keystore (release candidates may use a debug fallback).
-- [x] Keep the private upload keystore outside the repository.
-- [ ] Configure the four production signing secrets in GitHub before running the Google Play workflow.
-- [ ] Upload the resulting signed AAB to Play Console and review Play's automated device / 16 KB page-size checks.
+- [x] Ciljani Android API 36 (uvjet za nove prijave od 31. kolovoza 2026.).
+- [x] Android podatkovna sigurnosna kopija onemogućena, nezaštićeni HTTP promet isključen.
+- [x] Nema posebne dozvole za točne alarme; lokalni podsjetnici koriste manje invazivno zakazivanje.
+- [x] Hrvatski je jedini jezik aplikacije; pravni dokumenti i medicinsko upozorenje dostupni su na hrvatskom.
+- [x] Nisu prikazane vanjske poveznice na službene izvore lijekova u kliničkim ekranima.
+- [ ] Potvrditi završne testove, Flutter analizu, audit i APK/AAB release artefakte za verziju 1.0.0 na točnom commitu.
+- [ ] Testirati pokretanje, terapiju, izvoz, 320 px i veliki font na fizičkim Android uređajima.
 
-Required secrets:
+## Potpisivanje
+
+**GitHub javno izdanje može koristiti razvojni (debug) potpis. Takav AAB nije potvrđeno spreman za Play.**
+
+Workflow `.github/workflows/play-production-build.yml` zahtijeva privatne GitHub Secrets:
 
 - `MEDIX_UPLOAD_KEYSTORE_BASE64`
 - `MEDIX_UPLOAD_KEY_ALIAS`
 - `MEDIX_UPLOAD_KEY_PASSWORD`
 - `MEDIX_UPLOAD_STORE_PASSWORD`
 
-## Health app policy
+- [ ] Konfigurirati privatni upload ključ (nikada ga ne spremati u repozitorij).
+- [ ] Ručno pokrenuti **Google Play production AAB** i potvrditi uspjeh provjere potpisa.
+- [ ] Učitati tako potpisani AAB u Play Console.
 
-- [ ] Complete the Health apps declaration in Play Console.
-- [ ] Review **Medication and Treatment Management** and **Clinical Decision Support** as likely applicable Play Console categories; confirm declarations against each shipping feature.
-- [ ] Review whether any particular calculator or clinical functionality requires medical-device regulatory classification, without relying solely on the app disclaimer.
-- [x] In-app medical disclaimer states that MediX is not a medical device and does not diagnose, treat, cure or prevent medical conditions.
-- [x] In-app guidance tells users to consult a qualified healthcare professional.
-- [ ] Include the same medical disclaimer in the Google Play store description.
+## Zdravstvena pravila i sigurnost
 
-## Privacy and Data safety
+- [ ] Popuniti **Health apps declaration**, uključujući kategorije liječenja/praćenja terapije i stručne referentne alate prema stvarnim funkcijama.
+- [ ] Provjeriti regulatornu klasifikaciju pojedinih kliničkih kalkulatora i tvrdnji; sama napomena ne daje automatsko oslobođenje od medicinskih propisa.
+- [ ] Popuniti **Data safety** na temelju stvarnih dozvola, lokalne pohrane i dijeljenja datoteka.
+- [ ] Potvrditi javno dostupnu hrvatsku [Politiku privatnosti](PRIVACY_POLICY.md).
+- [ ] U opis trgovine uključiti medicinsko upozorenje: MediX nije medicinski uređaj, ne postavlja dijagnozu i ne zamjenjuje liječnika ni ljekarnika.
+- [ ] Unijeti odgovarajuću dobnu kategoriju, ocjenu sadržaja i kontakt podatke.
 
-- [x] In-app privacy section is available without an account.
-- [x] App-specific public privacy policy source: https://github.com/bren-wp/MediX/blob/main/docs/PRIVACY_POLICY.md (verify its public URL after merge).
-- [x] App-specific terms source: https://github.com/bren-wp/MediX/blob/main/docs/TERMS_OF_USE.md (verify its public URL after merge).
-- [x] Cleartext Android traffic disabled.
-- [x] Android cloud backup disabled for local therapy state.
-- [x] Export uses app cache + FileProvider instead of broad storage access.
-- [ ] Complete Play Console Data safety declarations to match the shipping app exactly.
-- [ ] Confirm Play Console privacy-policy URL resolves publicly to the MediX-specific policy after merge.
-- [ ] Confirm the Android pre-launch report, 16 KB page-size compatibility and large-screen UX on real test devices/emulators.
-- [ ] Re-check notification/alarm permission declarations in Play Console before production rollout.
+## Prikaz i objava
 
-## Store listing
+- [ ] Pripremiti stvarne snimke zaslona iz izdanja 1.0.0, ne ilustracije.
+- [ ] Provjeriti 16 KB poravnanje i izvješće Play pre-launch testova.
+- [ ] Provjeriti tablet, pejzažni prikaz, povećane fontove, pristupačnost i otvorene izbornike.
+- [ ] Provjeriti da se `versionCode=23` još nije koristio na toj istoj Play Console aplikaciji.
+- [ ] Pokrenuti testno izdanje prije produkcijske distribucije.
 
-- [ ] Complete content rating questionnaire.
-- [ ] Upload current screenshots captured from the actual production build.
-- [ ] Verify app name, short description and full description in every published store locale.
-- [ ] Confirm support/contact details and privacy policy URL.
-- [ ] Review tablet/large-screen presentation before broad rollout.
-
-## Release gate
-
-Do not promote a bundle to production until:
-
-1. CI is green.
-2. Release APK/AAB build is green.
-3. Google Play production AAB workflow is green with the private upload key.
-4. Play Console policy declarations are complete.
-5. Automated Play pre-launch checks show no release-blocking findings.
-
-## iOS status
-
-- [ ] An iOS/Xcode project, macOS build, provisioning, signing and App Store Connect review have not been completed. Android CI does not validate iOS readiness.
+**Završna objava dopuštena je tek nakon svih neoznačenih stavki.**

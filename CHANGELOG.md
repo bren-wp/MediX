@@ -1,3 +1,27 @@
+# Dnevnik promjena MediX
+
+## [1.0.0] – 2026-10-18
+
+### Hrvatski jezik i korisničko iskustvo
+- Korisničko sučelje i rezervni prijevodi isključivo su na hrvatskom jeziku.
+- Uklonjeni su nepotpuni strani prijevodi i nepotreban odabir jezika u postavkama.
+- PDF izvozi i obavijesti prevedeni su na hrvatski; lokalni font podržava dijakritičke znakove.
+- Iz ekrana lijeka, HZZO podataka i izbornika uklonjene su vanjske poveznice na službene izvore lijekova. Nazivi izvora, datumi i regulatorni metapodaci ostaju u bazi.
+
+### Privatnost i Play politika
+- Tekst podsjetnika ne otkriva naziv lijeka ili dozu.
+- Uklonjena je posebna dozvola za točne alarme; ostaju lokalni podsjetnici koji mogu kasniti ovisno o Androidu.
+- Ciljani Android API 36 zadržan je za zahtjeve Google Playa iz 2026.
+- Dodana hrvatska Play Store dokumentacija i revidirani pravni dokumenti.
+
+### Stabilnost i kvaliteta
+- Sačuvani su prethodni popravci brzog učitavanja baze, indeksiranja, optimizacije memorije, sigurnosti kataloga i odgođenog učitavanja ekrana.
+- Proširen audit nedosežnog koda i regresijsko testiranje hrvatskog sučelja, izostanka službenih poveznica i PDF izvještaja.
+
+**Napomena:** GitHub testni APK/AAB ne znači automatski da je AAB potpisan Play upload ključem. Prije objave na Google Playu potrebni su zaseban potpisani AAB, zdravstvene i privatnosne deklaracije te pregled Play Console izvještaja.
+
+---
+
 # Changelog
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.

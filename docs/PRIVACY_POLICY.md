@@ -1,57 +1,42 @@
-# MediX Privacy Policy
+# Politika privatnosti aplikacije MediX
 
-**Effective date:** 14 October 2026  
-**App:** MediX for Android (`com.brendigo.medix`)  
-**Developer:** Brendigo, Rijeka, Croatia  
-**Privacy contact:** info@brendigo.com
+**Datum primjene:** 18. listopada 2026.  
+**Aplikacija:** MediX za Android (`com.brendigo.medix`)  
+**Razvojni programer:** Brendigo, Rijeka, Hrvatska  
+**Kontakt za privatnost:** info@brendigo.com
 
-This policy describes how the MediX mobile app handles data. It applies to MediX specifically; Brendigo's general website privacy policy covers other services separately.
+Ova se politika odnosi na aplikaciju MediX, a ne na sve ostale usluge Brendiga.
 
-## What MediX stores
+## Podaci koje aplikacija pohranjuje
 
-MediX can store the following information **on your Android device**:
+U privatnu pohranu aplikacije na vašem Android uređaju mogu se spremiti omiljeni i nedavno pregledani lijekovi te unosi terapije: identifikator lijeka, opis doze, dani, vrijeme podsjetnika i status terapije. Aplikacija pamti i završetak uvodnog prikaza. Ne traži korisnički račun, e-poštu, ime ni dijagnozu.
 
-- Medication IDs you mark as favorites or have recently viewed.
-- Therapy-plan entries you choose to create: medication ID, dose description, selected weekdays, reminder times, and active/paused status.
-- Your preferred interface language and whether you completed onboarding.
-- Local scheduled notification information needed to show the reminders you requested.
+Terapijski podaci mogu predstavljati osjetljive zdravstvene podatke. **Trenutačna verzija koristi SharedPreferences i nema zasebnu enkripciju na razini aplikacije.** Pohrana ostaje u privatnom prostoru aplikacije; Android automatska sigurnosna kopija podataka aplikacije je isključena.
 
-Because therapy entries can reveal health information, treat your device and any exported documents as sensitive. MediX does not require an account, name, email address, or diagnosis to use its core functions.
+## Izvanmrežni katalog i mrežna komunikacija
 
-MediX uses Android app-private storage and SharedPreferences for local settings and therapy entries. **The current app does not implement a separate application-layer encryption system for those entries.** Android backup of MediX application data is disabled.
+HALMED, HZZO i cjenovni zapisi ugrađeni su u aplikaciju za izvanmrežni pregled. MediX ne šalje terapije, favorite ni dijagnoze na svoj poslužitelj. Projekt ne sadrži SDK za oglašavanje ili praćenje analitike.
 
-## Network access and third parties
+Poveznice na službene mrežne izvore lijekova nisu prikazane u korisničkom sučelju. Ako korisnik sam pokrene prikaz pravnih dokumenata ili pretragu ljekarni putem karata, otvorit će se druga aplikacija ili preglednik s vlastitim pravilima privatnosti. MediX uz te radnje ne šalje spremljenu terapiju.
 
-The medication catalog is bundled for offline use. The app does not upload therapy plans, favorites, or diagnoses to a MediX account or cloud service. The codebase does not include a third-party analytics or advertising SDK.
+## Obavijesti
 
-If you choose to open a public website, product source, or nearby-pharmacy search, an external web browser or mapping application handles that request under its own privacy policy. Your device/network may disclose ordinary connection data to that external provider. MediX does not attach your saved therapy plan to those links.
+Dozvola za obavijesti traži se samo kada korisnik uključi podsjetnike. MediX ne zahtijeva posebnu Android dozvolu za točne alarme. Podsjetnici se obrađuju lokalno i mogu kasniti ovisno o Android sustavu, bateriji i postavkama uređaja. Tekst obavijesti ne prikazuje naziv lijeka ni dozu radi veće privatnosti.
 
-## Notifications
+## Izvoz i dijeljenje
 
-MediX requests notification and alarm permissions only for the local reminder feature. You can decline the permission and still use the medicine catalog and therapy planner. You can pause a plan or change notification permissions using Android settings.
+Na korisnikov zahtjev MediX izrađuje ZIP s PDF sažecima terapije, omiljenih lijekova i podataka o aplikaciji. Izvoz se privremeno sprema u predmemoriju aplikacije; korisnik sam bira primatelja putem Android dijeljenja. Primatelj može imati vlastita pravila pohrane i prijenosa podataka.
 
-## Exports and user-directed sharing
+ZIP datoteke starije od 24 sata uklanjaju se **pri izradi sljedećeg izvoza**, a Android može ranije očistiti predmemoriju. Nije zajamčeno automatsko brisanje točno nakon 24 sata.
 
-When you choose **Export my MediX data**, MediX generates a ZIP file containing PDF summaries of saved therapy, favorites, and app information. The archive is prepared in an app-specific temporary export folder, not automatically uploaded.
+## Brisanje i zadržavanje
 
-The Android share sheet allows **you** to choose a receiving application. That recipient may copy, store, sync or transmit the file under its own terms. Share sensitive exports only with recipients you trust.
+Unosi ostaju na uređaju dok ih korisnik ne promijeni ili izbriše, odnosno dok ne ukloni aplikaciju. Brisanje aplikacije u pravilu uklanja njezine privatne podatke, ali ne može ukloniti datoteke koje je korisnik ranije podijelio drugim aplikacijama.
 
-Old MediX export ZIP archives more than 24 hours old are removed **when another export is created**, and Android may clear cached files independently. Do not interpret this as automatic deletion exactly 24 hours after creation.
+## Sigurnost i pitanja
 
-## Retention and your choices
+MediX ograničava FileProvider na direktorij izvoza, onemogućuje nezaštićeni HTTP promet i isključuje automatsku Android sigurnosnu kopiju aplikacije. Nijedno rješenje ne jamči apsolutnu sigurnost na otključanom ili kompromitiranom uređaju.
 
-Favorites, recent items and therapy entries remain locally until you remove or change them or uninstall the app. You may remove individual therapy entries and favorites in the app. Uninstalling the app normally removes its app-private data, subject to Android/device-management behavior and any exports you deliberately shared or copied elsewhere.
+Aplikacija je informativni alat, a djeca je trebaju koristiti uz nadzor odgovornih osoba. Primjenjivi su važeći propisi o privatnosti i zaštiti podataka, uključujući GDPR kada je primjenjiv. Za pitanja: **info@brendigo.com**.
 
-If you shared an export into another app, you must use that receiving app's controls to delete its copies.
-
-## Security
-
-MediX restricts Android FileProvider access to its dedicated export cache folder, rejects non-HTTPS website links through its Android navigation bridge, and disables Android's application backup. No system can guarantee absolute security, especially on a compromised or unlocked device.
-
-## Children, changes, and questions
-
-MediX is a medical-information and therapy-planning aid, not a substitute for professional medical judgment. Guardians should supervise its use by children.
-
-We may update this policy as the product changes and will revise the date above. For questions about the app or privacy, contact **info@brendigo.com**.
-
-The applicable privacy and data-protection laws, including GDPR where relevant, continue to apply. This document does not replace any required Play Console disclosures or legal assessment.
+Izmjenama aplikacije može se ažurirati ova politika i njezin datum.

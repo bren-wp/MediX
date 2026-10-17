@@ -13,10 +13,15 @@ class MedixExportService {
       MethodChannel('com.brendigo.medix/navigation');
 
   Future<Uint8List> buildZip(MedixState state) async {
+    // Embedded, locally bundled Lato has Croatian č, ć, đ, š and ž glyphs.
+    // No network font fetch is performed during an export.
+    final font = pw.Font.ttf(
+      await rootBundle.load('assets/fonts/Lato-Regular.ttf'),
+    );
     final archive = Archive();
-    final therapyPdf = await _therapyPdf(state);
-    final favoritesPdf = await _favoritesPdf(state);
-    final appPdf = await _appInfoPdf();
+    final therapyPdf = await _therapyPdf(state, font);
+    final favoritesPdf = await _favoritesPdf(state, font);
+    final appPdf = await _appInfoPdf(font);
 
     archive.addFile(ArchiveFile.bytes('therapy-plan.pdf', therapyPdf));
     archive.addFile(ArchiveFile.bytes('favorites.pdf', favoritesPdf));
@@ -65,23 +70,24 @@ class MedixExportService {
         false;
   }
 
-  Future<Uint8List> _therapyPdf(MedixState state) async {
+  Future<Uint8List> _therapyPdf(MedixState state, pw.Font font) async {
     final document = pw.Document(
-      title: 'MediX Therapy Plan',
+      title: 'MediX — Plan terapije',
       author: 'Brendigo',
       creator: 'MediX ${MedixAppInfo.displayVersion}',
     );
 
     document.addPage(
       pw.MultiPage(
+        theme: pw.ThemeData.withFont(base: font, bold: font),
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(36),
         build: (_) => <pw.Widget>[
-          _heading('MediX Therapy Plan'),
+          _heading('MediX — Plan terapije'),
           _meta(),
           pw.SizedBox(height: 18),
           if (state.therapy.isEmpty)
-            pw.Text('No therapy entries are saved on this device.')
+            pw.Text('Na ovom uređaju nema spremljenih terapija.')
           else
             ...state.therapy.map((entry) {
               final medication = state.medicationById(entry.medicationId);
@@ -103,13 +109,13 @@ class MedixExportService {
                       ),
                     ),
                     pw.SizedBox(height: 4),
-                    pw.Text('Dose: ${entry.doseDescription}'),
-                    pw.Text('Times: ${entry.times.join(', ')}'),
+                    pw.Text('Doza: ${entry.doseDescription}'),
+                    pw.Text('Vrijeme uzimanja: ${entry.times.join(', ')}'),
                     pw.Text(
-                      'Weekdays: ${entry.weekdays.join(', ')}',
+                      'Dani u tjednu: ${entry.weekdays.join(', ')}',
                     ),
                     pw.Text(
-                      'Reminder status: ${entry.isActive ? 'active' : 'paused'}',
+                      'Podsjetnik: ${entry.isActive ? 'uključen' : 'pauziran'}',
                     ),
                   ],
                 ),
@@ -124,26 +130,27 @@ class MedixExportService {
     return document.save();
   }
 
-  Future<Uint8List> _favoritesPdf(MedixState state) async {
+  Future<Uint8List> _favoritesPdf(MedixState state, pw.Font font) async {
     final document = pw.Document(
-      title: 'MediX Favorites',
+      title: 'MediX — Omiljeni lijekovi',
       author: 'Brendigo',
       creator: 'MediX ${MedixAppInfo.displayVersion}',
     );
 
     document.addPage(
       pw.MultiPage(
+        theme: pw.ThemeData.withFont(base: font, bold: font),
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(36),
         build: (_) => <pw.Widget>[
-          _heading('MediX Favorites'),
+          _heading('MediX — Omiljeni lijekovi'),
           _meta(),
           pw.SizedBox(height: 18),
           if (state.favorites.isEmpty)
-            pw.Text('No favorite medicines are saved on this device.')
+            pw.Text('Na ovom uređaju nema spremljenih omiljenih lijekova.')
           else
             pw.TableHelper.fromTextArray(
-              headers: const ['Medicine', 'Active ingredient', 'ATC'],
+              headers: const ['Lijek', 'Djelatna tvar', 'ATK'],
               data: state.favorites
                   .map(
                     (medication) => [
@@ -165,28 +172,29 @@ class MedixExportService {
     return document.save();
   }
 
-  Future<Uint8List> _appInfoPdf() async {
+  Future<Uint8List> _appInfoPdf(pw.Font font) async {
     final document = pw.Document(
-      title: 'MediX App Information',
+      title: 'MediX — Podaci o aplikaciji',
       author: 'Brendigo',
       creator: 'MediX ${MedixAppInfo.displayVersion}',
     );
 
     document.addPage(
       pw.MultiPage(
+        theme: pw.ThemeData.withFont(base: font, bold: font),
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(36),
         build: (_) => <pw.Widget>[
-          _heading('MediX App Information'),
+          _heading('MediX — Podaci o aplikaciji'),
           _meta(),
           pw.SizedBox(height: 18),
-          pw.Text('Author: Brendigo'),
-          pw.Text('Package: com.brendigo.medix'),
-          pw.Text('Privacy: ${MedixAppInfo.privacyPolicyUrl}'),
-          pw.Text('Terms: ${MedixAppInfo.termsOfUseUrl}'),
+          pw.Text('Autor: Brendigo'),
+          pw.Text('Paket: com.brendigo.medix'),
+          pw.Text('Privatnost: ${MedixAppInfo.privacyPolicyUrl}'),
+          pw.Text('Uvjeti korištenja: ${MedixAppInfo.termsOfUseUrl}'),
           pw.SizedBox(height: 16),
           pw.Text(
-            'This export is generated locally on the device. It contains only the MediX data selected by the export feature and is not uploaded by MediX.',
+            'Ovaj se izvoz izrađuje lokalno na uređaju i sadrži samo odabrane MediX podatke. Aplikacija ih ne šalje na poslužitelj.',
           ),
           pw.SizedBox(height: 16),
           _disclaimer(),
@@ -218,7 +226,7 @@ class MedixExportService {
         padding: const pw.EdgeInsets.all(10),
         color: PdfColors.grey200,
         child: pw.Text(
-          'MediX is not a medical device and does not diagnose, treat, cure or prevent any medical condition. Consult a qualified healthcare professional for medical advice, diagnosis or treatment.',
+          'MediX nije medicinski uređaj i ne postavlja dijagnoze, ne propisuje terapiju niti liječi bolesti. Za medicinske odluke obratite se liječniku ili ljekarniku.',
           style: const pw.TextStyle(fontSize: 9),
         ),
       );

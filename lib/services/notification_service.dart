@@ -83,11 +83,6 @@ class MedixNotificationService implements TherapyReminderScheduler {
       return false;
     }
 
-    final canUseExact = await android.canScheduleExactNotifications();
-    if (canUseExact == false) {
-      await android.requestExactAlarmsPermission();
-    }
-
     return true;
   }
 
@@ -106,13 +101,9 @@ class MedixNotificationService implements TherapyReminderScheduler {
       return;
     }
 
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-    final exactAllowed =
-        await android?.canScheduleExactNotifications() ?? false;
-    final scheduleMode = exactAllowed
-        ? AndroidScheduleMode.exactAllowWhileIdle
-        : AndroidScheduleMode.inexactAllowWhileIdle;
+    // Android's restricted exact-alarm permission is not needed for
+    // non-critical local reminders. Delivery can be delayed by the system.
+    const scheduleMode = AndroidScheduleMode.inexactAllowWhileIdle;
 
     for (final entry in therapy.where((item) => item.isActive)) {
       final medication = medicationById(entry.medicationId);
@@ -148,7 +139,7 @@ class MedixNotificationService implements TherapyReminderScheduler {
           await _plugin.zonedSchedule(
             id: id,
             title: 'Vrijeme za terapiju',
-            body: '${medication.name} · ${entry.doseDescription}',
+            body: 'Provjerite svoj raspored terapije u aplikaciji MediX.',
             scheduledDate: scheduled,
             notificationDetails: const NotificationDetails(
               android: AndroidNotificationDetails(
@@ -164,7 +155,7 @@ class MedixNotificationService implements TherapyReminderScheduler {
             androidScheduleMode: scheduleMode,
             matchDateTimeComponents:
                 DateTimeComponents.dayOfWeekAndTime,
-            payload: 'therapy:${entry.id}:${medication.id}',
+            payload: 'therapy:${entry.id}',
           );
         }
       }
