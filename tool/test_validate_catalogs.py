@@ -1,6 +1,5 @@
 """Regression checks for the official MediX catalog safety gate."""
 
-import copy
 import unittest
 
 from tool.validate_catalogs import validate_secondary
