@@ -7,6 +7,58 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  test('corrupted entry does not erase later valid private therapy records',
+      () async {
+    SharedPreferences.setMockInitialValues({
+      'medix.therapy.v1': jsonEncode([
+        {'bad': 'record'},
+        {
+          'id': ['invalid type'],
+          'medication_id': 'paracetamol-500',
+          'dose': '1 tablet',
+          'times': ['08:00'],
+        },
+        {
+          'id': 'safe',
+          'medication_id': 'paracetamol-500',
+          'dose': '1 tablet',
+          'times': ['08:00'],
+        },
+        {
+          'id': 'safe',
+          'medication_id': 'ibuprofen-400',
+          'dose': '2 tablets',
+          'times': ['09:00'],
+        },
+        {
+          'id': 'other',
+          'medication_id': 'ibuprofen-400',
+          'dose': '1 tablet',
+          'times': ['18:00', 12, null],
+        },
+      ]),
+    });
+
+    final stored = await MedixPreferences().load();
+    expect(stored.therapy.map((entry) => entry.id), ['safe', 'other']);
+    expect(stored.therapy.last.times, ['18:00']);
+    expect(stored.therapy.first.medicationId, 'paracetamol-500');
+  });
+
+  test('malformed overall therapy JSON does not stop other settings loading',
+      () async {
+    SharedPreferences.setMockInitialValues({
+      'medix.therapy.v1': '{invalid',
+      'medix.favorite_ids.v1': ['paracetamol-500'],
+      'medix.locale.v1': 'hr',
+    });
+
+    final stored = await MedixPreferences().load();
+    expect(stored.therapy, isEmpty);
+    expect(stored.favoriteIds, contains('paracetamol-500'));
+    expect(stored.localeCode, 'hr');
+  });
+
   test('restores only valid, canonical therapy times', () async {
     SharedPreferences.setMockInitialValues({
       'medix.therapy.v1': jsonEncode([

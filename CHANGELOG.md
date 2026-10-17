@@ -2,6 +2,18 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.17] - 2026-10-17
+
+### Kvaliteta službenih podataka, privatnost i preglednost
+- standardni CI sada provjerava stvarne ugrađene HALMED, HZZO i veleprodajne kataloge prije Flutter builda
+- validiraju se izvor, stvarni datumi primjene/objave, JSON struktura i eventualne nedosljednosti deklariranog broja zapisa
+- dodani su zasebni Python regresijski testovi validatora i `--check-only` način rada bez prepisivanja službenog izvještaja
+- oštećena stavka u lokalno pohranjenom planu terapije ne može onemogućiti učitavanje ostatka plana
+- dupli identifikatori terapije odbacuju se pri obnovi, bez zapisivanja osjetljivih podataka u log
+- pretraga automatski premješta broj rezultata i gumb filtara u raspored prilagođen malim ekranima i povećanom tekstu
+- početna lista nedavno pregledanih lijekova koristi postojeći indeks umjesto ponovne izrade mape pri svakom osvježavanju
+- dodani widget i regresijski testovi za 320 px, podatkovne izvore i lokalni plan terapije
+
 ## [0.3.16] - 2026-10-17
 
 ### Sigurnije povezivanje HALMED i HZZO zapisa

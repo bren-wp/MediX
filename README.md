@@ -34,6 +34,8 @@ Missing or invalid official publication dates are never replaced with fabricated
 
 HZZO copayments and wholesale prices are attached only when a secondary record confirms the same active ingredient, strength and counted package. Ambiguous packages and contradictory basic/supplementary list flags remain unverified; a medicine name or ATC code alone is insufficient.
 
+The bundled HALMED, HZZO and wholesale catalogs are automatically validated in every pull-request CI run. The mobile app keeps user therapy plans locally; invalid individual entries can no longer block restoration of the remaining plan. Medicine search now accommodates larger Android text and narrow screens.
+
 The medicine identity comes from the **official HALMED medicine catalog**. HZZO reimbursement information and separate pricing sources complement those records without replacing or inventing medicine names.
 
 ## ✨ Discover what MediX can do

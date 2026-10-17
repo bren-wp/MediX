@@ -5,9 +5,10 @@ on:
   schedule:
     - cron: "17 4 * * *"
   push:
+    # Never let a network-driven data sync rewrite an active feature branch
+    # after CI has tested its head; PR CI validates committed assets instead.
     branches:
       - main
-      - "feat/medix-pro-v*"
     paths:
       - "tool/sync_halmed_catalog.py"
       - "tool/sync_hzzo_catalog.py"
@@ -40,6 +41,9 @@ jobs:
 
       - name: Install importer dependencies
         run: python -m pip install --disable-pip-version-check requests beautifulsoup4 openpyxl
+
+      - name: Verify catalog validator behavior
+        run: python3 -m unittest tool.test_validate_catalogs
 
       - name: Synchronize HALMED human-medicine registry
         run: python tool/sync_halmed_catalog.py --minimum-records 4000
