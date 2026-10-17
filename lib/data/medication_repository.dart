@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'dispensing_status_parser.dart';
+import 'official_price_validation.dart';
 import '../models/drug_interaction.dart';
 import '../models/medication.dart';
 import '../models/medication_price.dart';
@@ -26,8 +27,8 @@ class MedicationRepository {
         : <String, dynamic>{};
     final sourceName = sourceMap['name']?.toString() ?? 'catalog';
     final sourceUrl = sourceMap['url']?.toString();
-    final publishedEffectiveDate = DateTime.tryParse(
-      sourceMap['effective_date']?.toString() ?? '',
+    final publishedEffectiveDate = OfficialPriceValidation.officialDate(
+      sourceMap['effective_date'],
     );
     // Absence of a source date must not fabricate a dated HZZO copayment.
     final effectiveDate = publishedEffectiveDate ??
@@ -54,7 +55,7 @@ class MedicationRepository {
         continue;
       }
 
-      final copay = _asDouble(record['copay_eur']);
+      final copay = OfficialPriceValidation.euro(record['copay_eur']);
       final prices = <MedicationPrice>[
         if (copay != null &&
             copay.isFinite &&
@@ -349,8 +350,16 @@ class MedicationRepository {
     List<Medication> medications,
     String rawJson,
   ) {
-    final decoded = jsonDecode(rawJson);
-    if (decoded is! Map<String, dynamic>) return;
+    // Wholesale catalog is optional enrichment, not an app startup gate.
+    // Malformed snapshots must not crash the main HALMED medicine catalog.
+    Map<String, dynamic> decoded;
+    try {
+      final value = jsonDecode(rawJson);
+      if (value is! Map<String, dynamic>) return;
+      decoded = value;
+    } on FormatException {
+      return;
+    }
 
     final source = decoded['source'];
     final sourceMap = source is Map<String, dynamic>
@@ -358,10 +367,16 @@ class MedicationRepository {
         : <String, dynamic>{};
     final sourceName =
         sourceMap['name']?.toString() ?? 'price-catalog';
-    final publishedDate = DateTime.tryParse(
-          sourceMap['published_date']?.toString() ?? '',
-        ) ??
-        DateTime(2026, 6, 18);
+    final publishedDate = OfficialPriceValidation.officialDate(
+      sourceMap['published_date'],
+    );
+    // A price without its actual source date has unknown validity; never
+    // fabricate a publication date and present it as a verified price.
+    if (publishedDate == null) return;
+    final currency = sourceMap['currency']?.toString().trim().toUpperCase();
+    if (currency != null && currency.isNotEmpty && currency != 'EUR') {
+      return;
+    }
 
     final rawRecords = decoded['records'];
     if (rawRecords is! List || rawRecords.isEmpty) return;
@@ -376,7 +391,7 @@ class MedicationRepository {
       final atc = _nullableString(record['atc_code']);
       final package =
           _nullableString(record['name_and_package']) ?? '';
-      final price = _asDouble(record['max_wholesale_eur']);
+      final price = OfficialPriceValidation.euro(record['max_wholesale_eur']);
 
       if (name.isEmpty || price == null || !price.isFinite || price < 0) {
         continue;
@@ -548,13 +563,6 @@ class MedicationRepository {
     if (value is bool) return value;
     final text = value?.toString().toLowerCase().trim();
     return text == 'true' || text == 'da' || text == '1';
-  }
-
-  static double? _asDouble(Object? value) {
-    if (value is num) return value.toDouble();
-    final normalized =
-        value?.toString().replaceAll(',', '.').trim() ?? '';
-    return double.tryParse(normalized);
   }
 
   static bool _isValidHumanMedicineRecord(

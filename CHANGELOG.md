@@ -2,6 +2,17 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.15] - 2026-10-17
+
+### Provjereni HZZO datumi i veleprodajne cijene
+- odbacuju se nevaljani ili nepostojeći kalendarski datumi (npr. 30. veljače) u izvoru HZZO liste
+- veleprodajna cijena bez provjerenog datuma objave više se ne povezuje s lijekom uz izmišljeni zamjenski datum
+- neispravan ili oštećen pomoćni cjenovni katalog ne ruši HALMED katalog
+- cijene s neispravnim iznosima ili izričito proturječnom valutom ne ulaze u prikaz
+- HZZO doplate i veleprodajne cijene koriste jedinstvenu konzervativnu validaciju numeričkih vrijednosti
+- uklonjen je duplicirani parser novčanih vrijednosti
+- prošireni su regresijski testovi za nedostajuće datume, nevaljane podatke i uspješan službeni uvoz
+
 ## [0.3.14] - 2026-10-14
 
 ### Jednostavnija i dosljednija pretraga lijekova
