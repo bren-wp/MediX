@@ -46,7 +46,12 @@ void main() {
     final navAgain = tester.widget<NavigationBar>(find.byType(NavigationBar));
     navAgain.onDestinationSelected!(0);
     await tester.pumpAndSettle();
-    expect(find.byType(SearchScreen), findsOneWidget);
+    // IndexedStack keeps the visited SearchScreen mounted but offstage;
+    // Flutter finders ignore offstage widgets unless requested.
+    expect(
+      find.byType(SearchScreen, skipOffstage: false),
+      findsOneWidget,
+    );
   });
 
   testWidgets('onboarding remains usable when reminder service is unavailable',
