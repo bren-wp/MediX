@@ -21,9 +21,7 @@ class OfficialPriceValidation {
   /// (e.g. February 30), so checking tryParse alone is not sufficient.
   static DateTime? officialDate(Object? raw) {
     final value = raw?.toString().trim() ?? '';
-    if (!RegExp(r'^\d{4}-\d{2}-\d{2}
-}
-).hasMatch(value)) return null;
+    if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value)) return null;
     final date = DateTime.tryParse(value);
     if (date == null ||
         date.year.toString().padLeft(4, '0') != value.substring(0, 4) ||
