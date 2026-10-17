@@ -14,7 +14,16 @@ import '../widgets/medix_brand.dart';
 import '../widgets/medix_page.dart';
 
 class MedixApp extends StatefulWidget {
-  const MedixApp({super.key});
+  const MedixApp({
+    this.repositoryLoader,
+    this.remindersFactory,
+    super.key,
+  });
+
+  // Injectable for deterministic startup tests. Production uses the
+  // verified offline catalog and native local-notification service.
+  final Future<MedicationRepository> Function()? repositoryLoader;
+  final TherapyReminderScheduler Function()? remindersFactory;
 
   @override
   State<MedixApp> createState() => _MedixAppState();
@@ -39,7 +48,8 @@ class _MedixAppState extends State<MedixApp> {
     try {
       // Never parse or cross-reference multi-megabyte medicine catalogs on
       // the Flutter UI isolate. Long synchronous work caused startup freezes.
-      repository = await loadBundledMedicineRepository();
+      repository = await (widget.repositoryLoader ??
+          loadBundledMedicineRepository)();
     } catch (error, stackTrace) {
       FlutterError.reportError(
         FlutterErrorDetails(
@@ -62,9 +72,11 @@ class _MedixAppState extends State<MedixApp> {
 
     TherapyReminderScheduler? reminders;
     try {
-      final notificationService = MedixNotificationService();
-      await notificationService.initialize();
-      reminders = notificationService;
+      // Never await the native notification plugin before showing the UI.
+      // MedixState syncs existing alarms asynchronously after restore;
+      // a slow or unavailable Android plugin must not delay startup.
+      reminders = (widget.remindersFactory ??
+          MedixNotificationService.new)();
     } catch (_) {
       reminders = null;
     }

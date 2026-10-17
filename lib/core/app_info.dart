@@ -1,6 +1,6 @@
 abstract final class MedixAppInfo {
-  static const version = '0.3.18';
-  static const displayVersion = '0.3.18+21';
+  static const version = '0.3.19';
+  static const displayVersion = '0.3.19+22';
   static const privacyPolicyUrl =
       'https://github.com/bren-wp/MediX/blob/main/docs/PRIVACY_POLICY.md';
   static const termsOfUseUrl =

@@ -72,9 +72,15 @@ class MedixState extends ChangeNotifier {
   Future<bool> requestReminderPermissions() async {
     final scheduler = reminders;
     if (scheduler == null) return false;
-    final allowed = await scheduler.requestPermissions();
-    if (allowed) _syncReminders();
-    return allowed;
+    try {
+      final allowed = await scheduler.requestPermissions();
+      if (allowed) _syncReminders();
+      return allowed;
+    } catch (_) {
+      // A missing/broken system notifications provider should only prevent
+      // enabling reminders, never crash medicine browsing or leak therapy.
+      return false;
+    }
   }
 
   Future<void> setLocale(String code) async {

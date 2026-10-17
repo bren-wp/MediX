@@ -122,6 +122,39 @@ void main() {
     );
   });
 
+  test('large same-brand candidate sets still preserve strict pack identity',
+      () {
+    final records = [
+      for (var i = 0; i < 700; i++)
+        halmedRecord(
+          'same-brand-$i',
+          'Medicin 250 mg tablete',
+          '250 mg',
+          '250 mg ${10 + i} tableta',
+        ),
+      halmedRecord(
+        'correct',
+        'Medicin 500 mg tablete',
+        '500 mg',
+        '500 mg 30 tableta',
+      ),
+    ];
+    final repo = MedicationRepository.fromBundledCatalogs(
+      halmedJson: halmed(records),
+      reimbursementJson: hzzo(),
+      priceJson: wholesale('Medicin 500 mg 30 tableta'),
+    );
+    final correct = repo.medications.singleWhere((m) => m.id == 'correct');
+    expect(correct.hzzoCopay?.amount, 6.5);
+    expect(correct.maxWholesalePrice?.amount, 23);
+    expect(
+      repo.medications
+          .where((m) => m.id != 'correct')
+          .every((m) => m.prices.isEmpty),
+      isTrue,
+    );
+  });
+
   test('does not guess a pack match when HALMED strength or pack is absent',
       () {
     final repo = MedicationRepository.fromBundledCatalogs(

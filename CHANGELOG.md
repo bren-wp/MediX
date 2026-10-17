@@ -2,6 +2,17 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.19] - 2026-10-18
+
+### Brže otvaranje, manja potrošnja memorije i otporniji podsjetnici
+- početna navigacija više ne stvara svih pet ekrana i indeks pretrage odmah pri pokretanju; svaki ekran učitava se na prvom otvaranju i potom zadržava stanje
+- povezivanje HALMED/HZZO/cjenovnih zapisa ponovo koristi unaprijed izračunate podatke kandidata (ATK, sastav, jačina, pakiranje, nositelj) umjesto ponovljene obrade za svaki izvorni redak
+- regularni izrazi za normalizaciju identiteta i pakiranja sada se kompiliraju samo jednom
+- izbjegnuto dodatno kopiranje string-keyed JSON mapa za svaki službeni zapis
+- inicijalizacija Android podsjetnika ne blokira prikaz aplikacije; problemi s uslugom podsjetnika ne ruše početni prikaz ili zahtjev dopuštenja
+- prošireni regresijski testovi za spor/neodgovarajući podsjetnik, odgođeno učitavanje kartica, isti trgovački naziv s različitim pakiranjima i stvarno učitavanje katalogâ
+- dodano dijagnostičko mjerenje trajanja učitavanja u CI bez nepouzdanog fiksnog vremenskog praga
+
 ## [0.3.18] - 2026-10-17
 
 ### Hitni popravak dugog učitavanja i zamrzavanja aplikacije
