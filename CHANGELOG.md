@@ -2,6 +2,17 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.18] - 2026-10-17
+
+### Hitni popravak dugog učitavanja i zamrzavanja aplikacije
+- učitavanje HALMED, HZZO i cjenovnih JSON podataka više se ne obrađuje na glavnom Flutter/UI izolatu
+- sirovi podaci prenose se pozadinskom izolatu bez kopiranja velikih JSON stringova na glavnoj dretvi
+- indeks naziva HALMED lijekova uklanja višemilijunske usporedbe pri povezivanju HZZO i veleprodajnih zapisa
+- postojeće stroge provjere djelatnih tvari, jačine, pakiranja, ATK i dvosmislenosti ostaju nepromijenjene
+- učitavanje katalogâ zadržava postojeći ekran pogreške i ručni ponovni pokušaj
+- dodan integracijski test učitavanja stvarnih ugrađenih katalogâ i regresijski test indeksiranog povezivanja
+- bez mrežnog pristupa ili novih Android dopuštenja
+
 ## [0.3.17] - 2026-10-17
 
 ### Kvaliteta službenih podataka, privatnost i preglednost

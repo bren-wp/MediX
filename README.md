@@ -36,6 +36,8 @@ HZZO copayments and wholesale prices are attached only when a secondary record c
 
 The bundled HALMED, HZZO and wholesale catalogs are automatically validated in every pull-request CI run. The mobile app keeps user therapy plans locally; invalid individual entries can no longer block restoration of the remaining plan. Medicine search now accommodates larger Android text and narrow screens.
 
+MediX loads its multi-megabyte official offline medicine databases on a background Dart isolate and matches records using a trade-name index, keeping the Android interface responsive without weakening the strict medicine, strength and package validation.
+
 The medicine identity comes from the **official HALMED medicine catalog**. HZZO reimbursement information and separate pricing sources complement those records without replacing or inventing medicine names.
 
 ## ✨ Discover what MediX can do
