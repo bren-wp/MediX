@@ -16,16 +16,28 @@ class OfficialPriceValidation {
     return value;
   }
 
-  static String publishedDate(Object? raw) {
+  /// Only a valid, explicit calendar date can be treated as an official
+  /// effective or publication date. Dart normalizes some impossible dates
+  /// (e.g. February 30), so checking tryParse alone is not sufficient.
+  static DateTime? officialDate(Object? raw) {
     final value = raw?.toString().trim() ?? '';
+    if (!RegExp(r'^\d{4}-\d{2}-\d{2}
+}
+).hasMatch(value)) return null;
     final date = DateTime.tryParse(value);
     if (date == null ||
-        !RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value) ||
         date.year.toString().padLeft(4, '0') != value.substring(0, 4) ||
         date.month.toString().padLeft(2, '0') != value.substring(5, 7) ||
         date.day.toString().padLeft(2, '0') != value.substring(8, 10)) {
-      return 'Datum objave nije potvrđen';
+      return null;
     }
-    return value;
+    return date;
+  }
+
+  static String publishedDate(Object? raw) {
+    final value = raw?.toString().trim() ?? '';
+    return officialDate(raw) == null
+        ? 'Datum objave nije potvrđen'
+        : value;
   }
 }
