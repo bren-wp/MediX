@@ -97,7 +97,13 @@ void main() {
       MaterialApp(
         theme: MedixTheme.dark(),
         locale: const Locale('hr'),
-        localizationsDelegates: const [MedixLocalizations.delegate],
+        supportedLocales: MedixLanguages.locales,
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         home: Scaffold(
           body: SingleChildScrollView(
             child: MedicationAccessPanel(medication: medicine),
@@ -130,7 +136,13 @@ void main() {
       MaterialApp(
         theme: MedixTheme.dark(),
         locale: const Locale('hr'),
-        localizationsDelegates: const [MedixLocalizations.delegate],
+        supportedLocales: MedixLanguages.locales,
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         home: Scaffold(
           body: SingleChildScrollView(
             child: MedicationAccessPanel(medication: medicine),
@@ -160,7 +172,13 @@ void main() {
       MaterialApp(
         theme: MedixTheme.dark(),
         locale: const Locale('hr'),
-        localizationsDelegates: const [MedixLocalizations.delegate],
+        supportedLocales: MedixLanguages.locales,
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         home: Scaffold(
           body: SingleChildScrollView(
             child: MedicationAccessPanel(medication: medicine),
