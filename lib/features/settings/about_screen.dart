@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_info.dart';
 import '../../core/localization/medix_localizations.dart';
 import '../../core/theme/medix_theme.dart';
+import '../../services/platform_navigation.dart';
 import '../../widgets/medix_brand.dart';
 import '../../widgets/medix_page.dart';
 
@@ -115,15 +116,35 @@ class AboutScreen extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
+          const SizedBox(height: 6),
+          Center(
+            child: TextButton.icon(
+              onPressed: () async {
+                var opened = false;
+                try {
+                  opened = await MedixPlatformNavigation.openExternalUrl(
+                    MedixAppInfo.developerWebsiteUrl,
+                  );
+                } catch (_) {
+                  // A missing browser must not crash the About screen.
+                }
+                if (!opened && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(loc.t('openFailed'))),
+                  );
+                }
+              },
+              icon: const Icon(Icons.open_in_new_rounded, size: 18),
+              label: const Text('brendigo.com'),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  String stateCopy(BuildContext context) {
-    final hr = Localizations.localeOf(context).languageCode == 'hr';
-    return hr
-        ? 'MediX spaja provjerene podatke o lijekovima, naprednu pretragu, terapiju, klasifikacije, cijene i profesionalne kliničke alate u jedno moderno Android iskustvo.'
-        : 'MediX brings verified medicine data, advanced search, therapy planning, classifications, pricing and professional clinical tools into one focused Android experience.';
-  }
+  String stateCopy(BuildContext context) =>
+      'MediX spaja provjerene podatke o lijekovima, naprednu pretragu, '
+      'terapiju, klasifikacije, cijene i stručne kliničke alate '
+      'u jednu preglednu Android aplikaciju.';
 }

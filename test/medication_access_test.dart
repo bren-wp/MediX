@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medix/core/localization/medix_localizations.dart';
 import 'package:medix/core/theme/medix_theme.dart';
@@ -97,8 +96,14 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: MedixTheme.dark(),
-        locale: const Locale('en'),
-        localizationsDelegates: const [MedixLocalizations.delegate],
+        locale: const Locale('hr'),
+        supportedLocales: MedixLanguages.locales,
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         home: Scaffold(
           body: SingleChildScrollView(
             child: MedicationAccessPanel(medication: medicine),
@@ -108,38 +113,36 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Prescription & medicine costs'), findsOneWidget);
-    expect(find.textContaining('Available without a prescription'),
+    expect(find.text('Recept i cijena lijeka'), findsOneWidget);
+    expect(find.textContaining('Može se izdati bez recepta'),
         findsOneWidget);
-    expect(find.textContaining('No confirmed HZZO list match'),
+    expect(find.textContaining('Nema potvrđenog HZZO podudaranja'),
         findsOneWidget);
-    expect(find.text('Amount not confirmed'), findsOneWidget);
-    expect(find.textContaining('Not available in official offline data'),
+    expect(find.text('Iznos nije potvrđen'), findsOneWidget);
+    expect(find.textContaining('Nije dostupna u službenim offline podacima'),
         findsOneWidget);
-    expect(find.textContaining('zero-euro cost cannot be assumed'),
+    expect(find.textContaining('Iznosi se odnose na upareno pakiranje'),
         findsOneWidget);
   });
 
-  testWidgets('HZZO source failure shows feedback instead of crashing',
+  testWidgets('HZZO kartica nema vanjsku poveznicu na bazu lijekova',
       (tester) async {
     final medicine = testMedication(
       id: 'offline-link',
-      name: 'Test Medicine',
-      ingredient: 'Test',
+      name: 'Paracetamol',
+      ingredient: 'Paracetamol',
     );
-    const channel = MethodChannel('com.brendigo.medix/navigation');
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      channel,
-      (_) async => throw PlatformException(code: 'NO_HANDLER'),
-    );
-    addTearDown(() => tester.binding.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, null));
-
     await tester.pumpWidget(
       MaterialApp(
         theme: MedixTheme.dark(),
-        locale: const Locale('en'),
-        localizationsDelegates: const [MedixLocalizations.delegate],
+        locale: const Locale('hr'),
+        supportedLocales: MedixLanguages.locales,
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         home: Scaffold(
           body: SingleChildScrollView(
             child: MedicationAccessPanel(medication: medicine),
@@ -148,12 +151,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('View official HZZO medicine lists'));
-    await tester.pumpAndSettle();
-    expect(
-      find.text('This link could not be opened on this device.'),
-      findsOneWidget,
-    );
+    expect(find.text('Recept i cijena lijeka'), findsOneWidget);
+    expect(find.byIcon(Icons.open_in_new_rounded), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -165,15 +164,21 @@ void main() {
       ingredient: 'Active',
     ).copyWith(
       reimbursementStatus: ReimbursementStatus.basic,
-      hzzoListSource: 'HZZO official list',
+      hzzoListSource: 'HZZO službena lista',
       hzzoListEffectiveDate: DateTime(2026, 10, 1),
     );
 
     await tester.pumpWidget(
       MaterialApp(
         theme: MedixTheme.dark(),
-        locale: const Locale('en'),
-        localizationsDelegates: const [MedixLocalizations.delegate],
+        locale: const Locale('hr'),
+        supportedLocales: MedixLanguages.locales,
+        localizationsDelegates: const [
+          MedixLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
         home: Scaffold(
           body: SingleChildScrollView(
             child: MedicationAccessPanel(medication: medicine),
@@ -184,7 +189,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(
-      find.textContaining('HZZO official list · Effective from 01.10.2026.'),
+      find.textContaining('HZZO službena lista · U primjeni od 01.10.2026.'),
       findsOneWidget,
     );
   });
@@ -223,19 +228,15 @@ void main() {
     expect(find.text('Iznos nije potvrđen'), findsOneWidget);
   });
 
-  test('Croatian pricing explanation has its own translation', () {
-    const hr = MedixLocalizations(Locale('hr'));
-    const en = MedixLocalizations(Locale('en'));
-    const de = MedixLocalizations(Locale('de'));
+  test('Hrvatski prijevod svih ključnih cijena i naknada', () {
+    const loc = MedixLocalizations(Locale('hr'));
     for (final key in const [
       'accessTitle',
       'accessCopaymentLabel',
       'accessPolicyVaries',
       'accessWholesaleLabel',
     ]) {
-      expect(hr.t(key), isNot(key));
-      expect(en.t(key), isNot(key));
-      expect(de.t(key), en.t(key));
+      expect(loc.t(key), isNot(key));
     }
   });
 }

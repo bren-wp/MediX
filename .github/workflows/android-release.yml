@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - "feat/medix-pro-v*"
+      - "feat/medix-v*"
     tags:
       - "v*"
 

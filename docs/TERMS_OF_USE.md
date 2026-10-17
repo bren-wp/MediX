@@ -1,44 +1,32 @@
-# MediX Terms of Use
+# Uvjeti korištenja aplikacije MediX
 
-**Effective date:** 14 October 2026  
-**App:** MediX for Android (`com.brendigo.medix`)  
-**Developer:** Brendigo, Rijeka, Croatia  
-**Contact:** info@brendigo.com
+**Datum primjene:** 18. listopada 2026.  
+**Aplikacija:** MediX za Android (`com.brendigo.medix`)  
+**Razvojni programer:** Brendigo, Rijeka, Hrvatska  
+**Kontakt:** info@brendigo.com
 
-## Purpose
+## Namjena
 
-MediX is an informational application for finding medicine records, reviewing available source data, comparing medicine information, using reference calculators, and organizing personal therapy notes and reminders.
+MediX je informativna aplikacija za pregled podataka o lijekovima, dostupnih lista i cijena, usporedbu, stručne referentne izračune te osobne bilješke i podsjetnike za terapiju.
 
-MediX is **not a medical device** as presented in its current app description, does not diagnose, prescribe, treat, cure, or prevent any medical condition, and does not replace a physician or pharmacist. The regulatory classification of specific features remains subject to applicable law and assessment.
+MediX **nije predstavljen kao medicinski uređaj** i ne služi postavljanju dijagnoze, propisivanju lijekova ni zamjeni liječnika ili ljekarnika. Primjenjiva regulatorna klasifikacija pojedine funkcionalnosti zahtijeva zasebnu stručnu i pravnu procjenu.
 
-## Information quality and limits
+## Točnost i ograničenja podataka
 
-MediX displays offline medicine data drawn from official public sources, including HALMED, with additional HZZO and pricing information where available. Published records, regulatory status, package details, market availability, reimbursement terms, and prices may change or be incomplete.
+Podaci su dio izvanmrežnog kataloga izvedenog iz javnih službenih zapisa. Status lijeka, podaci o pakiranju, dostupnost, naknada i cijena mogu se promijeniti ili biti nepotpuni. Informacije važne za terapiju provjerite u aktualnoj dokumentaciji proizvođača i kod kvalificiranog zdravstvenog stručnjaka.
 
-Always verify important information with the official source, current product documentation, and a qualified health professional. Missing interaction information **does not mean that two medicines are safe to combine**. Medicines grouped by ingredient or classification are not necessarily interchangeable.
+**Nepostojanje zapisa o interakciji ne znači da je kombinacija lijekova sigurna.** Lijekovi s jednakom djelatnom tvari ili klasifikacijom nisu automatski zamjenjivi. Klinički kalkulatori služe isključivo orijentacijskom stručnom pregledu i ne smiju biti jedina osnova za dijagnozu, doziranje ili liječenje.
 
-Clinical calculations support reference review only. They must not be the sole basis for diagnosis, dosing, or treatment.
+## Terapija i podsjetnici
 
-## Therapy plans and reminders
+Korisnik unosi raspored prema uputi liječnika ili ljekarnika. MediX ne izrađuje niti odobrava individualni plan liječenja. Android može odgoditi ili onemogućiti obavijesti zbog dozvola, štednje baterije ili postavki. **Ne oslanjajte se na podsjetnik kao jedinu zaštitu pri kritičnom liječenju.**
 
-You are responsible for entering the medicine, dose instructions and times from professional advice. MediX does not create or authorize a treatment plan. Notifications may be delayed, suppressed or blocked by system permissions, battery settings, clock changes or other technical conditions. **Never rely on a reminder as the only safeguard for critical treatment.**
+## Privatnost i dijeljenje
 
-## Privacy and export
+Način pohrane objašnjen je u dokumentu [Politika privatnosti MediX](PRIVACY_POLICY.md). Prije slanja ZIP/PDF datoteka provjerite sadržaj i odabranog primatelja. Dijeljenje se pokreće isključivo na zahtjev korisnika.
 
-Your locally entered personal information is handled as explained in the [MediX Privacy Policy](PRIVACY_POLICY.md). You control any sharing of PDF/ZIP exports. Check the content and recipient before sharing sensitive information.
+## Dostupnost i prava
 
-## Availability and external links
+Izvanmrežni katalog može se koristiti bez stalnog interneta. Zasebni preglednici i aplikacije za karte imaju vlastite uvjete. Naziv i vizualni identitet MediX povezani su s Brendigom; licencija repozitorija uređuje ponovnu uporabu izvornog koda, a prava nad podacima iz javnih izvora uređuju se prema njihovim uvjetima.
 
-MediX can operate with its bundled catalog without continuous internet access. External websites and map applications are separate services and may have their own terms and privacy practices. Some features or records can change as source data evolves.
-
-## Intellectual property and lawful use
-
-The MediX application and its branding are associated with Brendigo. The repository license governs reuse of the open-source code. Public-source medicine data remains subject to its applicable source terms.
-
-Use MediX lawfully. Do not use or present unverified application output as professional medical advice.
-
-## Updates and contact
-
-These terms may be revised as MediX changes; the effective date will be updated. For questions, contact **info@brendigo.com**.
-
-Applicable consumer-protection rules and non-waivable legal rights are not limited by these terms.
+Ovi uvjeti ne ograničavaju prava koja potrošačima pripadaju prema obveznim propisima. Za pitanja: **info@brendigo.com**.

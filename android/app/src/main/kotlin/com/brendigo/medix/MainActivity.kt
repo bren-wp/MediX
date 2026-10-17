@@ -104,7 +104,7 @@ class MainActivity : FlutterActivity() {
         }
 
         return try {
-            startActivity(Intent.createChooser(shareIntent, "Share MediX export"))
+            startActivity(Intent.createChooser(shareIntent, "Podijeli MediX izvoz"))
             true
         } catch (_: ActivityNotFoundException) {
             false

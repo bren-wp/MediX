@@ -101,20 +101,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
-                DropdownButtonFormField<String>(
-                  initialValue: widget.state.localeCode,
-                  isExpanded: true,
-                  decoration: const InputDecoration(prefixIcon: Icon(Icons.language_rounded)),
-                  items: MedixLanguages.supported
-                      .map((language) => DropdownMenuItem<String>(
-                            value: language.code,
-                            child: Text(language.nativeName),
-                          ))
-                      .toList(growable: false),
-                  onChanged: (value) {
-                    if (value != null) widget.state.setLocale(value);
-                  },
+                const SizedBox(height: 12),
+                const Text(
+                  'Hrvatski jezik',
+                  style: TextStyle(
+                    color: MedixColors.cyanSoft,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ],
             ),

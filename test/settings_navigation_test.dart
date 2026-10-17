@@ -18,7 +18,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: MedixTheme.dark(),
-        locale: const Locale('en'),
+        locale: const Locale('hr'),
         supportedLocales: MedixLanguages.locales,
         localizationsDelegates: const [
           MedixLocalizations.delegate,
@@ -31,15 +31,15 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Settings'), findsOneWidget);
-    expect(find.text('English'), findsOneWidget);
-    final privacy = find.text('Security & privacy');
+    expect(find.text('Postavke'), findsOneWidget);
+    expect(find.text('Hrvatski jezik'), findsOneWidget);
+    final privacy = find.text('Sigurnost i privatnost');
     await tester.ensureVisible(privacy);
     await tester.tap(privacy);
     await tester.pumpAndSettle();
 
-    expect(find.text('No mandatory account'), findsOneWidget);
-    expect(find.text('Private local data'), findsWidgets);
+    expect(find.text('Bez obveznog računa'), findsOneWidget);
+    expect(find.text('Privatni lokalni podaci'), findsWidgets);
   });
 
   testWidgets('Settings opens MediX-specific legal URLs', (tester) async {
@@ -68,7 +68,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: MedixTheme.dark(),
-        locale: const Locale('en'),
+        locale: const Locale('hr'),
         supportedLocales: MedixLanguages.locales,
         localizationsDelegates: const [
           MedixLocalizations.delegate,
@@ -81,12 +81,12 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final privacy = find.text('Privacy policy');
+    final privacy = find.text('Politika privatnosti');
     await tester.ensureVisible(privacy);
     await tester.tap(privacy);
     await tester.pumpAndSettle();
 
-    final terms = find.text('Terms of use');
+    final terms = find.text('Uvjeti korištenja');
     await tester.ensureVisible(terms);
     await tester.tap(terms);
     await tester.pumpAndSettle();
@@ -97,14 +97,13 @@ void main() {
     ]);
   });
 
-  testWidgets('Settings provides working language selection', (tester) async {
+  testWidgets('Postavke prikazuju samo hrvatski jezik', (tester) async {
     final state = MedixState(repository: buildTestRepository());
     addTearDown(state.dispose);
-
     await tester.pumpWidget(
       MaterialApp(
         theme: MedixTheme.dark(),
-        locale: const Locale('en'),
+        locale: const Locale('hr'),
         supportedLocales: MedixLanguages.locales,
         localizationsDelegates: const [
           MedixLocalizations.delegate,
@@ -116,14 +115,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-
-    await tester.tap(find.byType(DropdownButtonFormField<String>));
-    await tester.pumpAndSettle();
-    final croatian = find.text('Hrvatski').last;
-    await tester.ensureVisible(croatian);
-    await tester.tap(croatian);
-    await tester.pumpAndSettle();
-
+    expect(find.text('Hrvatski jezik'), findsOneWidget);
+    expect(find.byType(DropdownButtonFormField<String>), findsNothing);
     expect(state.localeCode, 'hr');
   });
 }

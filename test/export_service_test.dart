@@ -8,6 +8,8 @@ import 'package:medix/state/medix_state.dart';
 import 'support/medication_fixtures.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   test('builds a ZIP containing three valid PDF documents', () async {
     final state = MedixState(repository: buildTestRepository());
     addTearDown(state.dispose);
