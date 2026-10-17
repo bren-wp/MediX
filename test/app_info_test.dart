@@ -16,8 +16,8 @@ void main() {
     final policy = File('docs/PRIVACY_POLICY.md').readAsStringSync();
     final terms = File('docs/TERMS_OF_USE.md').readAsStringSync();
     expect(policy, contains('SharedPreferences'));
-    expect(policy, contains('therapy'));
-    expect(terms, contains('not a medical device'));
+    expect(policy, contains('terapije'));
+    expect(terms, contains('medicinski uređaj'));
   });
 
   test('app version metadata matches pubspec', () async {
