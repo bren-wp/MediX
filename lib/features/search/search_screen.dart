@@ -627,7 +627,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String?>(
-              key: ValueKey(value.atcGroup),
+              key: ValueKey(('atc', value.atcGroup)),
               initialValue: value.atcGroup,
               isExpanded: true,
               decoration:
@@ -657,7 +657,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String?>(
-              key: ValueKey(value.form),
+              key: ValueKey(('form', value.form)),
               initialValue: value.form,
               isExpanded: true,
               decoration:
@@ -687,7 +687,7 @@ class _FilterSheetState extends State<_FilterSheet> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String?>(
-              key: ValueKey(value.holder),
+              key: ValueKey(('holder', value.holder)),
               initialValue: value.holder,
               isExpanded: true,
               decoration: InputDecoration(
