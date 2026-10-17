@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/app_info.dart';
 import '../../core/localization/medix_localizations.dart';
 import '../../core/theme/medix_theme.dart';
+import '../../services/platform_navigation.dart';
 import '../../widgets/medix_brand.dart';
 import '../../widgets/medix_page.dart';
 
@@ -113,6 +114,28 @@ class AboutScreen extends StatelessWidget {
               color: MedixColors.textMuted,
               fontSize: 12,
               fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Center(
+            child: TextButton.icon(
+              onPressed: () async {
+                var opened = false;
+                try {
+                  opened = await MedixPlatformNavigation.openExternalUrl(
+                    MedixAppInfo.developerWebsiteUrl,
+                  );
+                } catch (_) {
+                  // A missing browser must not crash the About screen.
+                }
+                if (!opened && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(loc.t('openFailed'))),
+                  );
+                }
+              },
+              icon: const Icon(Icons.open_in_new_rounded, size: 18),
+              label: const Text('brendigo.com'),
             ),
           ),
         ],

@@ -9,7 +9,8 @@
 - Iz ekrana lijeka, HZZO podataka i izbornika uklonjene su vanjske poveznice na službene izvore lijekova. Nazivi izvora, datumi i regulatorni metapodaci ostaju u bazi.
 
 ### Privatnost i Play politika
-- Tekst podsjetnika ne otkriva naziv lijeka ili dozu.
+- Podsjetnici čuvaju **naziv lijeka**, ali ne prikazuju opis doze. Sadržaj podsjetnika na zaključanom zaslonu kontrolira Android.
+- Brendigo, originalni vizualni identitet i vidljiva poveznica **brendigo.com** ostaju u aplikaciji i dokumentaciji.
 - Uklonjena je posebna dozvola za točne alarme; ostaju lokalni podsjetnici koji mogu kasniti ovisno o Androidu.
 - Ciljani Android API 36 zadržan je za zahtjeve Google Playa iz 2026.
 - Dodana hrvatska Play Store dokumentacija i revidirani pravni dokumenti.

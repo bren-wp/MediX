@@ -32,14 +32,14 @@ MediX objedinjavanjem dostupnih zapisa HALMED-a i HZZO-a olakšava pregled podat
 
 Izdanje **1.0.0** prikazuje korisničko sučelje, obavijesti i PDF izvještaje na hrvatskom jeziku, uključujući prvo pokretanje. Službeni nazivi lijekova i regulatorni nazivi iz izvornog kataloga nisu umjetno prevođeni.
 
-Vanjske poveznice na službene izvore lijekova uklonjene su iz korisničkog sučelja. **Podrijetlo, datumi i regulatorni metapodaci ostaju dostupni** kako bi korisnik mogao procijeniti starost i pouzdanost podataka. Pravni dokumenti (politika privatnosti i uvjeti) ostaju javno dostupni.
+**Nazivi lijekova, djelatne tvari, jačine, pakiranja i ostali medicinski podaci ostaju vidljivi.** Vanjske poveznice na službene izvore lijekova uklonjene su iz korisničkog sučelja. **Podrijetlo, datumi i regulatorni metapodaci ostaju dostupni** kako bi korisnik mogao procijeniti starost i pouzdanost podataka. Pravni dokumenti (politika privatnosti i uvjeti) ostaju javno dostupni.
 
 ## Privatnost i pouzdanost
 
 - Katalog lijekova radi izvanmrežno; nema obvezne registracije, oglasa ni sustava praćenja.
 - Terapija i favoriti ostaju lokalno, u privatnom prostoru aplikacije. **Zasebna enkripcija terapije nije implementirana.**
 - Automatski Android backup za podatke aplikacije je isključen.
-- Podsjetnici ne prikazuju naziv lijeka ni dozu u obavijesti i ne zahtijevaju posebno dopuštenje za točne alarme.
+- Podsjetnici zadržavaju **naziv lijeka**, ali ne prikazuju dozu. Korisnik može sakriti sadržaj obavijesti na zaključanom zaslonu kroz Android postavke; posebno dopuštenje za točne alarme nije potrebno.
 - Izvoz podataka korisnik pokreće samostalno, a ZIP sadrži PDF dokumente na hrvatskom jeziku.
 
 ## Performanse i provjere
@@ -67,5 +67,7 @@ Podaci o lijekovima potječu iz objavljenih HALMED/HZZO zapisa, ali mogu biti za
 ## Brendigo
 
 Razvoj: **Brendigo** · [brendigo.com](https://brendigo.com) · info@brendigo.com
+
+Poveznica na [brendigo.com](https://brendigo.com) dostupna je i unutar aplikacije na zaslonu **O aplikaciji MediX**.
 
 [Politika privatnosti](docs/PRIVACY_POLICY.md) · [Uvjeti korištenja](docs/TERMS_OF_USE.md) · [Izdanja](https://github.com/bren-wp/MediX/releases)

@@ -139,7 +139,11 @@ class MedixNotificationService implements TherapyReminderScheduler {
           await _plugin.zonedSchedule(
             id: id,
             title: 'Vrijeme za terapiju',
-            body: 'Provjerite svoj raspored terapije u aplikaciji MediX.',
+            // The medicine name remains useful in the reminder, as in the
+            // original app; dose instructions are kept inside MediX.
+            // Users can hide notification content on the lock screen
+            // through their Android notification settings.
+            body: '${medication.name} · Pojedinosti terapije u aplikaciji MediX.',
             scheduledDate: scheduled,
             notificationDetails: const NotificationDetails(
               android: AndroidNotificationDetails(

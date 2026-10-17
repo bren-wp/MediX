@@ -21,7 +21,7 @@ Poveznice na službene mrežne izvore lijekova nisu prikazane u korisničkom su�
 
 ## Obavijesti
 
-Dozvola za obavijesti traži se samo kada korisnik uključi podsjetnike. MediX ne zahtijeva posebnu Android dozvolu za točne alarme. Podsjetnici se obrađuju lokalno i mogu kasniti ovisno o Android sustavu, bateriji i postavkama uređaja. Tekst obavijesti ne prikazuje naziv lijeka ni dozu radi veće privatnosti.
+Dozvola za obavijesti traži se samo kada korisnik uključi podsjetnike. MediX ne zahtijeva posebnu Android dozvolu za točne alarme. Podsjetnici se obrađuju lokalno i mogu kasniti ovisno o Android sustavu, bateriji i postavkama uređaja. Tekst podsjetnika prikazuje **naziv lijeka**, ali ne i opis doze. Naziv lijeka može biti vidljiv na zaključanom zaslonu, ovisno o Android postavkama obavijesti. Korisnik može uključiti skrivanje osjetljivog sadržaja obavijesti u postavkama uređaja.
 
 ## Izvoz i dijeljenje
 
