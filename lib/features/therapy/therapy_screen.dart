@@ -155,7 +155,6 @@ class _TherapyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = MedixLocalizations.of(context);
-    final hr = Localizations.localeOf(context).languageCode == 'hr';
     final medication = state.medicationById(entry.medicationId);
     if (medication == null) {
       return const SizedBox.shrink();
@@ -193,7 +192,7 @@ class _TherapyCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 7),
                 Text(
-                  _weekdaySummary(entry.weekdays, hr: hr),
+                  _weekdaySummary(entry.weekdays),
                   style: const TextStyle(
                     color: MedixColors.cyanSoft,
                     fontSize: 11,
@@ -296,6 +295,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
   final List<TimeOfDay> times = <TimeOfDay>[];
   final Set<int> weekdays = <int>{};
   String? medicationId;
+  bool _saving = false;
 
   bool get isEditing => widget.entry != null;
 
@@ -375,6 +375,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
     if (medicationId == null ||
         doseController.text.trim().isEmpty ||
         times.isEmpty ||
@@ -387,6 +388,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
       return;
     }
 
+    setState(() => _saving = true);
     final messenger = ScaffoldMessenger.of(context);
     final therapyState = widget.state;
     final formattedTimes =
@@ -412,6 +414,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
           );
 
     if (!saved) {
+      if (mounted) setState(() => _saving = false);
       messenger.showSnackBar(
         SnackBar(
           content: Text(MedixLocalizations.of(context).t('therapySaveFailed')),
@@ -434,7 +437,6 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
   @override
   Widget build(BuildContext context) {
     final loc = MedixLocalizations.of(context);
-    final hr = Localizations.localeOf(context).languageCode == 'hr';
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
 
     return Padding(
@@ -530,7 +532,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
               children: List.generate(7, (index) {
                 final day = index + 1;
                 return FilterChip(
-                  label: Text(_weekdayShortLabel(day, hr: hr)),
+                  label: Text(_weekdayShortLabel(day)),
                   selected: weekdays.contains(day),
                   onSelected: (selected) {
                     setState(() {
@@ -598,7 +600,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                onPressed: _save,
+                onPressed: _saving ? null : _save,
                 icon: const Icon(Icons.check_rounded),
                 label: Text(isEditing ? loc.t('saveChanges') : loc.t('saveTherapy')),
               ),
@@ -611,28 +613,23 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
 }
 
 
-String _weekdayShortLabel(int weekday, {required bool hr}) {
-  return switch (weekday) {
-    1 => hr ? 'Pon' : 'Mon',
-    2 => hr ? 'Uto' : 'Tue',
-    3 => hr ? 'Sri' : 'Wed',
-    4 => hr ? 'Čet' : 'Thu',
-    5 => hr ? 'Pet' : 'Fri',
-    6 => hr ? 'Sub' : 'Sat',
-    7 => hr ? 'Ned' : 'Sun',
-    _ => '—',
-  };
-}
+String _weekdayShortLabel(int weekday) => switch (weekday) {
+  1 => 'Pon',
+  2 => 'Uto',
+  3 => 'Sri',
+  4 => 'Čet',
+  5 => 'Pet',
+  6 => 'Sub',
+  7 => 'Ned',
+  _ => '—',
+};
 
-String _weekdaySummary(List<int> weekdays, {required bool hr}) {
+String _weekdaySummary(List<int> weekdays) {
   final normalized = weekdays
       .where((day) => day >= 1 && day <= 7)
       .toSet()
       .toList()
     ..sort();
-
-  if (normalized.length == 7) {
-    return hr ? 'Svaki dan' : 'Every day';
-  }
-  return normalized.map((day) => _weekdayShortLabel(day, hr: hr)).join(', ');
+  if (normalized.length == 7) return 'Svaki dan';
+  return normalized.map(_weekdayShortLabel).join(', ');
 }
