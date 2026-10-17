@@ -2,6 +2,16 @@
 
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
+## [0.3.16] - 2026-10-17
+
+### Sigurnije povezivanje HALMED i HZZO zapisa
+- izvorni zapis mora potvrditi istu djelatnu tvar, jačinu i broj jedinica u pakiranju prije dodjele doplate ili veleprodajne cijene
+- neodređena pakiranja i neslaganja djelatne tvari ne mogu preuzeti cijene drugog proizvoda, čak ni uz sličan naziv ili istu ATK šifru
+- proturječne HZZO oznake (istodobno osnovna i dopunska lista) ostaju nepotvrđene
+- HZZO doplata nastaje samo za potvrđen zapis dopunske liste s valjanim službenim datumom
+- zapisi s proturječnom valutom na razini cjenovnog retka odbacuju se
+- dodani su regresijski testovi za zaštitu od zamjene sastojaka, nepotpuna pakiranja, istodobne oznake HZZO lista, pogrešne doplate i nevaljane valute
+
 ## [0.3.15] - 2026-10-17
 
 ### Provjereni HZZO datumi i veleprodajne cijene

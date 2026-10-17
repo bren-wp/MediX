@@ -55,29 +55,30 @@ class MedicationRepository {
         continue;
       }
 
+      final basicList = _asBool(record['basic_list']);
+      final supplementaryList = _asBool(record['supplementary_list']);
+      // The lists are mutually exclusive for a specific product record.
+      // Simultaneously claiming both lists is contradictory, not evidence
+      // that the basic list should win.
+      final reimbursementStatus = basicList == supplementaryList
+          ? ReimbursementStatus.none
+          : basicList
+              ? ReimbursementStatus.basic
+              : ReimbursementStatus.supplementary;
       final copay = OfficialPriceValidation.euro(record['copay_eur']);
       final prices = <MedicationPrice>[
-        if (copay != null &&
-            copay.isFinite &&
-            copay >= 0 &&
+        if (reimbursementStatus == ReimbursementStatus.supplementary &&
+            copay != null &&
             publishedEffectiveDate != null)
           MedicationPrice(
             amount: copay,
             currency: 'EUR',
             kind: MedicationPriceKind.hzzoCopay,
             source: sourceName,
-            validFrom: effectiveDate,
+            validFrom: publishedEffectiveDate,
             note: 'Doplata za originalno pakiranje.',
           ),
       ];
-
-      final basicList = _asBool(record['basic_list']);
-      final supplementaryList = _asBool(record['supplementary_list']);
-      final reimbursementStatus = basicList
-          ? ReimbursementStatus.basic
-          : supplementaryList
-              ? ReimbursementStatus.supplementary
-              : ReimbursementStatus.none;
 
       final package = record['package']?.toString().trim();
       final form = record['form']?.toString().trim();
@@ -392,8 +393,15 @@ class MedicationRepository {
       final package =
           _nullableString(record['name_and_package']) ?? '';
       final price = OfficialPriceValidation.euro(record['max_wholesale_eur']);
+      final recordCurrency =
+          record['currency']?.toString().trim().toUpperCase();
+      if (recordCurrency != null &&
+          recordCurrency.isNotEmpty &&
+          recordCurrency != 'EUR') {
+        continue;
+      }
 
-      if (name.isEmpty || price == null || !price.isFinite || price < 0) {
+      if (name.isEmpty || price == null) {
         continue;
       }
 
@@ -461,6 +469,16 @@ class MedicationRepository {
     final incomingPackCount = _extractPackCount(strengthOrPackage);
     final incomingHolder = _normalize(holder ?? '');
 
+    // A matching trade name or ATC alone is not a valid package identity.
+    // Without an explicit ingredient, strength and pack unit count from
+    // the secondary source, the attachment must remain unverified.
+    if (incomingName.isEmpty ||
+        incomingActive.isEmpty ||
+        incomingStrength.isEmpty ||
+        incomingPackCount == null) {
+      return null;
+    }
+
     int? bestIndex;
     var bestScore = -1;
     var bestCount = 0;
@@ -491,6 +509,11 @@ class MedicationRepository {
       }
 
       final candidateActive = _normalize(candidate.activeIngredient);
+      // Identical brand/strength/ATC is not enough when active ingredients
+      // disagree (especially for combination medicines).
+      if (candidateActive.isEmpty || incomingActive != candidateActive) {
+        continue;
+      }
       final candidateHolder = _normalize(
         candidate.marketingAuthorizationHolder ?? '',
       );
@@ -508,11 +531,7 @@ class MedicationRepository {
       // Never transfer the copayment or package price across different
       // strengths or known package quantities. A name/ATC match alone
       // is insufficient evidence for a price tied to a specific pack.
-      if (incomingStrength.isNotEmpty &&
-          incomingStrength != candidateStrength) {
-        continue;
-      }
-      if (incomingPackCount != null &&
+      if (incomingStrength != candidateStrength ||
           incomingPackCount != candidatePackCount) {
         continue;
       }
@@ -522,10 +541,7 @@ class MedicationRepository {
         score += 4;
       }
 
-      if (incomingActive.isNotEmpty &&
-          candidateActive == incomingActive) {
-        score += 4;
-      }
+      score += 4; // Identical active ingredient is mandatory above.
 
       if (incomingStrength.isNotEmpty &&
           incomingStrength == candidateStrength) {
