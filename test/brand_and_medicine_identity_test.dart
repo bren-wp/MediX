@@ -58,6 +58,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Brendigo'), findsWidgets);
     final website = find.text('brendigo.com');
+    // AboutScreen uses a lazily built ListView, so scroll to the bottom
+    // before testing the developer's external website button.
+    await tester.scrollUntilVisible(
+      website,
+      180,
+      scrollable: find.byType(Scrollable).first,
+    );
     expect(website, findsOneWidget);
     expect(MedixAppInfo.developerWebsiteUrl, 'https://brendigo.com');
     await tester.ensureVisible(website);
