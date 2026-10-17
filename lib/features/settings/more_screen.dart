@@ -38,7 +38,6 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = MedixLocalizations.of(context);
-    final hr = true; // Hrvatski je jedini jezik javnog izdanja.
     return MedixPage(
       appBar: AppBar(title: Text(loc.t('more'))),
       safeArea: false,
@@ -54,9 +53,7 @@ class MoreScreen extends StatelessWidget {
           _MenuItem(
             icon: Icons.auto_awesome_rounded,
             title: 'MediX Smart',
-            subtitle: hr
-                ? 'Pametna pretraga lijekova prirodnim upitom'
-                : 'Smart medicine search with natural-language queries',
+            subtitle: 'Pametna pretraga lijekova prirodnim upitom',
             color: MedixColors.cyan,
             onTap: () => _push(
               context,
@@ -65,10 +62,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.hub_outlined,
-            title: hr ? 'Provjera interakcija' : 'Interaction checker',
-            subtitle: hr
-                ? 'Usporedite lijekove i terapiju'
-                : 'Review medicines and therapy together',
+            title: 'Provjera interakcija',
+            subtitle: 'Usporedite lijekove i terapiju',
             color: MedixColors.danger,
             onTap: () => _push(
               context,
@@ -77,10 +72,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.compare_arrows_rounded,
-            title: hr ? 'Usporedba lijekova' : 'Compare medicines',
-            subtitle: hr
-                ? 'Usporedite 2 do 4 lijeka i pakiranja'
-                : 'Compare 2 to 4 medicines and packages',
+            title: 'Usporedba lijekova',
+            subtitle: 'Usporedite 2 do 4 lijeka i pakiranja',
             color: MedixColors.cyan,
             onTap: () => _push(
               context,
@@ -89,10 +82,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.calculate_outlined,
-            title: hr ? 'Klinički alati' : 'Clinical tools',
-            subtitle: hr
-                ? 'BMI, BSA, eGFR, GCS, CHA₂DS₂-VASc i više'
-                : 'BMI, BSA, eGFR, GCS, CHA₂DS₂-VASc and more',
+            title: 'Klinički alati',
+            subtitle: 'BMI, BSA, eGFR, GCS, CHA₂DS₂-VASc i više',
             color: MedixColors.primary,
             onTap: () => _push(
               context,
@@ -101,10 +92,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.account_tree_outlined,
-            title: hr ? 'ATK i MKB-10' : 'ATC & ICD-10',
-            subtitle: hr
-                ? 'Klasifikacije lijekova i dijagnoza'
-                : 'Medicine and diagnosis classifications',
+            title: 'ATK i MKB-10',
+            subtitle: 'Klasifikacije lijekova i dijagnoza',
             color: MedixColors.purple,
             onTap: () => _push(
               context,
@@ -113,10 +102,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.swap_horiz_rounded,
-            title: hr ? 'Paralelni i srodni lijekovi' : 'Related medicines',
-            subtitle: hr
-                ? 'Pregled po djelatnoj tvari'
-                : 'Explore medicines by active ingredient',
+            title: 'Paralelni i srodni lijekovi',
+            subtitle: 'Pregled po djelatnoj tvari',
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -125,10 +112,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.euro_rounded,
-            title: hr ? 'Cijene i pakiranja' : 'Prices & packages',
-            subtitle: hr
-                ? 'Pretraživ pregled dostupnih cjenovnih zapisa'
-                : 'Search available pricing records',
+            title: 'Cijene i pakiranja',
+            subtitle: 'Pretraživ pregled dostupnih cjenovnih zapisa',
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -139,10 +124,8 @@ class MoreScreen extends StatelessWidget {
           _SectionTitle(loc.t('therapySafety')),
           _MenuItem(
             icon: Icons.calendar_month_outlined,
-            title: hr ? 'Kalendar terapije' : 'Therapy calendar',
-            subtitle: hr
-                ? 'Dnevni raspored i podsjetnici na uređaju'
-                : 'Daily schedule and on-device reminders',
+            title: 'Kalendar terapije',
+            subtitle: 'Dnevni raspored i podsjetnici na uređaju',
             color: MedixColors.primary,
             onTap: () => _push(
               context,
@@ -151,10 +134,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.pregnant_woman_rounded,
-            title: hr ? 'Trudnoća i dojenje' : 'Pregnancy & breastfeeding',
-            subtitle: hr
-                ? 'Brzi pregled posebnih upozorenja'
-                : 'Focused safety considerations',
+            title: 'Trudnoća i dojenje',
+            subtitle: 'Brzi pregled posebnih upozorenja',
             color: MedixColors.purple,
             onTap: () => _push(
               context,
@@ -165,10 +146,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.child_care_rounded,
-            title: hr ? 'Djeca' : 'Children',
-            subtitle: hr
-                ? 'Pedijatrijski sigurnosni pregled'
-                : 'Pediatric safety overview',
+            title: 'Djeca',
+            subtitle: 'Pedijatrijski sigurnosni pregled',
             color: MedixColors.warning,
             onTap: () => _push(
               context,
@@ -179,10 +158,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.elderly_rounded,
-            title: hr ? 'Starije osobe' : 'Older adults',
-            subtitle: hr
-                ? 'Politerapija i posebna upozorenja'
-                : 'Polypharmacy and safety considerations',
+            title: 'Starije osobe',
+            subtitle: 'Politerapija i posebna upozorenja',
             color: MedixColors.cyan,
             onTap: () => _push(
               context,
@@ -195,10 +172,8 @@ class MoreScreen extends StatelessWidget {
           _SectionTitle(loc.t('additional')),
           _MenuItem(
             icon: Icons.local_pharmacy_outlined,
-            title: hr ? 'Ljekarne u blizini' : 'Nearby pharmacies',
-            subtitle: hr
-                ? 'Otvori pretragu ljekarni u aplikaciji za karte'
-                : 'Open a pharmacy search in your maps app',
+            title: 'Ljekarne u blizini',
+            subtitle: 'Otvori pretragu ljekarni u aplikaciji za karte',
             color: MedixColors.success,
             onTap: () => _push(
               context,
@@ -207,10 +182,8 @@ class MoreScreen extends StatelessWidget {
           ),
           _MenuItem(
             icon: Icons.school_outlined,
-            title: hr ? 'Edukacija i vodiči' : 'Education & guides',
-            subtitle: hr
-                ? 'Kratki vodiči za sigurnije korištenje MediX alata'
-                : 'Practical guides for getting more from MediX',
+            title: 'Edukacija i vodiči',
+            subtitle: 'Kratki vodiči za sigurnije korištenje MediX alata',
             color: MedixColors.warning,
             onTap: () => _push(
               context,
