@@ -19,7 +19,6 @@ import '../substitutions/substitutions_screen.dart';
 import '../therapy/calendar_screen.dart';
 import 'about_screen.dart';
 import 'privacy_screen.dart';
-import 'sources_screen.dart';
 import 'settings_screen.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -39,7 +38,7 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = MedixLocalizations.of(context);
-    final hr = Localizations.localeOf(context).languageCode == 'hr';
+    final hr = true; // Hrvatski je jedini jezik javnog izdanja.
     return MedixPage(
       appBar: AppBar(title: Text(loc.t('more'))),
       safeArea: false,
@@ -236,16 +235,6 @@ class MoreScreen extends StatelessWidget {
             onTap: () => _push(
               context,
               const PrivacyScreen(),
-            ),
-          ),
-          _MenuItem(
-            icon: Icons.verified_user_outlined,
-            title: loc.t('officialSources'),
-            subtitle: loc.t('officialSourcesSubtitle'),
-            color: MedixColors.cyan,
-            onTap: () => _push(
-              context,
-              const SourcesScreen(),
             ),
           ),
           _MenuItem(

@@ -24,7 +24,7 @@ void main() {
       expect(state.localeCode, 'hr');
 
       await state.setLocale('unsupported');
-      expect(state.localeCode, 'en');
+      expect(state.localeCode, 'hr');
     });
 
     test('toggles favorites', () {

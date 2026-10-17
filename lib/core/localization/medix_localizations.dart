@@ -1,67 +1,37 @@
 import 'package:flutter/material.dart';
 
+/// MediX 1.0.0 uses Croatian exclusively in its user interface.
+/// The official source names and raw regulatory data remain unchanged.
 class MedixLanguage {
   const MedixLanguage(this.code, this.nativeName);
-
   final String code;
   final String nativeName;
 }
 
 abstract final class MedixLanguages {
-  static const primaryCode = 'en';
-
+  static const primaryCode = 'hr';
   static const supported = <MedixLanguage>[
-    MedixLanguage('en', 'English'),
     MedixLanguage('hr', 'Hrvatski'),
-    MedixLanguage('de', 'Deutsch'),
-    MedixLanguage('fr', 'Français'),
-    MedixLanguage('es', 'Español'),
-    MedixLanguage('it', 'Italiano'),
-    MedixLanguage('pt', 'Português'),
-    MedixLanguage('nl', 'Nederlands'),
-    MedixLanguage('pl', 'Polski'),
-    MedixLanguage('cs', 'Čeština'),
-    MedixLanguage('sk', 'Slovenčina'),
-    MedixLanguage('sl', 'Slovenščina'),
-    MedixLanguage('hu', 'Magyar'),
-    MedixLanguage('ro', 'Română'),
-    MedixLanguage('bg', 'Български'),
-    MedixLanguage('el', 'Ελληνικά'),
-    MedixLanguage('tr', 'Türkçe'),
-    MedixLanguage('uk', 'Українська'),
-    MedixLanguage('ru', 'Русский'),
-    MedixLanguage('sv', 'Svenska'),
-    MedixLanguage('da', 'Dansk'),
-    MedixLanguage('no', 'Norsk'),
-    MedixLanguage('fi', 'Suomi'),
-    MedixLanguage('lt', 'Lietuvių'),
   ];
 
-  static bool isSupported(String code) =>
-      supported.any((language) => language.code == code);
+  static bool isSupported(String code) => code == primaryCode;
 
-  static String normalize(String? code) =>
-      code != null && isSupported(code) ? code : primaryCode;
+  static String normalize(String? code) => primaryCode;
 
-  static List<Locale> get locales =>
-      supported.map((language) => Locale(language.code)).toList(growable: false);
+  static List<Locale> get locales => const [Locale('hr')];
 }
 
 class MedixLocalizations {
   const MedixLocalizations(this.locale);
-
   final Locale locale;
 
   static MedixLocalizations of(BuildContext context) =>
       Localizations.of<MedixLocalizations>(context, MedixLocalizations) ??
-      const MedixLocalizations(Locale('en'));
+      const MedixLocalizations(Locale('hr'));
 
   static const delegate = _MedixLocalizationsDelegate();
 
-  String t(String key) {
-    final language = _translations[locale.languageCode] ?? _translations['en']!;
-    return language[key] ?? _translations['en']![key] ?? key;
-  }
+  String t(String key) => _translations[key] ?? key;
 
   String tArgs(String key, Map<String, Object> values) {
     var value = t(key);
@@ -71,176 +41,8 @@ class MedixLocalizations {
     return value;
   }
 
-  static const _translations = <String, Map<String, String>>{
-    'en': {
-      'accessHzzoEffective': 'Effective from',
-      'accessHzzoDateUnknown': 'Effective date not provided',
-      'quickAll': 'All',
-      'quickPrescription': 'Prescription',
-      'quickOtc': 'Without prescription',
-      'quickBasicList': 'HZZO Basic',
-      'quickSupplementaryList': 'HZZO Supplementary',
-      'quickCopay': 'Verified copay',
-      'sortName': 'Medicine name A–Z',
-      'sortIngredient': 'Active ingredient A–Z',
-      'sortAtc': 'ATC code',
-      'sortCopayAsc': 'HZZO copayment: lower first',
-      'sortCopayDesc': 'HZZO copayment: higher first',
-      'sortWholesaleAsc': 'Wholesale price: lower first',
-      'sortWholesaleDesc': 'Wholesale price: higher first',
-      'medicineDocumentsTitle': 'Official medicine information',
-      'medicineDocumentsIntro': 'Open available official product documents. If no direct leaflet is supplied, search HALMED using the exact product name and strength.',
-      'medicinePatientLeaflet': 'Patient leaflet',
-      'medicineProfessionalSummary': 'Professional product information',
-      'medicineOfficialSource': 'Official source',
-      'medicineHalmedRegister': 'Search HALMED database',
-      'accessTitle': 'Prescription & medicine costs',
-      'accessPrescriptionLabel': 'Can it be purchased without a prescription?',
-      'accessPrescriptionRequired': 'Prescription required according to the medicine record.',
-      'accessWithoutPrescription': 'Available without a prescription according to the medicine record.',
-      'accessUnverified': 'Dispensing status not confirmed; ask your pharmacist.',
-      'accessMandatoryLabel': 'Mandatory HZZO insurance',
-      'accessBasicCoverage': 'Basic List: HZZO covers the medicine subject to prescribing and eligibility conditions.',
-      'accessSupplementaryList': 'HZZO Supplementary List: a medicine copayment may apply.',
-      'accessUnknownCoverage': 'No confirmed HZZO list match for this exact medicine and pack; coverage is not determined.',
-      'accessCopaymentLabel': 'HZZO copayment per original pack',
-      'accessCopaymentChip': 'HZZO copayment:',
-      'accessNotAvailable': 'Amount not confirmed',
-      'accessSupplementaryInsuranceLabel': 'With supplementary health insurance',
-      'accessPolicyVaries': 'Actual payment depends on your policy and coverage. A zero-euro cost cannot be assumed.',
-      'accessRetailLabel': 'Pharmacy retail price without reimbursement',
-      'accessRetailUnavailable': 'Not available in official offline data; ask the pharmacy.',
-      'accessWholesaleLabel': 'Recorded maximum wholesale price (not retail)',
-      'accessDisclaimer': 'HZZO list status, supplementary health insurance and wholesale/retail prices are different things. Amounts apply to the matched pack and stated source date; they are not a personal checkout quote.',
-      'accessOfficialHzzo': 'View official HZZO medicine lists',
-      'professionalDetails': 'Professional & regulatory details',
-      'accessPriceDetails': 'Detailed official price records',
-      'home': 'Home',
-      'searchTitle': 'Medicine search',
-      'compareMedicines': 'Compare medicines',
-      'sort': 'Sort',
-      'clearSearch': 'Clear search',
-      'filters': 'Filters',
-      'noResultsTitle': 'No matching medicines',
-      'noResultsBody': 'Adjust your search or remove one or more filters.',
-      'resetSearch': 'Reset search and filters',
-      'results': '{count} results',
-      'resultOne': '1 result',
-      'advancedFilters': 'Advanced filters',
-      'filterDescription': 'Combine multiple criteria for a precise catalog view.',
-      'reset': 'Reset',
-      'dispensing': 'Dispensing',
-      'all': 'All',
-      'unknown': 'Not specified',
-      'listStatus': 'Reimbursement status',
-      'price': 'Price',
-      'marketStatus': 'Market status',
-      'shortage': 'Shortage',
-      'atcGroup': 'ATC group',
-      'allAtc': 'All ATC groups',
-      'form': 'Pharmaceutical form',
-      'allForms': 'All forms',
-      'holderManufacturer': 'Authorization holder / manufacturer',
-      'applyFilters': 'Apply filters',
-      'therapyTitle': 'My therapy',
-      'addTherapy': 'Add therapy',
-      'noTherapyTitle': 'No therapy plan yet',
-      'noTherapyBody': 'Add a medicine, dose description, schedule and reminder times.',
-      'therapyNotice': 'Your therapy plan stays on this device. Android notification and alarm access is requested only when you enable reminders.',
-      'editTherapy': 'Edit therapy',
-      'removeTherapy': 'Remove therapy',
-      'removeTherapyQuestion': 'Remove this therapy?',
-      'removeTherapyBody': 'This entry and its reminders will be removed from this device.',
-      'cancel': 'Cancel',
-      'remove': 'Remove',
-      'remindersDenied': 'Therapy is active, but Android notifications are not allowed.',
-      'therapyFormIntro': 'Enter the schedule exactly as instructed by your doctor, pharmacist or the official medicine leaflet.',
-      'medicine': 'Medicine',
-      'doseDescription': 'Dose description',
-      'doseExample': 'e.g. 1 tablet',
-      'days': 'Days',
-      'selectDay': 'Select at least one day.',
-      'times': 'Reminder times',
-      'addTime': 'Add time',
-      'noTime': 'No time has been added yet.',
-      'saveTherapy': 'Save therapy',
-      'saveChanges': 'Save changes',
-      'therapyInvalid': 'Choose a medicine, enter the dose, select days and add a time.',
-      'therapySaveFailed': 'Therapy could not be saved. Check the entered data.',
-      'therapySavedNoNotifications': 'Therapy was saved, but Android notifications are not allowed.',
-      'everyDay': 'Every day',
-      'favoritesEmptyTitle': 'No favorites yet',
-      'favoritesEmptyBody': 'Tap the heart on a medicine to keep it one touch away.',
-      'search': 'Search',
-      'therapy': 'Therapy',
-      'favorites': 'Favorites',
-      'more': 'More',
-      'settings': 'Settings',
-      'language': 'Language',
-      'languageSubtitle': 'Choose the language used across MediX',
-      'export': 'Export my MediX data',
-      'exportSubtitle': 'Create a ZIP archive with PDF summaries of therapy, favorites and app information',
-      'privacy': 'Privacy policy',
-      'terms': 'Terms of use',
-      'author': 'Author',
-      'notifications': 'Reminder permissions',
-      'notificationsSubtitle': 'Allow Android notifications used only for therapy reminders',
-      'remindersEnabled': 'Therapy reminder permissions are enabled.',
-      'remindersPermissionDenied': 'Reminder permissions were not granted.',
-      'about': 'About MediX',
-      'legal': 'Legal & privacy',
-      'professionalTools': 'Professional tools',
-      'therapySafety': 'Therapy & safety',
-      'additional': 'More from MediX',
-      'officialSources': 'Official data sources',
-      'officialSourcesSubtitle': 'HALMED, HZZO and official pricing sources',
-      'securityPrivacy': 'Security & privacy',
-      'securityPrivacySubtitle': 'Privacy-first design with no mandatory account',
-      'exportReady': 'Your ZIP export is ready to share.',
-      'exportFailed': 'The export could not be created.',
-      'openFailed': 'This link could not be opened on this device.',
-      'loading': 'Loading verified medicine data…',
-      'dataErrorTitle': 'Verified data could not be loaded',
-      'dataErrorBody': 'MediX never replaces official medicine records with demo data. Check the installation and try again.',
-      'retry': 'Try again',
-      'skip': 'Skip',
-      'next': 'Next',
-      'start': 'Start MediX',
-      'onboarding1Title': 'Verified medicine data, ready when you need it',
-      'onboarding1Body': 'Search official medicine records, reimbursement details and pricing information in a fast professional workspace.',
-      'onboarding2Title': 'Safer therapy review',
-      'onboarding2Body': 'Compare medicines, review known interaction data and keep uncertainty visible instead of guessing.',
-      'onboarding3Title': 'Your therapy, organized privately',
-      'onboarding3Body': 'Keep favorites, therapy schedules and reminders on your device without a mandatory account.',
-      'allMedicines': 'All medicines',
-      'prescription': 'Prescription',
-      'otc': 'Non-prescription',
-      'marketed': 'On market',
-      'ingredients': 'Active ingredients',
-      'manufacturers': 'Manufacturers',
-      'quickTools': 'Professional shortcuts',
-      'categories': 'Medicine categories',
-      'viewAll': 'View all',
-      'recent': 'Recently viewed',
-      'database': 'From the verified database',
-      'searchHint': 'Name, ingredient, ATC, package…',
-      'privacyTitle': 'Security & privacy',
-      'privacyNoAccount': 'No mandatory account',
-      'privacyNoAccountBody': 'Core MediX features work without registration or sign-in.',
-      'privacyLocal': 'Private local data',
-      'privacyLocalBody': 'Favorites, recent medicines, therapy and language preferences are stored on your device.',
-      'privacyReminders': 'Purpose-limited reminders',
-      'privacyRemindersBody': 'Notification and alarm permissions are used only for therapy reminders you choose to enable.',
-      'privacyMedical': 'Health information',
-      'privacyMedicalBody': 'MediX does not require a diagnosis to browse the medicine database. Therapy entries stay on your device.',
-      'privacyPermissions': 'Minimum permissions',
-      'privacyPermissionsBody': 'MediX requests only permissions required by a feature you actively use.',
-      'aboutTitle': 'About MediX',
-      'aboutTagline': 'Professional medicine intelligence for clear, confident navigation of verified data.',
-      'medicalDisclaimer': 'MediX is not a medical device and does not diagnose, treat, cure or prevent any medical condition. Consult a qualified healthcare professional for medical advice, diagnosis or treatment.',
-      'byBrendigo': 'Designed and developed by Brendigo.',
-    },
-    'hr': {
+  static const _translations = <String, String>{
+
       'accessHzzoEffective': 'U primjeni od',
       'accessHzzoDateUnknown': 'Datum primjene nije potvrđen',
       'quickAll': 'Svi',
@@ -369,33 +171,11 @@ class MedixLocalizations {
       'aboutTitle': 'O aplikaciji MediX', 'aboutTagline': 'Profesionalna baza i alati za jasan rad s provjerenim podacima o lijekovima.',
       'medicalDisclaimer': 'MediX nije medicinski uređaj i ne postavlja dijagnozu, ne liječi, ne izliječi niti sprječava zdravstvena stanja. Za medicinski savjet, dijagnozu ili liječenje obratite se kvalificiranom zdravstvenom stručnjaku.',
       'byBrendigo': 'Dizajn i razvoj: Brendigo.',
-    },
-    'de': {'home':'Start','search':'Suche','therapy':'Therapie','favorites':'Favoriten','more':'Mehr','settings':'Einstellungen','language':'Sprache','export':'MediX-Daten exportieren','privacy':'Datenschutz','terms':'Nutzungsbedingungen','about':'Über MediX','author':'Autor','retry':'Erneut versuchen','skip':'Überspringen','next':'Weiter','start':'MediX starten'},
-    'fr': {'home':'Accueil','search':'Recherche','therapy':'Traitement','favorites':'Favoris','more':'Plus','settings':'Paramètres','language':'Langue','export':'Exporter mes données MediX','privacy':'Politique de confidentialité','terms':'Conditions d’utilisation','about':'À propos de MediX','author':'Auteur','retry':'Réessayer','skip':'Ignorer','next':'Suivant','start':'Démarrer MediX'},
-    'es': {'home':'Inicio','search':'Buscar','therapy':'Terapia','favorites':'Favoritos','more':'Más','settings':'Ajustes','language':'Idioma','export':'Exportar mis datos de MediX','privacy':'Política de privacidad','terms':'Términos de uso','about':'Acerca de MediX','author':'Autor','retry':'Reintentar','skip':'Omitir','next':'Siguiente','start':'Iniciar MediX'},
-    'it': {'home':'Home','search':'Cerca','therapy':'Terapia','favorites':'Preferiti','more':'Altro','settings':'Impostazioni','language':'Lingua','export':'Esporta i miei dati MediX','privacy':'Informativa sulla privacy','terms':'Termini di utilizzo','about':'Informazioni su MediX','author':'Autore','retry':'Riprova','skip':'Salta','next':'Avanti','start':'Avvia MediX'},
-    'pt': {'home':'Início','search':'Pesquisa','therapy':'Terapia','favorites':'Favoritos','more':'Mais','settings':'Definições','language':'Idioma','export':'Exportar os meus dados MediX','privacy':'Política de privacidade','terms':'Termos de utilização','about':'Sobre o MediX','author':'Autor','retry':'Tentar novamente','skip':'Saltar','next':'Seguinte','start':'Iniciar MediX'},
-    'nl': {'home':'Home','search':'Zoeken','therapy':'Therapie','favorites':'Favorieten','more':'Meer','settings':'Instellingen','language':'Taal','export':'Mijn MediX-gegevens exporteren','privacy':'Privacybeleid','terms':'Gebruiksvoorwaarden','about':'Over MediX','author':'Auteur','retry':'Opnieuw proberen','skip':'Overslaan','next':'Volgende','start':'MediX starten'},
-    'pl': {'home':'Start','search':'Szukaj','therapy':'Terapia','favorites':'Ulubione','more':'Więcej','settings':'Ustawienia','language':'Język','export':'Eksportuj moje dane MediX','privacy':'Polityka prywatności','terms':'Warunki korzystania','about':'O MediX','author':'Autor','retry':'Spróbuj ponownie','skip':'Pomiń','next':'Dalej','start':'Uruchom MediX'},
-    'cs': {'home':'Domů','search':'Hledat','therapy':'Terapie','favorites':'Oblíbené','more':'Více','settings':'Nastavení','language':'Jazyk','export':'Exportovat data MediX','privacy':'Zásady ochrany osobních údajů','terms':'Podmínky použití','about':'O MediX','author':'Autor','retry':'Zkusit znovu','skip':'Přeskočit','next':'Další','start':'Spustit MediX'},
-    'sk': {'home':'Domov','search':'Hľadať','therapy':'Terapia','favorites':'Obľúbené','more':'Viac','settings':'Nastavenia','language':'Jazyk','export':'Exportovať údaje MediX','privacy':'Zásady ochrany súkromia','terms':'Podmienky používania','about':'O MediX','author':'Autor','retry':'Skúsiť znova','skip':'Preskočiť','next':'Ďalej','start':'Spustiť MediX'},
-    'sl': {'home':'Domov','search':'Iskanje','therapy':'Terapija','favorites':'Priljubljeno','more':'Več','settings':'Nastavitve','language':'Jezik','export':'Izvozi moje podatke MediX','privacy':'Pravilnik o zasebnosti','terms':'Pogoji uporabe','about':'O MediX','author':'Avtor','retry':'Poskusi znova','skip':'Preskoči','next':'Naprej','start':'Začni MediX'},
-    'hu': {'home':'Kezdőlap','search':'Keresés','therapy':'Terápia','favorites':'Kedvencek','more':'Továbbiak','settings':'Beállítások','language':'Nyelv','export':'MediX-adatok exportálása','privacy':'Adatvédelmi irányelvek','terms':'Felhasználási feltételek','about':'A MediX névjegye','author':'Szerző','retry':'Újra','skip':'Kihagyás','next':'Tovább','start':'MediX indítása'},
-    'ro': {'home':'Acasă','search':'Căutare','therapy':'Terapie','favorites':'Favorite','more':'Mai multe','settings':'Setări','language':'Limbă','export':'Exportă datele mele MediX','privacy':'Politica de confidențialitate','terms':'Termeni de utilizare','about':'Despre MediX','author':'Autor','retry':'Încearcă din nou','skip':'Omite','next':'Înainte','start':'Pornește MediX'},
-    'bg': {'home':'Начало','search':'Търсене','therapy':'Терапия','favorites':'Любими','more':'Още','settings':'Настройки','language':'Език','export':'Експорт на моите MediX данни','privacy':'Политика за поверителност','terms':'Условия за ползване','about':'За MediX','author':'Автор','retry':'Опитай отново','skip':'Пропусни','next':'Напред','start':'Стартирай MediX'},
-    'el': {'home':'Αρχική','search':'Αναζήτηση','therapy':'Θεραπεία','favorites':'Αγαπημένα','more':'Περισσότερα','settings':'Ρυθμίσεις','language':'Γλώσσα','export':'Εξαγωγή δεδομένων MediX','privacy':'Πολιτική απορρήτου','terms':'Όροι χρήσης','about':'Σχετικά με το MediX','author':'Δημιουργός','retry':'Δοκιμή ξανά','skip':'Παράλειψη','next':'Επόμενο','start':'Έναρξη MediX'},
-    'tr': {'home':'Ana Sayfa','search':'Ara','therapy':'Tedavi','favorites':'Favoriler','more':'Daha Fazla','settings':'Ayarlar','language':'Dil','export':'MediX verilerimi dışa aktar','privacy':'Gizlilik politikası','terms':'Kullanım koşulları','about':'MediX hakkında','author':'Geliştirici','retry':'Tekrar dene','skip':'Atla','next':'İleri','start':'MediX’i başlat'},
-    'uk': {'home':'Головна','search':'Пошук','therapy':'Терапія','favorites':'Обране','more':'Більше','settings':'Налаштування','language':'Мова','export':'Експортувати мої дані MediX','privacy':'Політика конфіденційності','terms':'Умови використання','about':'Про MediX','author':'Автор','retry':'Спробувати знову','skip':'Пропустити','next':'Далі','start':'Запустити MediX'},
-    'ru': {'home':'Главная','search':'Поиск','therapy':'Терапия','favorites':'Избранное','more':'Ещё','settings':'Настройки','language':'Язык','export':'Экспортировать мои данные MediX','privacy':'Политика конфиденциальности','terms':'Условия использования','about':'О MediX','author':'Автор','retry':'Повторить','skip':'Пропустить','next':'Далее','start':'Запустить MediX'},
-    'sv': {'home':'Hem','search':'Sök','therapy':'Behandling','favorites':'Favoriter','more':'Mer','settings':'Inställningar','language':'Språk','export':'Exportera mina MediX-data','privacy':'Integritetspolicy','terms':'Användarvillkor','about':'Om MediX','author':'Utvecklare','retry':'Försök igen','skip':'Hoppa över','next':'Nästa','start':'Starta MediX'},
-    'da': {'home':'Hjem','search':'Søg','therapy':'Behandling','favorites':'Favoritter','more':'Mere','settings':'Indstillinger','language':'Sprog','export':'Eksportér mine MediX-data','privacy':'Privatlivspolitik','terms':'Brugsvilkår','about':'Om MediX','author':'Udvikler','retry':'Prøv igen','skip':'Spring over','next':'Næste','start':'Start MediX'},
-    'no': {'home':'Hjem','search':'Søk','therapy':'Behandling','favorites':'Favoritter','more':'Mer','settings':'Innstillinger','language':'Språk','export':'Eksporter mine MediX-data','privacy':'Personvernregler','terms':'Bruksvilkår','about':'Om MediX','author':'Utvikler','retry':'Prøv igjen','skip':'Hopp over','next':'Neste','start':'Start MediX'},
-    'fi': {'home':'Koti','search':'Haku','therapy':'Hoito','favorites':'Suosikit','more':'Lisää','settings':'Asetukset','language':'Kieli','export':'Vie MediX-tietoni','privacy':'Tietosuojakäytäntö','terms':'Käyttöehdot','about':'Tietoja MediXistä','author':'Tekijä','retry':'Yritä uudelleen','skip':'Ohita','next':'Seuraava','start':'Käynnistä MediX'},
-    'lt': {'home':'Pradžia','search':'Paieška','therapy':'Terapija','favorites':'Mėgstami','more':'Daugiau','settings':'Nustatymai','language':'Kalba','export':'Eksportuoti mano MediX duomenis','privacy':'Privatumo politika','terms':'Naudojimo sąlygos','about':'Apie MediX','author':'Autorius','retry':'Bandyti dar kartą','skip':'Praleisti','next':'Toliau','start':'Paleisti MediX'},
   };
 }
 
-class _MedixLocalizationsDelegate extends LocalizationsDelegate<MedixLocalizations> {
+class _MedixLocalizationsDelegate
+    extends LocalizationsDelegate<MedixLocalizations> {
   const _MedixLocalizationsDelegate();
 
   @override
@@ -404,7 +184,7 @@ class _MedixLocalizationsDelegate extends LocalizationsDelegate<MedixLocalizatio
 
   @override
   Future<MedixLocalizations> load(Locale locale) async =>
-      MedixLocalizations(locale);
+      const MedixLocalizations(Locale('hr'));
 
   @override
   bool shouldReload(_MedixLocalizationsDelegate old) => false;

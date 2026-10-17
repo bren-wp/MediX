@@ -120,10 +120,8 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  String stateCopy(BuildContext context) {
-    final hr = Localizations.localeOf(context).languageCode == 'hr';
-    return hr
-        ? 'MediX spaja provjerene podatke o lijekovima, naprednu pretragu, terapiju, klasifikacije, cijene i profesionalne kliničke alate u jedno moderno Android iskustvo.'
-        : 'MediX brings verified medicine data, advanced search, therapy planning, classifications, pricing and professional clinical tools into one focused Android experience.';
-  }
+  String stateCopy(BuildContext context) =>
+      'MediX spaja provjerene podatke o lijekovima, naprednu pretragu, '
+      'terapiju, klasifikacije, cijene i stručne kliničke alate '
+      'u jednu preglednu Android aplikaciju.';
 }

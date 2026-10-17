@@ -230,7 +230,7 @@ class HomeScreen extends StatelessWidget {
                   _ProfessionalAction(
                     icon: Icons.auto_awesome_rounded,
                     title: 'MediX Smart',
-                    subtitle: state.localeCode == 'hr' ? 'Pametna pretraga' : 'Smart search',
+                    subtitle: 'Pametna pretraga',
                     color: MedixColors.cyan,
                     onTap: () => _push(
                       context,
@@ -239,8 +239,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _ProfessionalAction(
                     icon: Icons.hub_outlined,
-                    title: state.localeCode == 'hr' ? 'Interakcije' : 'Interactions',
-                    subtitle: state.localeCode == 'hr' ? 'Provjera terapije' : 'Therapy review',
+                    title: 'Interakcije',
+                    subtitle: 'Provjera terapije',
                     color: MedixColors.danger,
                     onTap: () => _push(
                       context,
@@ -249,8 +249,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                   _ProfessionalAction(
                     icon: Icons.calculate_outlined,
-                    title: state.localeCode == 'hr' ? 'Klinički alati' : 'Clinical tools',
-                    subtitle: state.localeCode == 'hr' ? '9 kalkulatora' : '9 calculators',
+                    title: 'Klinički alati',
+                    subtitle: '9 kalkulatora',
                     color: MedixColors.primary,
                     onTap: () => _push(
                       context,
@@ -260,7 +260,7 @@ class HomeScreen extends StatelessWidget {
                   _ProfessionalAction(
                     icon: Icons.account_tree_outlined,
                     title: 'ATK i MKB-10',
-                    subtitle: state.localeCode == 'hr' ? 'Klasifikacije' : 'Classifications',
+                    subtitle: 'Klasifikacije',
                     color: MedixColors.purple,
                     onTap: () => _push(
                       context,

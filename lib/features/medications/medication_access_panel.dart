@@ -4,7 +4,6 @@ import '../../core/localization/medix_localizations.dart';
 import '../../core/theme/medix_theme.dart';
 import '../../models/medication.dart';
 import '../../models/medication_access.dart';
-import '../../services/platform_navigation.dart';
 import '../../widgets/medix_page.dart';
 
 /// One concise answer for both clinical professionals and medicine consumers.
@@ -14,9 +13,6 @@ class MedicationAccessPanel extends StatelessWidget {
   const MedicationAccessPanel({required this.medication, super.key});
 
   final Medication medication;
-
-  static const officialHzzoListUrl =
-      'https://hzzo.hr/zdravstvena-zastita/objavljene-liste-lijekova';
 
   @override
   Widget build(BuildContext context) {
@@ -122,29 +118,7 @@ class MedicationAccessPanel extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          const SizedBox(height: 5),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton.icon(
-              onPressed: () async {
-                var opened = false;
-                try {
-                  opened = await MedixPlatformNavigation.openExternalUrl(
-                    officialHzzoListUrl,
-                  );
-                } catch (_) {
-                  // Missing browser handlers must not crash medicine details.
-                }
-                if (!opened && context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(loc.t('openFailed'))),
-                  );
-                }
-              },
-              icon: const Icon(Icons.open_in_new_rounded, size: 17),
-              label: Text(loc.t('accessOfficialHzzo')),
-            ),
-          ),
+
         ],
       ),
     );

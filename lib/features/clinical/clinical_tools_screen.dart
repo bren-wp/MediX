@@ -423,7 +423,7 @@ final List<_ToolDefinition> _definitions = [
   ),
   _ToolDefinition(
     title: 'eGFR · CKD-EPI 2021',
-    subtitle: 'Race-free procjena za odrasle',
+    subtitle: 'Procjena za odrasle bez primjene rasnih koeficijenata',
     description:
         '2021 CKD-EPI kreatininska procjena iz dobi, serumskog kreatinina i spola, bez rasnog koeficijenta.',
     icon: Icons.water_drop_outlined,
