@@ -1,11 +1,11 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-17T08:32:25.140039+00:00",
+  "generated_at": "2026-10-17T21:31:00.799532+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad3328d87d9f.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad3e9082363c.xlsx",
     "scope": "public_human_medicine_search_results",
     "medicine_name_field": "Naziv",
     "medicine_name_policy": "copied from the HALMED Naziv column; whitespace normalized only"
