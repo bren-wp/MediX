@@ -98,7 +98,7 @@ class MedixPreferences implements MedixPersistence {
                   isActive: map['active'] != false,
                 ),
               );
-            } on (TypeError, FormatException) {
+            } catch (_) {
               // Do not log locally stored health-related details.
               continue;
             }
