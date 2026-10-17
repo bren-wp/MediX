@@ -104,17 +104,10 @@ class MedixState extends ChangeNotifier {
         .toList();
   }
 
-  List<Medication> get recent {
-    final byId = {
-      for (final medication in repository.medications)
-        medication.id: medication,
-    };
-
-    return _recentIds
-        .map((id) => byId[id])
-        .whereType<Medication>()
-        .toList(growable: false);
-  }
+  List<Medication> get recent => _recentIds
+      .map((id) => _medicationsById[id])
+      .whereType<Medication>()
+      .toList(growable: false);
 
   Medication? medicationById(String id) => _medicationsById[id];
 

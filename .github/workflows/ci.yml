@@ -40,6 +40,12 @@ jobs:
       - name: Audit production Dart sources
         run: python3 tool/audit_dart_reachability.py
 
+      - name: Test catalog validator
+        run: python3 -m unittest tool.test_validate_catalogs
+
+      - name: Validate bundled HALMED/HZZO/price catalogs
+        run: python3 tool/validate_catalogs.py --check-only
+
       - name: Analyze
         run: flutter analyze
 

@@ -41,6 +41,9 @@ jobs:
       - name: Install importer dependencies
         run: python -m pip install --disable-pip-version-check requests beautifulsoup4 openpyxl
 
+      - name: Verify catalog validator behavior
+        run: python3 -m unittest tool.test_validate_catalogs
+
       - name: Synchronize HALMED human-medicine registry
         run: python tool/sync_halmed_catalog.py --minimum-records 4000
 

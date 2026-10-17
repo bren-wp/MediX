@@ -7,6 +7,7 @@ import argparse
 import json
 import re
 from collections import Counter
+from datetime import date
 from pathlib import Path
 
 ATC_TOKEN_RE = re.compile(
@@ -219,6 +220,17 @@ def validate_halmed(data: dict, minimum: int) -> dict:
 
 
 def validate_secondary(data: dict, label: str, minimum: int) -> int:
+    """Fail closed on corrupt or untraceable secondary catalog snapshots.
+
+    A secondary source can only enrich HALMED identities. Its published
+    snapshot must have complete provenance before it can enter an APK.
+    """
+    if not isinstance(data, dict):
+        raise RuntimeError(f"{label} catalog is not a JSON object.")
+    source = data.get("source")
+    if not isinstance(source, dict) or not clean(source.get("name")):
+        raise RuntimeError(f"{label} source name is missing.")
+
     records = data.get("records")
     if not isinstance(records, list):
         raise RuntimeError(f"{label} records is not a list.")
@@ -226,6 +238,30 @@ def validate_secondary(data: dict, label: str, minimum: int) -> int:
         raise RuntimeError(
             f"{label} record count {len(records)} is below minimum {minimum}."
         )
+    declared_count = data.get("record_count")
+    if declared_count is not None and (
+        type(declared_count) is not int or declared_count != len(records)
+    ):
+        raise RuntimeError(
+            f"{label} record_count does not match actual records."
+        )
+
+    source_date_key = "effective_date" if label == "HZZO" else "published_date"
+    value = source.get(source_date_key)
+    if not isinstance(value, str):
+        raise RuntimeError(f"{label} {source_date_key} is missing.")
+    try:
+        parsed = date.fromisoformat(value)
+    except ValueError as exc:
+        raise RuntimeError(
+            f"{label} {source_date_key} is not a real ISO date."
+        ) from exc
+    if parsed.isoformat() != value:
+        raise RuntimeError(f"{label} {source_date_key} must be YYYY-MM-DD.")
+
+    for index, record in enumerate(records):
+        if not isinstance(record, dict):
+            raise RuntimeError(f"{label} non-object record at index {index}.")
     return len(records)
 
 
@@ -326,6 +362,11 @@ def main() -> int:
     parser.add_argument("--halmed-minimum", type=int, default=4000)
     parser.add_argument("--hzzo-minimum", type=int, default=500)
     parser.add_argument("--price-minimum", type=int, default=1000)
+    parser.add_argument(
+        "--check-only",
+        action="store_true",
+        help="Validate bundled catalogs without overwriting the checked-in report.",
+    )
     args = parser.parse_args()
 
     halmed = load(args.halmed)
@@ -339,7 +380,8 @@ def main() -> int:
         "HALMED prices",
         args.price_minimum,
     )
-    write_report(args.report, halmed, hzzo_count, price_count, stats)
+    if not args.check_only:
+        write_report(args.report, halmed, hzzo_count, price_count, stats)
 
     print(
         "Validated catalogs: "

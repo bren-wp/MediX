@@ -50,48 +50,58 @@ class MedixPreferences implements MedixPersistence {
       try {
         final decoded = jsonDecode(therapyRaw);
         if (decoded is List) {
+          final restoredIds = <String>{};
           for (final item in decoded) {
             if (item is! Map) continue;
-            final map = Map<String, dynamic>.from(item);
-            final id = map['id']?.toString() ?? '';
-            final medicationId = map['medication_id']?.toString() ?? '';
-            final dose = map['dose']?.toString() ?? '';
-            final rawTimes = map['times'];
-            final times = rawTimes is List
-                ? TherapyEntry.normalizeTimes(
-                    rawTimes.map((value) => value.toString()),
-                  )
-                : <String>[];
-            final rawWeekdays = map['weekdays'];
-            final weekdays = rawWeekdays is List
-                ? (rawWeekdays
-                      .map((e) => int.tryParse(e.toString()))
-                      .whereType<int>()
-                      .where((day) => day >= 1 && day <= 7)
-                      .toSet()
-                      .toList()
-                  ..sort())
-                : <int>[1, 2, 3, 4, 5, 6, 7];
+            try {
+              // Isolate corrupt entries: one malformed map must not discard
+              // an otherwise valid private therapy plan on this device.
+              final map = Map<String, dynamic>.from(item);
+              final id = (map['id'] as String?)?.trim() ?? '';
+              final medicationId =
+                  (map['medication_id'] as String?)?.trim() ?? '';
+              final dose = (map['dose'] as String?)?.trim() ?? '';
+              final rawTimes = map['times'];
+              final times = rawTimes is List
+                  ? TherapyEntry.normalizeTimes(
+                      rawTimes.whereType<String>(),
+                    )
+                  : <String>[];
+              final rawWeekdays = map['weekdays'];
+              final weekdays = rawWeekdays is List
+                  ? (rawWeekdays
+                        .map((e) => int.tryParse(e.toString()))
+                        .whereType<int>()
+                        .where((day) => day >= 1 && day <= 7)
+                        .toSet()
+                        .toList()
+                    ..sort())
+                  : <int>[1, 2, 3, 4, 5, 6, 7];
 
-            if (id.isEmpty ||
-                medicationId.isEmpty ||
-                dose.isEmpty ||
-                times.isEmpty) {
+              if (id.isEmpty ||
+                  medicationId.isEmpty ||
+                  dose.isEmpty ||
+                  times.isEmpty ||
+                  !restoredIds.add(id)) {
+                continue;
+              }
+
+              therapy.add(
+                TherapyEntry(
+                  id: id,
+                  medicationId: medicationId,
+                  doseDescription: dose,
+                  times: times,
+                  weekdays: weekdays.isEmpty
+                      ? const [1, 2, 3, 4, 5, 6, 7]
+                      : weekdays,
+                  isActive: map['active'] != false,
+                ),
+              );
+            } on (TypeError, FormatException) {
+              // Do not log locally stored health-related details.
               continue;
             }
-
-            therapy.add(
-              TherapyEntry(
-                id: id,
-                medicationId: medicationId,
-                doseDescription: dose,
-                times: times,
-                weekdays: weekdays.isEmpty
-                    ? const [1, 2, 3, 4, 5, 6, 7]
-                    : weekdays,
-                isActive: map['active'] != false,
-              ),
-            );
           }
         }
       } catch (_) {

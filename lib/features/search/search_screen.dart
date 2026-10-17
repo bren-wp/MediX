@@ -264,20 +264,18 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(height: 4),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 2, 16, 6),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        results.length == 1
-                            ? loc.t('resultOne')
-                            : loc.tArgs('results', {'count': results.length}),
-                        style: const TextStyle(
-                          color: MedixColors.textSecondary,
-                          fontWeight: FontWeight.w700,
-                        ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final count = Text(
+                      results.length == 1
+                          ? loc.t('resultOne')
+                          : loc.tArgs('results', {'count': results.length}),
+                      style: const TextStyle(
+                        color: MedixColors.textSecondary,
+                        fontWeight: FontWeight.w700,
                       ),
-                    ),
-                    FilledButton.tonalIcon(
+                    );
+                    final filters = FilledButton.tonalIcon(
                       onPressed: _openFilters,
                       icon: Icon(
                         query.hasFilters
@@ -290,8 +288,26 @@ class _SearchScreenState extends State<SearchScreen> {
                             ? '${loc.t('filters')} · ${_activeFilterCount(query)}'
                             : loc.t('filters'),
                       ),
-                    ),
-                  ],
+                    );
+                    // Leave enough room for large font settings and longer
+                    // translated labels without a RenderFlex overflow.
+                    if (constraints.maxWidth < 350 ||
+                        MediaQuery.textScalerOf(context).scale(1) > 1.35) {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        alignment: WrapAlignment.spaceBetween,
+                        children: [count, filters],
+                      );
+                    }
+                    return Row(
+                      children: [
+                        Expanded(child: count),
+                        filters,
+                      ],
+                    );
+                  },
                 ),
               ),
               if (query.hasFilters)
