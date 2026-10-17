@@ -12,7 +12,12 @@ void main() {
     SharedPreferences.setMockInitialValues({
       'medix.therapy.v1': jsonEncode([
         {'bad': 'record'},
-        {1: 'non-string key'},
+        {
+          'id': ['invalid type'],
+          'medication_id': 'paracetamol-500',
+          'dose': '1 tablet',
+          'times': ['08:00'],
+        },
         {
           'id': 'safe',
           'medication_id': 'paracetamol-500',
