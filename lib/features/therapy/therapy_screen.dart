@@ -5,6 +5,7 @@ import '../../core/localization/medix_localizations.dart';
 import '../../models/therapy_entry.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_page.dart';
+import 'therapy_medicine_picker.dart';
 
 class TherapyScreen extends StatelessWidget {
   const TherapyScreen({
@@ -309,9 +310,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
       times.addAll(entry.times.map(_parseTime).whereType<TimeOfDay>());
     } else {
       weekdays.addAll(const [1, 2, 3, 4, 5, 6, 7]);
-      if (widget.state.repository.medications.isNotEmpty) {
-        medicationId = widget.state.repository.medications.first.id;
-      }
+      // A new therapy must not default to the first medicine in the database.
     }
   }
 
@@ -335,6 +334,12 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
   void dispose() {
     doseController.dispose();
     super.dispose();
+  }
+
+  Future<void> _chooseMedication() async {
+    final selected = await showTherapyMedicinePicker(context, widget.state);
+    if (!mounted || selected == null) return;
+    setState(() => medicationId = selected);
   }
 
   Future<void> _addTime() async {
@@ -383,11 +388,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
     }
 
     final messenger = ScaffoldMessenger.of(context);
-    final notificationsAllowed =
-        await widget.state.requestReminderPermissions();
-
-    if (!mounted) return;
-
+    final therapyState = widget.state;
     final formattedTimes =
         times.map((time) => _formatTime(context, time)).toList();
 
@@ -419,14 +420,14 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
       return;
     }
 
+    // Persist immediately. Android's notification permission prompt must
+    // not delay or prevent saving an otherwise valid personal therapy plan.
+    final warning = MedixLocalizations.of(context)
+        .t('therapySavedNoNotifications');
     Navigator.of(context).pop();
-
-    if (!notificationsAllowed) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(MedixLocalizations.of(context).t('therapySavedNoNotifications')),
-        ),
-      );
+    final allowed = await therapyState.requestReminderPermissions();
+    if (!allowed && messenger.mounted) {
+      messenger.showSnackBar(SnackBar(content: Text(warning)));
     }
   }
 
@@ -435,7 +436,6 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
     final loc = MedixLocalizations.of(context);
     final hr = Localizations.localeOf(context).languageCode == 'hr';
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-    final medications = widget.state.repository.medications;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(18, 20, 18, 18 + bottomInset),
@@ -459,28 +459,55 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
               ),
             ),
             const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              initialValue: medicationId,
-              decoration: InputDecoration(
-                labelText: loc.t('medicine'),
-                prefixIcon: const Icon(Icons.medication_outlined),
-              ),
-              items: medications
-                  .map(
-                    (medication) => DropdownMenuItem<String>(
-                      value: medication.id,
-                      child: Text(
-                        medication.compactSubtitle == null
-                            ? medication.name
-                            : '${medication.name} · '
-                                '${medication.compactSubtitle}',
-                        overflow: TextOverflow.ellipsis,
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('therapyMedicineSelect'),
+                onPressed: _chooseMedication,
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 14,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.medication_outlined),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            medicationId == null
+                                ? loc.t('therapyChooseMedicine')
+                                : widget.state.medicationById(medicationId!)?.name ??
+                                    loc.t('therapyChooseMedicine'),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (medicationId != null)
+                            Text(
+                              [
+                                widget.state.medicationById(medicationId!)?.strength ?? '',
+                                widget.state.medicationById(medicationId!)?.packageDescription ?? '',
+                              ].where((v) => v.isNotEmpty).join(' · '),
+                              style: const TextStyle(
+                                color: MedixColors.textSecondary,
+                                fontSize: 11,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        ],
                       ),
                     ),
-                  )
-                  .toList(),
-              onChanged: (value) =>
-                  setState(() => medicationId = value),
+                    const Icon(Icons.chevron_right_rounded),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(height: 12),
             TextField(
