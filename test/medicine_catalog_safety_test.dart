@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medix/data/medication_repository.dart';
 import 'package:medix/models/medication.dart';
-import 'package:medix/models/medication_price.dart';
 
 void main() {
   String halmedCatalog({
