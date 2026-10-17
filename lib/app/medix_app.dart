@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter/services.dart';
 
 import '../core/theme/medix_theme.dart';
 import '../core/localization/medix_localizations.dart';
 import '../data/medication_repository.dart';
+import '../data/bundled_repository_loader.dart';
 import '../features/home/app_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../services/preferences_store.dart';
@@ -37,20 +37,9 @@ class _MedixAppState extends State<MedixApp> {
 
     late final MedicationRepository repository;
     try {
-      final halmedRaw = await rootBundle.loadString(
-        'assets/data/halmed_catalog.json',
-      );
-      final reimbursementRaw = await rootBundle.loadString(
-        'assets/data/medications_official.json',
-      );
-      final priceRaw = await rootBundle.loadString(
-        'assets/data/halmed_prices_2026.json',
-      );
-      repository = MedicationRepository.fromBundledCatalogs(
-        halmedJson: halmedRaw,
-        reimbursementJson: reimbursementRaw,
-        priceJson: priceRaw,
-      );
+      // Never parse or cross-reference multi-megabyte medicine catalogs on
+      // the Flutter UI isolate. Long synchronous work caused startup freezes.
+      repository = await loadBundledMedicineRepository();
     } catch (error, stackTrace) {
       FlutterError.reportError(
         FlutterErrorDetails(

@@ -92,6 +92,36 @@ void main() {
     expect(byId['correct']!.maxWholesalePrice?.amount, 23);
   });
 
+  test('indexed lookup still finds a precise match among many other brands',
+      () {
+    final records = [
+      for (var i = 0; i < 1800; i++)
+        halmedRecord('unrelated-$i', 'Otherbrand$i 500 mg tablete',
+            '500 mg', '500 mg 30 tableta'),
+      halmedRecord('correct', 'Medicin 500 mg tablete',
+          '500 mg', '500 mg 30 tableta'),
+    ];
+
+    final repository = MedicationRepository.fromBundledCatalogs(
+      halmedJson: halmed(records),
+      reimbursementJson: hzzo(),
+      priceJson: wholesale('Medicin 500 mg 30 tableta'),
+    );
+
+    final match = repository.medications
+        .singleWhere((medicine) => medicine.id == 'correct');
+    expect(match.hzzoCopay?.amount, 6.50);
+    expect(match.maxWholesalePrice?.amount, 23);
+    expect(
+      repository.medications
+          .where((medicine) => medicine.id.startsWith('unrelated-'))
+          .every((medicine) =>
+              medicine.hzzoCopay == null &&
+              medicine.maxWholesalePrice == null),
+      isTrue,
+    );
+  });
+
   test('does not guess a pack match when HALMED strength or pack is absent',
       () {
     final repo = MedicationRepository.fromBundledCatalogs(

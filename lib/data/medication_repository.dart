@@ -263,14 +263,20 @@ class MedicationRepository {
   }) {
     final base = MedicationRepository.fromHalmedJson(halmedJson);
     final medications = List<Medication>.from(base.medications);
+    // Index trade-name prefixes once. The previous startup compared each
+    // HZZO/price row against every HALMED medicine, causing tens of millions
+    // of synchronous comparisons and Android startup stalls.
+    final matchIndex = _MedicineMatchIndex(medications);
 
     _mergeReimbursementCatalog(
       medications,
       reimbursementJson,
+      matchIndex,
     );
     _mergePriceCatalog(
       medications,
       priceJson,
+      matchIndex,
     );
 
     medications.sort(
@@ -287,6 +293,7 @@ class MedicationRepository {
   static void _mergeReimbursementCatalog(
     List<Medication> medications,
     String rawJson,
+    _MedicineMatchIndex matchIndex,
   ) {
     MedicationRepository reimbursement;
     try {
@@ -307,6 +314,7 @@ class MedicationRepository {
           incoming.packageDescription ?? '',
         ].join(' '),
         holder: incoming.marketingAuthorizationHolder,
+        matchIndex: matchIndex,
       );
       if (index == null) continue;
 
@@ -350,6 +358,7 @@ class MedicationRepository {
   static void _mergePriceCatalog(
     List<Medication> medications,
     String rawJson,
+    _MedicineMatchIndex matchIndex,
   ) {
     // Wholesale catalog is optional enrichment, not an app startup gate.
     // Malformed snapshots must not crash the main HALMED medicine catalog.
@@ -412,6 +421,7 @@ class MedicationRepository {
         atcCode: atc,
         strengthOrPackage: package,
         holder: _nullableString(record['holder']),
+        matchIndex: matchIndex,
       );
       if (index == null) {
         // A secondary source can enrich an existing HALMED medicine,
@@ -459,6 +469,7 @@ class MedicationRepository {
     required String? atcCode,
     required String strengthOrPackage,
     required String? holder,
+    required _MedicineMatchIndex matchIndex,
   }) {
     final incomingName = _normalize(name);
     final incomingActive = _normalize(activeIngredient);
@@ -483,7 +494,10 @@ class MedicationRepository {
     var bestScore = -1;
     var bestCount = 0;
 
-    for (var i = 0; i < medications.length; i++) {
+    // All valid prefix/equality matches share the first normalized name
+    // token. Search that bounded bucket, then preserve the full strict
+    // strength/pack/ingredient/ATC and ambiguity checks unchanged.
+    for (final i in matchIndex.candidates(incomingName)) {
       final candidate = medications[i];
 
       // Most catalog entries do not share a trade name. Reject them
@@ -730,4 +744,28 @@ class MedicationRepository {
     }
     return null;
   }
+}
+
+/// Read-only index over stable HALMED medicine names used by both enrichment
+/// passes. Copy-with enrichment never changes trade names, so indices remain
+/// valid after attaching price or reimbursement data.
+class _MedicineMatchIndex {
+  _MedicineMatchIndex(List<Medication> medications) {
+    for (var i = 0; i < medications.length; i++) {
+      final normalized = MedicationRepository._normalize(medications[i].name);
+      if (normalized.isEmpty) continue;
+      _byFirstNameToken.putIfAbsent(
+        _firstToken(normalized),
+        () => <int>[],
+      ).add(i);
+    }
+  }
+
+  final Map<String, List<int>> _byFirstNameToken = <String, List<int>>{};
+
+  Iterable<int> candidates(String normalizedName) =>
+      _byFirstNameToken[_firstToken(normalizedName)] ?? const <int>[];
+
+  static String _firstToken(String normalizedName) =>
+      normalizedName.split(' ').first;
 }

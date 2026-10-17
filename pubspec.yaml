@@ -1,7 +1,7 @@
 name: medix
 description: MediX - professional medicine intelligence, therapy tools and verified Croatian drug data.
 publish_to: "none"
-version: 0.3.17+20
+version: 0.3.18+21
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
