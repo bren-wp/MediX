@@ -38,6 +38,8 @@ The bundled HALMED, HZZO and wholesale catalogs are automatically validated in e
 
 MediX loads its multi-megabyte official offline medicine databases on a background Dart isolate and matches records using a trade-name index, keeping the Android interface responsive without weakening the strict medicine, strength and package validation.
 
+For faster and more reliable startup, MediX now initializes its navigation tabs only when opened, keeps those tabs alive afterward, caches parsed official medicine identity metadata and does not wait for the system notifications provider before showing the app. The CI suite also measures the duration of loading the real bundled catalogs for diagnosis without inventing a universal device performance target.
+
 The medicine identity comes from the **official HALMED medicine catalog**. HZZO reimbursement information and separate pricing sources complement those records without replacing or inventing medicine names.
 
 ## ✨ Discover what MediX can do

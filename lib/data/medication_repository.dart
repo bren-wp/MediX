@@ -7,6 +7,23 @@ import '../models/medication.dart';
 import '../models/medication_price.dart';
 
 class MedicationRepository {
+  // Compiling regular expressions once substantially reduces allocations
+  // during HALMED/HZZO import and package-identity validation.
+  static final RegExp _normalizationSymbols = RegExp(r'[^a-z0-9%]+');
+  static final RegExp _normalizationWhitespace = RegExp(r'\s+');
+  static final RegExp _legalEntityPattern = RegExp(
+    r'\b(?:d o o|d d|j d o o|obrt|ustanova|limited|ltd|gmbh|s a|b v)\b',
+  );
+  static final RegExp _packCountPattern = RegExp(
+    r'\b(\d{1,4})\s*(?:tableta|tablete|tableti|tbl|kapsula|kapsule|'
+    r'caps|ampula|ampule|cepica|flastera|flasteri|vrecica|vrecice|'
+    r'bočica|bocica|bocice|komada|kom)\b',
+  );
+  static final RegExp _strengthPattern = RegExp(
+    r'(\d+(?:[.,]\d+)?\s*(?:mg|g|µg|mcg|ml|mmol|IU|i\.j\.|%)(?:\s*/\s*\d+(?:[.,]\d+)?\s*(?:ml|g))?)',
+    caseSensitive: false,
+  );
+
   const MedicationRepository({
     required this.medications,
     required this.interactions,
@@ -43,8 +60,9 @@ class MedicationRepository {
     final medications = <Medication>[];
 
     for (final rawRecord in rawRecords) {
-      if (rawRecord is! Map) continue;
-      final record = Map<String, dynamic>.from(rawRecord);
+      if (rawRecord is! Map<String, dynamic>) continue;
+      // jsonDecode yields string-keyed maps: avoid per-record map copying.
+      final record = rawRecord;
 
       final id = record['id']?.toString().trim() ?? '';
       final name = record['name']?.toString().trim() ?? '';
@@ -165,8 +183,9 @@ class MedicationRepository {
 
     final medications = <Medication>[];
     for (final rawRecord in rawRecords) {
-      if (rawRecord is! Map) continue;
-      final record = Map<String, dynamic>.from(rawRecord);
+      if (rawRecord is! Map<String, dynamic>) continue;
+      // jsonDecode yields string-keyed maps: avoid per-record map copying.
+      final record = rawRecord;
 
       if (!_isValidHumanMedicineRecord(record)) {
         continue;
@@ -305,7 +324,6 @@ class MedicationRepository {
 
     for (final incoming in reimbursement.medications) {
       final index = _findBestMatch(
-        medications,
         name: incoming.name,
         activeIngredient: incoming.activeIngredient,
         atcCode: incoming.atcCode,
@@ -392,8 +410,9 @@ class MedicationRepository {
     if (rawRecords is! List || rawRecords.isEmpty) return;
 
     for (final rawRecord in rawRecords) {
-      if (rawRecord is! Map) continue;
-      final record = Map<String, dynamic>.from(rawRecord);
+      if (rawRecord is! Map<String, dynamic>) continue;
+      // jsonDecode yields string-keyed maps: avoid per-record map copying.
+      final record = rawRecord;
 
       final name = record['name']?.toString().trim() ?? '';
       final active =
@@ -415,7 +434,6 @@ class MedicationRepository {
       }
 
       final index = _findBestMatch(
-        medications,
         name: name,
         activeIngredient: active,
         atcCode: atc,
@@ -462,9 +480,7 @@ class MedicationRepository {
     }
   }
 
-  static int? _findBestMatch(
-    List<Medication> medications, {
-    required String name,
+  static int? _findBestMatch({    required String name,
     required String activeIngredient,
     required String? atcCode,
     required String strengthOrPackage,
@@ -497,12 +513,10 @@ class MedicationRepository {
     // All valid prefix/equality matches share the first normalized name
     // token. Search that bounded bucket, then preserve the full strict
     // strength/pack/ingredient/ATC and ambiguity checks unchanged.
-    for (final i in matchIndex.candidates(incomingName)) {
-      final candidate = medications[i];
-
-      // Most catalog entries do not share a trade name. Reject them
-      // before parsing pharmaceutical strengths and package quantities.
-      final candidateName = _normalize(candidate.name);
+    for (final candidate in matchIndex.candidates(incomingName)) {
+      // Metadata is precomputed once when building the HALMED index.
+      // The verification logic and ambiguous-match rejection stay intact.
+      final candidateName = candidate.name;
       var score = 0;
       if (incomingName.isNotEmpty) {
         if (candidateName == incomingName) {
@@ -515,32 +529,22 @@ class MedicationRepository {
         }
       }
 
-      final candidateAtc = _normalize(candidate.atcCode ?? '');
+      final candidateAtc = candidate.atc;
       if (incomingAtc.isNotEmpty &&
           candidateAtc.isNotEmpty &&
           incomingAtc != candidateAtc) {
         continue;
       }
 
-      final candidateActive = _normalize(candidate.activeIngredient);
+      final candidateActive = candidate.active;
       // Identical brand/strength/ATC is not enough when active ingredients
       // disagree (especially for combination medicines).
       if (candidateActive.isEmpty || incomingActive != candidateActive) {
         continue;
       }
-      final candidateHolder = _normalize(
-        candidate.marketingAuthorizationHolder ?? '',
-      );
-      final candidateDescription = [
-        candidate.strength,
-        candidate.packageDescription ?? '',
-        candidate.name,
-      ].join(' ');
-      final candidateStrength = _normalize(
-        _extractStrength(candidateDescription),
-      );
-      final candidatePackCount =
-          _extractPackCount(candidate.packageDescription ?? '');
+      final candidateHolder = candidate.holder;
+      final candidateStrength = candidate.strength;
+      final candidatePackCount = candidate.packCount;
 
       // Never transfer the copayment or package price across different
       // strengths or known package quantities. A name/ATC match alone
@@ -571,7 +575,7 @@ class MedicationRepository {
 
       if (score > bestScore) {
         bestScore = score;
-        bestIndex = i;
+        bestIndex = candidate.index;
         bestCount = 1;
       } else if (score == bestScore) {
         bestCount++;
@@ -636,9 +640,7 @@ class MedicationRepository {
 
   static bool _looksLikeLegalEntity(String value) {
     final normalized = _normalize(value);
-    return RegExp(
-      r'\b(?:d o o|d d|j d o o|obrt|ustanova|limited|ltd|gmbh|s a|b v)\b',
-    ).hasMatch(normalized);
+    return _legalEntityPattern.hasMatch(normalized);
   }
 
   static String _normalize(String value) {
@@ -649,8 +651,8 @@ class MedicationRepository {
         .replaceAll('ž', 'z')
         .replaceAll('š', 's')
         .replaceAll('đ', 'd')
-        .replaceAll(RegExp(r'[^a-z0-9%]+'), ' ')
-        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(_normalizationSymbols, ' ')
+        .replaceAll(_normalizationWhitespace, ' ')
         .trim();
   }
 
@@ -683,19 +685,12 @@ class MedicationRepository {
   /// from a strength, volume or authorization number.
   static String? _extractPackCount(String description) {
     final normalized = _normalize(description);
-    final match = RegExp(
-      r'\b(\d{1,4})\s*(?:tableta|tablete|tableti|tbl|kapsula|kapsule|'
-      r'caps|ampula|ampule|cepica|flastera|flasteri|vrecica|vrecice|'
-      r'bočica|bocica|bocice|komada|kom)\b',
-    ).firstMatch(normalized);
+    final match = _packCountPattern.firstMatch(normalized);
     return match?.group(1);
   }
 
   static String _extractStrength(String package) {
-    final match = RegExp(
-      r'(\d+(?:[.,]\d+)?\s*(?:mg|g|µg|mcg|ml|mmol|IU|i\.j\.|%)(?:\s*/\s*\d+(?:[.,]\d+)?\s*(?:ml|g))?)',
-      caseSensitive: false,
-    ).firstMatch(package);
+    final match = _strengthPattern.firstMatch(package);
     return match?.group(1)?.trim() ?? '';
   }
 
@@ -746,26 +741,67 @@ class MedicationRepository {
   }
 }
 
-/// Read-only index over stable HALMED medicine names used by both enrichment
-/// passes. Copy-with enrichment never changes trade names, so indices remain
-/// valid after attaching price or reimbursement data.
+/// Read-only index over stable HALMED identities. Both enrichment passes
+/// reuse one precomputed set of normalized metadata. Copy-with enrichment
+/// changes neither names nor active ingredients, strengths, ATC or packs.
 class _MedicineMatchIndex {
   _MedicineMatchIndex(List<Medication> medications) {
     for (var i = 0; i < medications.length; i++) {
-      final normalized = MedicationRepository._normalize(medications[i].name);
-      if (normalized.isEmpty) continue;
-      _byFirstNameToken.putIfAbsent(
-        _firstToken(normalized),
-        () => <int>[],
-      ).add(i);
+      final item = medications[i];
+      final name = MedicationRepository._normalize(item.name);
+      if (name.isEmpty) continue;
+      final description = [
+        item.strength,
+        item.packageDescription ?? '',
+        item.name,
+      ].join(' ');
+      final candidate = _MedicineMatchCandidate(
+        index: i,
+        name: name,
+        active: MedicationRepository._normalize(item.activeIngredient),
+        atc: MedicationRepository._normalize(item.atcCode ?? ''),
+        holder: MedicationRepository._normalize(
+          item.marketingAuthorizationHolder ?? '',
+        ),
+        strength: MedicationRepository._normalize(
+          MedicationRepository._extractStrength(description),
+        ),
+        packCount: MedicationRepository._extractPackCount(
+          item.packageDescription ?? '',
+        ),
+      );
+      _byFirstNameToken
+          .putIfAbsent(_firstToken(name), () => <_MedicineMatchCandidate>[])
+          .add(candidate);
     }
   }
 
-  final Map<String, List<int>> _byFirstNameToken = <String, List<int>>{};
+  final Map<String, List<_MedicineMatchCandidate>> _byFirstNameToken = {};
 
-  Iterable<int> candidates(String normalizedName) =>
-      _byFirstNameToken[_firstToken(normalizedName)] ?? const <int>[];
+  Iterable<_MedicineMatchCandidate> candidates(String normalizedName) =>
+      _byFirstNameToken[_firstToken(normalizedName)] ??
+      const <_MedicineMatchCandidate>[];
 
   static String _firstToken(String normalizedName) =>
       normalizedName.split(' ').first;
+}
+
+class _MedicineMatchCandidate {
+  const _MedicineMatchCandidate({
+    required this.index,
+    required this.name,
+    required this.active,
+    required this.atc,
+    required this.holder,
+    required this.strength,
+    required this.packCount,
+  });
+
+  final int index;
+  final String name;
+  final String active;
+  final String atc;
+  final String holder;
+  final String strength;
+  final String? packCount;
 }
