@@ -28,6 +28,10 @@ MediX objedinjavanjem dostupnih zapisa HALMED-a i HZZO-a olakšava pregled podat
 
 **Cijene i pokriće nisu osobna ponuda ljekarne.** Ako identitet, jačina, pakiranje ili datum izvora nisu potvrđeni, MediX ne prikazuje izmišljene podatke. Nedostajući podatak nije dokaz da lijek nije dostupan ili da se ništa ne doplaćuje.
 
+## Jednostavno dodavanje terapije
+
+Za novi plan otvorite **Terapija → Dodaj terapiju → Odaberite lijek i pakiranje**. Po nazivu, djelatnoj tvari, ATK oznaci ili pakiranju pronađite točan zapis. Aplikacija više ne odabire prvi lijek iz kataloga automatski. Omiljeni i nedavno pregledani lijekovi prikazuju se kao prijedlozi. Unesite dozu, dane i vrijeme prema uputi liječnika ili ljekarnika. Plan se sprema lokalno i kada dozvola za podsjetnike nije odobrena.
+
 ## Hrvatski jezik
 
 Izdanje **1.0.0** prikazuje korisničko sučelje, obavijesti i PDF izvještaje na hrvatskom jeziku, uključujući prvo pokretanje. Službeni nazivi lijekova i regulatorni nazivi iz izvornog kataloga nisu umjetno prevođeni.

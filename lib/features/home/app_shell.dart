@@ -30,6 +30,7 @@ class _AppShellState extends State<AppShell> {
   late final List<Widget> pages;
 
   void _selectTab(int next) {
+    if (next == index || next < 0 || next >= pages.length) return;
     setState(() {
       index = next;
       _visitedTabs.add(next);
@@ -67,6 +68,12 @@ class _AppShellState extends State<AppShell> {
         ],
       ),
       bottomNavigationBar: NavigationBar(
+        // Show only the active label when Android text scaling or a narrow
+        // display would otherwise crowd all five navigation destinations.
+        labelBehavior: MediaQuery.sizeOf(context).width < 390 ||
+                MediaQuery.textScalerOf(context).scale(1) > 1.35
+            ? NavigationDestinationLabelBehavior.onlyShowSelected
+            : NavigationDestinationLabelBehavior.alwaysShow,
         selectedIndex: index,
         onDestinationSelected: _selectTab,
         destinations: [

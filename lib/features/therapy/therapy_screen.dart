@@ -5,6 +5,7 @@ import '../../core/localization/medix_localizations.dart';
 import '../../models/therapy_entry.dart';
 import '../../state/medix_state.dart';
 import '../../widgets/medix_page.dart';
+import 'therapy_medicine_picker.dart';
 
 class TherapyScreen extends StatelessWidget {
   const TherapyScreen({
@@ -154,7 +155,6 @@ class _TherapyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final loc = MedixLocalizations.of(context);
-    final hr = Localizations.localeOf(context).languageCode == 'hr';
     final medication = state.medicationById(entry.medicationId);
     if (medication == null) {
       return const SizedBox.shrink();
@@ -192,7 +192,7 @@ class _TherapyCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 7),
                 Text(
-                  _weekdaySummary(entry.weekdays, hr: hr),
+                  _weekdaySummary(entry.weekdays),
                   style: const TextStyle(
                     color: MedixColors.cyanSoft,
                     fontSize: 11,
@@ -295,6 +295,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
   final List<TimeOfDay> times = <TimeOfDay>[];
   final Set<int> weekdays = <int>{};
   String? medicationId;
+  bool _saving = false;
 
   bool get isEditing => widget.entry != null;
 
@@ -309,9 +310,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
       times.addAll(entry.times.map(_parseTime).whereType<TimeOfDay>());
     } else {
       weekdays.addAll(const [1, 2, 3, 4, 5, 6, 7]);
-      if (widget.state.repository.medications.isNotEmpty) {
-        medicationId = widget.state.repository.medications.first.id;
-      }
+      // A new therapy must not default to the first medicine in the database.
     }
   }
 
@@ -335,6 +334,12 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
   void dispose() {
     doseController.dispose();
     super.dispose();
+  }
+
+  Future<void> _chooseMedication() async {
+    final selected = await showTherapyMedicinePicker(context, widget.state);
+    if (!mounted || selected == null) return;
+    setState(() => medicationId = selected);
   }
 
   Future<void> _addTime() async {
@@ -370,6 +375,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
     if (medicationId == null ||
         doseController.text.trim().isEmpty ||
         times.isEmpty ||
@@ -382,12 +388,9 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
       return;
     }
 
+    setState(() => _saving = true);
     final messenger = ScaffoldMessenger.of(context);
-    final notificationsAllowed =
-        await widget.state.requestReminderPermissions();
-
-    if (!mounted) return;
-
+    final therapyState = widget.state;
     final formattedTimes =
         times.map((time) => _formatTime(context, time)).toList();
 
@@ -411,6 +414,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
           );
 
     if (!saved) {
+      if (mounted) setState(() => _saving = false);
       messenger.showSnackBar(
         SnackBar(
           content: Text(MedixLocalizations.of(context).t('therapySaveFailed')),
@@ -419,23 +423,21 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
       return;
     }
 
+    // Persist immediately. Android's notification permission prompt must
+    // not delay or prevent saving an otherwise valid personal therapy plan.
+    final warning = MedixLocalizations.of(context)
+        .t('therapySavedNoNotifications');
     Navigator.of(context).pop();
-
-    if (!notificationsAllowed) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(MedixLocalizations.of(context).t('therapySavedNoNotifications')),
-        ),
-      );
+    final allowed = await therapyState.requestReminderPermissions();
+    if (!allowed && messenger.mounted) {
+      messenger.showSnackBar(SnackBar(content: Text(warning)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final loc = MedixLocalizations.of(context);
-    final hr = Localizations.localeOf(context).languageCode == 'hr';
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-    final medications = widget.state.repository.medications;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(18, 20, 18, 18 + bottomInset),
@@ -459,28 +461,55 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
               ),
             ),
             const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              initialValue: medicationId,
-              decoration: InputDecoration(
-                labelText: loc.t('medicine'),
-                prefixIcon: const Icon(Icons.medication_outlined),
-              ),
-              items: medications
-                  .map(
-                    (medication) => DropdownMenuItem<String>(
-                      value: medication.id,
-                      child: Text(
-                        medication.compactSubtitle == null
-                            ? medication.name
-                            : '${medication.name} · '
-                                '${medication.compactSubtitle}',
-                        overflow: TextOverflow.ellipsis,
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                key: const Key('therapyMedicineSelect'),
+                onPressed: _chooseMedication,
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 14,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.medication_outlined),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            medicationId == null
+                                ? loc.t('therapyChooseMedicine')
+                                : widget.state.medicationById(medicationId!)?.name ??
+                                    loc.t('therapyChooseMedicine'),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (medicationId != null)
+                            Text(
+                              [
+                                widget.state.medicationById(medicationId!)?.strength ?? '',
+                                widget.state.medicationById(medicationId!)?.packageDescription ?? '',
+                              ].where((v) => v.isNotEmpty).join(' · '),
+                              style: const TextStyle(
+                                color: MedixColors.textSecondary,
+                                fontSize: 11,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        ],
                       ),
                     ),
-                  )
-                  .toList(),
-              onChanged: (value) =>
-                  setState(() => medicationId = value),
+                    const Icon(Icons.chevron_right_rounded),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -503,7 +532,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
               children: List.generate(7, (index) {
                 final day = index + 1;
                 return FilterChip(
-                  label: Text(_weekdayShortLabel(day, hr: hr)),
+                  label: Text(_weekdayShortLabel(day)),
                   selected: weekdays.contains(day),
                   onSelected: (selected) {
                     setState(() {
@@ -571,7 +600,7 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
-                onPressed: _save,
+                onPressed: _saving ? null : _save,
                 icon: const Icon(Icons.check_rounded),
                 label: Text(isEditing ? loc.t('saveChanges') : loc.t('saveTherapy')),
               ),
@@ -584,28 +613,23 @@ class _TherapyEditorSheetState extends State<_TherapyEditorSheet> {
 }
 
 
-String _weekdayShortLabel(int weekday, {required bool hr}) {
-  return switch (weekday) {
-    1 => hr ? 'Pon' : 'Mon',
-    2 => hr ? 'Uto' : 'Tue',
-    3 => hr ? 'Sri' : 'Wed',
-    4 => hr ? 'Čet' : 'Thu',
-    5 => hr ? 'Pet' : 'Fri',
-    6 => hr ? 'Sub' : 'Sat',
-    7 => hr ? 'Ned' : 'Sun',
-    _ => '—',
-  };
-}
+String _weekdayShortLabel(int weekday) => switch (weekday) {
+  1 => 'Pon',
+  2 => 'Uto',
+  3 => 'Sri',
+  4 => 'Čet',
+  5 => 'Pet',
+  6 => 'Sub',
+  7 => 'Ned',
+  _ => '—',
+};
 
-String _weekdaySummary(List<int> weekdays, {required bool hr}) {
+String _weekdaySummary(List<int> weekdays) {
   final normalized = weekdays
       .where((day) => day >= 1 && day <= 7)
       .toSet()
       .toList()
     ..sort();
-
-  if (normalized.length == 7) {
-    return hr ? 'Svaki dan' : 'Every day';
-  }
-  return normalized.map((day) => _weekdayShortLabel(day, hr: hr)).join(', ');
+  if (normalized.length == 7) return 'Svaki dan';
+  return normalized.map(_weekdayShortLabel).join(', ');
 }

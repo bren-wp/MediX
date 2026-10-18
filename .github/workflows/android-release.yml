@@ -7,6 +7,7 @@ on:
       - main
       - "feat/medix-pro-v*"
       - "feat/medix-v*"
+      - "feat/medix-ux-v*"
     tags:
       - "v*"
 

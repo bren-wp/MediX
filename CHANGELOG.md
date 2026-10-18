@@ -1,5 +1,16 @@
 # Dnevnik promjena MediX
 
+## [1.0.1] – 2026-10-18
+
+### Jednostavnija i sigurnija terapija
+- Zamijenjen spor padajući izbornik s više tisuća lijekova pretraživim odabirom uz lijeno učitavanje rezultata.
+- Novi plan terapije više ne odabire prvi lijek iz baze bez znanja korisnika.
+- Pretražuju se izvorni nazivi, djelatne tvari, jačine, ATK oznake i pakiranja.
+- Omiljeni i nedavno pregledani lijekovi dostupni su kao prijedlozi.
+- Spremanje plana nije blokirano Androidovim zahtjevom za dozvolu obavijesti.
+- Pet glavnih navigacijskih kartica preglednije je na uskim ekranima i velikom fontu.
+- Dodani testovi odabira lijeka, očuvanja izvornog naziva te hrvatskih korisničkih poruka.
+
 ## [1.0.0] – 2026-10-18
 
 ### Hrvatski jezik i korisničko iskustvo
