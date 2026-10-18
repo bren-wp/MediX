@@ -1,23 +1,23 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-17T21:31:00.799532+00:00",
+  "generated_at": "2026-10-18T08:50:17.782804+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad3e9082363c.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad4883f435cf.xlsx",
     "scope": "public_human_medicine_search_results",
     "medicine_name_field": "Naziv",
     "medicine_name_policy": "copied from the HALMED Naziv column; whitespace normalized only"
   },
   "quality": {
     "accepted_records": 4477,
-    "rejected_records": 1886,
+    "rejected_records": 1885,
     "rejected_reasons": {
       "legal_entity_as_name": 26,
       "missing_authorization_number": 1603,
       "missing_name": 1,
-      "revoked_authorization": 256
+      "revoked_authorization": 255
     }
   },
   "record_count": 4477,

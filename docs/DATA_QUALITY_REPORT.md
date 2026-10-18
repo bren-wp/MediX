@@ -2,7 +2,7 @@
 
 Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 
-- HALMED generirano: 2026-10-17T21:31:00.799532+00:00
+- HALMED generirano: 2026-10-18T08:50:17.782804+00:00
 - Prihvaćeni HALMED zapisi: 4477
 - Jedinstveni nazivi: 4476
 - Jedinstvene djelatne tvari: 1044
@@ -19,8 +19,8 @@ Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 - Bez poznatog statusa nestašice: 1619
 - Bez ATK: 1
 - Bez pakiranja: 0
-- Odbačeni HALMED zapisi: 1886
-- HZZO enrichment zapisi: 3778
+- Odbačeni HALMED zapisi: 1885
+- HZZO enrichment zapisi: 3732
 - Cjenovni zapisi: 5341
 
 ## Razlozi odbacivanja
@@ -28,7 +28,7 @@ Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 - `legal_entity_as_name`: 26
 - `missing_authorization_number`: 1603
 - `missing_name`: 1
-- `revoked_authorization`: 256
+- `revoked_authorization`: 255
 
 ## Aktivne zaštite
 
