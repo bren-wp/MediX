@@ -1,11 +1,11 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-18T08:50:17.782804+00:00",
+  "generated_at": "2026-10-19T09:51:46.223428+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad4883f435cf.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad5e82597b58.xlsx",
     "scope": "public_human_medicine_search_results",
     "medicine_name_field": "Naziv",
     "medicine_name_policy": "copied from the HALMED Naziv column; whitespace normalized only"
@@ -10405,7 +10405,7 @@
       "composition": "svaka kapsula sadrži 100 mg atomoksetina u obliku atomoksetinklorida",
       "form": "Kapsula, tvrda",
       "strength": "100 mg",
-      "package": "HR-H-236399204-01 | 28 kapsula u blisteru, u kutiji | stavljeno u promet | nema nestašice",
+      "package": "HR-H-236399204-01 | 28 kapsula u blisteru, u kutiji | stavljeno u promet | u tijeku",
       "manufacturer": "Pharmathen S.A., Pallini Attiki, Grčka<br/>Pharmathen International S.A., Rodopi, Grčka",
       "holder": "Makpharm d.o.o., Trnjanska cesta 37/1, Zagreb, Hrvatska",
       "decision_date": "05.05.2026.",
@@ -10419,7 +10419,7 @@
       "atc_code": "N06BA09",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "shortage_status": "u tijeku",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Attoxem-100-mg-tvrde-kapsule/16166/"
     },
     {
@@ -27565,7 +27565,7 @@
       "composition": "jedna tableta sadrži 5 mg prednizona",
       "form": "tableta",
       "strength": "5 mg",
-      "package": "HR-H-977673553-01 | 20 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-977673553-02 | 100 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
+      "package": "HR-H-977673553-01 | 20 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-977673553-02 | 100 tableta u blisteru, u kutiji | stavljeno u promet | u tijeku",
       "manufacturer": "P&G Health Austria GmbH & Co. OG, Spittal an der Drau, Austrija",
       "holder": "Merck d.o.o., Oreškovićeva ulica 6H/1, Zagreb, Hrvatska",
       "decision_date": "28.04.2017.",
@@ -44985,7 +44985,7 @@
       "composition": "jedna filmom obložena tableta sadrži 850 mg metforminklorida",
       "form": "filmom obložena tableta",
       "strength": "850 mg",
-      "package": "HR-H-213830516-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-213830516-02 | 100 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
+      "package": "HR-H-213830516-01 | 30 tableta u blisteru, u kutiji | trajni prekid opskrbe | - HR-H-213830516-02 | 100 tableta u blisteru, u kutiji | trajni prekid opskrbe | -",
       "manufacturer": "Merck Sante s.a.s., Semoy, Francuska<br/>Merck S.L., Barcelona, Španjolska",
       "holder": "Merck d.o.o., Oreškovićeva ulica 6H/1, Zagreb, Hrvatska",
       "decision_date": "28.04.2017.",
@@ -44998,8 +44998,8 @@
       "advertising": "zabranjeno",
       "atc_code": "A10BA02",
       "category": "Probavni sustav i metabolizam",
-      "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "market_status": "trajni prekid opskrbe",
+      "shortage_status": "",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Glucophage-850-mg-filmom-oblozene-tablete/13568/"
     },
     {
@@ -81523,7 +81523,7 @@
       "class": "UP/I-530-09/19-02/152",
       "urbroj": "381-12-01/30-20-03",
       "rx_status": "na recept",
-      "prescribing_mode": "ograničeni recept",
+      "prescribing_mode": "neponovljivi recept",
       "dispensing_place": "u ljekarni",
       "advertising": "zabranjeno",
       "atc_code": "J07AL01",
