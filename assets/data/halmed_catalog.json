@@ -1,21 +1,21 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-19T09:51:46.223428+00:00",
+  "generated_at": "2026-10-20T09:24:38.118796+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad5e82597b58.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad7334ad1d23.xlsx",
     "scope": "public_human_medicine_search_results",
     "medicine_name_field": "Naziv",
     "medicine_name_policy": "copied from the HALMED Naziv column; whitespace normalized only"
   },
   "quality": {
     "accepted_records": 4477,
-    "rejected_records": 1885,
+    "rejected_records": 1884,
     "rejected_reasons": {
       "legal_entity_as_name": 26,
-      "missing_authorization_number": 1603,
+      "missing_authorization_number": 1602,
       "missing_name": 1,
       "revoked_authorization": 255
     }
@@ -1981,7 +1981,7 @@
       "composition": "1 g gela sadrži 10 mg klindamicina u obliku klindamicinfosfata i 30 mg bezvodnog benzoilperoksida u obliku benzoilperoksida s vodom",
       "form": "Gel",
       "strength": "10 mg",
-      "package": "HR-H-018374600-01 | 1 tuba s 30 g gela, u kutiji | nije stavljeno u promet | - HR-H-018374600-02 | 1 tuba s 60 g gela, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-018374600-01 | 1 tuba s 30 g gela, u kutiji | stavljeno u promet | nema nestašice HR-H-018374600-02 | 1 tuba s 60 g gela, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "Jadran Galenski laboratorij d.d., Rijeka, Hrvatska",
       "holder": "Jadran Galenski laboratorij d.d., Svilno 20, Rijeka, Hrvatska",
       "decision_date": "31.07.2026.",
@@ -1994,8 +1994,8 @@
       "advertising": "zabranjeno",
       "atc_code": "D10AF51",
       "category": "Dermatološki lijekovi",
-      "market_status": "nije stavljeno u promet",
-      "shortage_status": "",
+      "market_status": "stavljeno u promet",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Aknet-Duo-10-mg-g-30-mg-g-gel/17233/"
     },
     {
@@ -25642,7 +25642,7 @@
       "form": "Filmom obložena tableta",
       "strength": "5 mg",
       "package": "HR-H-234265605-01 | 56 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-234265605-02 | 56 tableta u blisteru s jediničnom dozom, u kutiji | nije stavljeno u promet | - HR-H-234265605-03 | 60 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-234265605-04 | 196 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
-      "manufacturer": "Mylan Hungary Kft, Komárom, Mađarska<br/>Viatris Germany GmbH, Bad Homburg, Hesse, Njemačka",
+      "manufacturer": "Mylan Hungary Kft, Komárom, Mađarska Viatris Germany GmbH, Bad Homburg, Hesse, Njemačka",
       "holder": "Viatris Limited, Damastown Industrial Park, Mulhuddart, Dublin, Irska",
       "decision_date": "02.10.2026.",
       "authorization_expiry": "02.10.2031.",
@@ -25668,7 +25668,7 @@
       "form": "Filmom obložena tableta",
       "strength": "5 mg",
       "package": "HR-H-328120686-01 | 56 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-328120686-02 | 56 tableta u blisteru s jediničnom dozom, u kutiji | nije stavljeno u promet | - HR-H-328120686-03 | 60 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-328120686-04 | 196 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
-      "manufacturer": "Mylan Hungary Kft, Komárom, Mađarska<br/>Viatris Germany GmbH, Bad Homburg, Hesse, Njemačka",
+      "manufacturer": "Mylan Hungary Kft, Komárom, Mađarska Viatris Germany GmbH, Bad Homburg, Hesse, Njemačka",
       "holder": "Viatris Limited, Damastown Industrial Park, Mulhuddart, Dublin, Irska",
       "decision_date": "02.10.2026.",
       "authorization_expiry": "02.10.2031.",
@@ -102576,7 +102576,7 @@
       "form": "Filmom obložena tableta",
       "strength": "14 mg",
       "package": "HR-H-044519058-01 | 14 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-044519058-02 | 28 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-044519058-03 | 84 tablete u blisteru, u kutiji | nije stavljeno u promet | - HR-H-044519058-04 | 98 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-044519058-05 | 14 tableta u blisteru s jediničnom dozom, u kutiji | nije stavljeno u promet | - HR-H-044519058-06 | 28 tableta u blisteru s jediničnom dozom, u kutiji | nije stavljeno u promet | - HR-H-044519058-07 | 84 tablete u blisteru s jediničnom dozom, u kutiji | nije stavljeno u promet | - HR-H-044519058-08 | 98 tableta u blisteru s jediničnom dozom, u kutiji | nije stavljeno u promet | -",
-      "manufacturer": "STADA Arzneimittel AG, Bad Vilbel, Njemačka<br/>Laboratori Fundacio Dau, Barcelona, Španjolska<br/>STADA Nordic ApS, Herlev, Danska<br/>STADA Arzneimittel GmbH, Beč, Austrija<br/>Centrafarm Services B.V., Breda, Nizozemska<br/>Clonmel Healthcare Ltd., Clonmel, Co. Tipperary, Irska",
+      "manufacturer": "STADA Arzneimittel AG, Bad Vilbel, Njemačka Laboratori Fundacio Dau, Barcelona, Španjolska STADA Nordic ApS, Herlev, Danska STADA Arzneimittel GmbH, Beč, Austrija Centrafarm Services B.V., Breda, Nizozemska Clonmel Healthcare Ltd., Clonmel, Co. Tipperary, Irska",
       "holder": "STADA Arzneimittel AG, Stadastrasse 2-18, Bad Vilbel, Njemačka",
       "decision_date": "29.09.2026.",
       "authorization_expiry": "29.09.2031.",
