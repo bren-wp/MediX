@@ -1,11 +1,11 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-10-20T09:24:38.118796+00:00",
+  "generated_at": "2026-10-21T09:20:59.826096+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad7334ad1d23.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16ad883f12b6a5.xlsx",
     "scope": "public_human_medicine_search_results",
     "medicine_name_field": "Naziv",
     "medicine_name_policy": "copied from the HALMED Naziv column; whitespace normalized only"
@@ -967,7 +967,7 @@
       "composition": "jedna želučanootporna tableta sadrži 20 mg pantoprazola u obliku pantoprazolnatrij seskvihidrata",
       "form": "želučanootporna tableta",
       "strength": "20 mg",
-      "package": "HR-H-654438627-01 | 28 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-654438627-02 | 56 tableta u blisteru, u kutiji | - | -",
+      "package": "HR-H-654438627-01 | 28 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-654438627-02 | 56 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Lek Pharmaceuticals d.d., Ljubljana, Slovenija<br/>Lek Pharmaceuticals d.d., Lendava, Slovenija<br/>Salutas Pharma GmbH, Barleben, Njemačka<br/>Lek S.A., Varšava, Poljska<br/>Sandoz S.R.L., Targu Mures, Rumunjska<br/>Lek S.A., Strykow, Poljska",
       "holder": "Sandoz d.o.o., Maksimirska 120, Zagreb, Hrvatska",
       "decision_date": "23.12.2019.",
@@ -5829,7 +5829,7 @@
       "composition": "jedna pastila sadrži 5 mg klorheksidindiklorida i 1 mg lidokainklorida",
       "form": "pastila",
       "strength": "5 mg",
-      "package": "HR-H-693425328-01 | 20 pastila u blisteru, u kutiji | - | - HR-H-693425328-02 | 24 pastile u blisteru, u kutiji | - | -",
+      "package": "HR-H-693425328-01 | 20 pastila u blisteru, u kutiji | - | - HR-H-693425328-02 | 24 pastile u blisteru, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Lek Pharmaceuticals d.d., Ljubljana, Slovenija",
       "holder": "Sandoz d.o.o., Maksimirska 120, Zagreb, Hrvatska",
       "decision_date": "31.05.2016.",
@@ -5842,8 +5842,8 @@
       "advertising": "dopušteno",
       "atc_code": "R02AA05",
       "category": "Dišni sustav",
-      "market_status": "",
-      "shortage_status": "",
+      "market_status": "stavljeno u promet",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Angal-5-mg-1-mg-pastile/12670/"
     },
     {
@@ -5907,7 +5907,7 @@
       "composition": "jedan mililitar otopine sadrži 2 mg klorheksidindiglukonata i 0,5 mg lidokainklorida",
       "form": "Sprej za usnu sluznicu, otopina",
       "strength": "2 mg",
-      "package": "HR-H-470596257-01 | 1 bočica s 30 ml otopine i nastavkom za raspršivanje, u kutiji | - | -",
+      "package": "HR-H-470596257-01 | 1 bočica s 30 ml otopine i nastavkom za raspršivanje, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Lek Pharmaceuticals d.d., Ljubljana, Slovenija",
       "holder": "Sandoz d.o.o., Maksimirska 120, Zagreb, Hrvatska",
       "decision_date": "31.05.2016.",
@@ -5920,8 +5920,8 @@
       "advertising": "dopušteno",
       "atc_code": "R02AA05",
       "category": "Dišni sustav",
-      "market_status": "",
-      "shortage_status": "",
+      "market_status": "stavljeno u promet",
+      "shortage_status": "nema nestašice",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Angal-S-2-mg-ml-05-mg-ml-sprej-za-usnu-sluznicu-otopina/12671/"
     },
     {
@@ -17529,7 +17529,7 @@
       "composition": "jedna filmom obložena tableta sadrži 5 mg bisoprololfumarata",
       "form": "filmom obložena tableta",
       "strength": "5 mg",
-      "package": "HR-H-374048741-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-374048741-02 | 60 tableta u blisteru, u kutiji | - | -",
+      "package": "HR-H-374048741-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-374048741-02 | 60 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice",
       "manufacturer": "Salutas Pharma GmbH, Barleben, Njemačka Lek Pharmaceuticals d.d., Ljubljana, Slovenija Lek S.A., Varšava, Poljska Lek S.A., Strykow, Poljska",
       "holder": "Sandoz d.o.o., Maksimirska 120, Zagreb, Hrvatska",
       "decision_date": "07.06.2019.",
@@ -17737,7 +17737,7 @@
       "composition": "jedna filmom obložena tableta sadrži 2,5 mg bisoprololfumarata",
       "form": "filmom obložena tableta",
       "strength": "2,5 mg",
-      "package": "HR-H-417781648-01 | 30 tableta u blisteru, u kutiji | nije stavljeno u promet | - HR-H-417781648-02 | 50 tableta u blisteru, u kutiji | - | -",
+      "package": "HR-H-417781648-01 | 30 tableta u blisteru, u kutiji | stavljeno u promet | nema nestašice HR-H-417781648-02 | 50 tableta u blisteru, u kutiji | - | -",
       "manufacturer": "Salutas Pharma GmbH, Barleben, Njemačka Lek S.A., Varšava, Poljska Lek Pharmaceuticals d.d., Ljubljana, Slovenija Lek S.A., Strykow, Poljska",
       "holder": "Sandoz d.o.o., Maksimirska 120, Zagreb, Hrvatska",
       "decision_date": "07.06.2019.",
@@ -17750,8 +17750,8 @@
       "advertising": "zabranjeno",
       "atc_code": "C07AB07",
       "category": "Srce i krvožilni sustav",
-      "market_status": "nije stavljeno u promet",
-      "shortage_status": "",
+      "market_status": "stavljeno u promet",
+      "shortage_status": "nema nestašice",
       "official_record_url": null
     },
     {
@@ -66669,7 +66669,7 @@
       "composition": "jedna obložena tableta sadrži 2,5 mg flufenazinklorida",
       "form": "obložena tableta",
       "strength": "2,5 mg",
-      "package": "HR-H-049449269-01 | 100 tableta u bočici, u kutiji | stavljeno u promet | nema nestašice",
+      "package": "HR-H-049449269-01 | 100 tableta u bočici, u kutiji | stavljeno u promet | u tijeku",
       "manufacturer": "Krka d.d., Novo mesto, Novo Mesto, Slovenija",
       "holder": "Krka - farma d.o.o., Radnička cesta 48, Zagreb, Hrvatska",
       "decision_date": "20.12.2016.",
@@ -66683,7 +66683,7 @@
       "atc_code": "N05AB02",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "shortage_status": "u tijeku",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Moditen-25-mg-oblozene-tablete/13273/"
     },
     {
@@ -66695,7 +66695,7 @@
       "composition": "jedna obložena tableta sadrži 5 mg flufenazinklorida",
       "form": "obložena tableta",
       "strength": "5 mg",
-      "package": "HR-H-172041173-01 | 100 tableta u bočici, u kutiji | stavljeno u promet | nema nestašice",
+      "package": "HR-H-172041173-01 | 100 tableta u bočici, u kutiji | stavljeno u promet | u tijeku",
       "manufacturer": "Krka d.d., Novo mesto, Novo Mesto, Slovenija",
       "holder": "Krka - farma d.o.o., Radnička cesta 48, Zagreb, Hrvatska",
       "decision_date": "20.12.2016.",
@@ -66709,7 +66709,7 @@
       "atc_code": "N05AB02",
       "category": "Živčani sustav",
       "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "shortage_status": "u tijeku",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Moditen-5-mg-oblozene-tablete/13274/"
     },
     {
@@ -84037,7 +84037,7 @@
       "composition": "1 meka pastila sadrži 26 mg ekstrakta (kao suhi ekstrakt) iz Hedera helix L., folium (bršljanov list) (5–7,5 : 1). Ekstrakcijsko otapalo: 30 % etanol m/m",
       "form": "meka pastila",
       "strength": "26 mg",
-      "package": "HR-H-027525605-01 | 20 pastila u blisteru, u kutiji | stavljeno u promet | nema nestašice",
+      "package": "HR-H-027525605-01 | 20 pastila u blisteru, u kutiji | trajni prekid opskrbe | -",
       "manufacturer": "Engelhard Arnzneimittel GmbH & Co. KG, Niederdorfelden, Njemačka",
       "holder": "Engelhard Arzneimittel GmbH & Co. KG, Herzbergstraße 3, Niederdorfelden, Njemačka",
       "decision_date": "02.03.2026.",
@@ -84050,8 +84050,8 @@
       "advertising": "dopušteno",
       "atc_code": "R05CA12",
       "category": "Dišni sustav",
-      "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "market_status": "trajni prekid opskrbe",
+      "shortage_status": "",
       "official_record_url": null
     },
     {
@@ -114197,7 +114197,7 @@
       "composition": "svaka bočica s praškom sadrži 100 mg ili 150 mg azacitidina Nakon rekonstitucije jedan ml suspenzije sadrži 25 mg azacitidina",
       "form": "prašak za suspenziju za injekciju",
       "strength": "25 mg",
-      "package": "HR-H-083919150-01 | 1 bočica sa 100 mg azacitidina, u kutiji | stavljeno u promet | nema nestašice HR-H-083919150-02 | 1 bočica sa 150 mg azacitidina, u kutiji | nije stavljeno u promet | -",
+      "package": "HR-H-083919150-01 | 1 bočica sa 100 mg azacitidina, u kutiji | stavljeno u promet | u tijeku HR-H-083919150-02 | 1 bočica sa 150 mg azacitidina, u kutiji | nije stavljeno u promet | -",
       "manufacturer": "AqVida GmbH, Hamburg, Njemačka",
       "holder": "Zentiva k.s., U Kabelovny 130, Dolni Mecholupy, Prag 10, Češka",
       "decision_date": "06.03.2026.",
@@ -114211,7 +114211,7 @@
       "atc_code": "L01BC07",
       "category": "Antineoplastici i imunomodulatori",
       "market_status": "stavljeno u promet",
-      "shortage_status": "nema nestašice",
+      "shortage_status": "u tijeku",
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Zassida-25-mg-ml-prasak-za-suspenziju-za-injekciju/16044/"
     },
     {
