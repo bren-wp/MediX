@@ -8,6 +8,7 @@ on:
       - "feat/medix-pro-v*"
       - "feat/medix-v*"
       - "feat/medix-ux-v*"
+      - "feat/medix-ui-v*"
     tags:
       - "v*"
 
