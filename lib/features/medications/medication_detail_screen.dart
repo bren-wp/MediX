@@ -633,7 +633,8 @@ class _InfoRow extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 118,
+            width: (MediaQuery.sizeOf(context).width * .32)
+                .clamp(92.0, 140.0),
             child: Text(
               label,
               style: const TextStyle(

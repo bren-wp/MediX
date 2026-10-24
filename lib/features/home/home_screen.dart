@@ -221,8 +221,8 @@ class HomeScreen extends StatelessWidget {
                       crossAxisCount: columns,
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
-                      mainAxisExtent: (columns == 1 ? 82.0 : 92.0) +
-                          (scale - 1.0).clamp(0.0, 2.0) * 34.0,
+                      mainAxisExtent: (columns == 1 ? 86.0 : 98.0) +
+                          (scale - 1.0).clamp(0.0, 2.0) * 43.0,
                     ),
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -306,8 +306,8 @@ class HomeScreen extends StatelessWidget {
                       crossAxisCount: columns,
                       mainAxisSpacing: 8,
                       crossAxisSpacing: 8,
-                      mainAxisExtent: (columns == 2 ? 105.0 : 111.0) +
-                          (scale - 1.0).clamp(0.0, 2.0) * 40.0,
+                      mainAxisExtent: (columns == 2 ? 110.0 : 115.0) +
+                          (scale - 1.0).clamp(0.0, 2.0) * 45.0,
                     ),
                     itemBuilder: (context, index) {
                   final category = categories[index];
@@ -417,9 +417,9 @@ class _HomeAction extends StatelessWidget {
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: FontWeight.w800,
-              height: 1.1,
+              height: 1.2,
             ),
           ),
           if (subtitle != null) ...[
@@ -428,8 +428,10 @@ class _HomeAction extends StatelessWidget {
               subtitle!,
               style: const TextStyle(
                 color: MedixColors.textSecondary,
-                fontSize: 9,
+                fontSize: 11,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ],
@@ -467,9 +469,9 @@ class _CategoryCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 10,
+              fontSize: 12,
               fontWeight: FontWeight.w800,
-              height: 1.1,
+              height: 1.15,
             ),
           ),
         ],
@@ -517,7 +519,7 @@ class _ProfessionalAction extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -528,7 +530,7 @@ class _ProfessionalAction extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: MedixColors.textSecondary,
-                    fontSize: 9,
+                    fontSize: 11,
                   ),
                 ),
               ],
