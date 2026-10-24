@@ -81,20 +81,21 @@ class MedixSectionCard extends StatelessWidget {
       );
     }
 
-    return Material(
-      color: Colors.transparent,
-      child: Ink(
-        decoration: decoration,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: radius,
-          splashColor:
-              MedixColors.primary.withValues(alpha: .10),
-          highlightColor:
-              MedixColors.primary.withValues(alpha: .05),
-          child: Padding(
-            padding: padding,
-            child: child,
+    return Semantics(
+      button: true,
+      child: Material(
+        color: Colors.transparent,
+        child: Ink(
+          decoration: decoration,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: radius,
+            splashColor: MedixColors.primary.withValues(alpha: .10),
+            highlightColor: MedixColors.primary.withValues(alpha: .05),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 48),
+              child: Padding(padding: padding, child: child),
+            ),
           ),
         ),
       ),

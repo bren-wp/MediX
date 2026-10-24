@@ -47,6 +47,8 @@ class TherapyScreen extends StatelessWidget {
                   icon: Icons.event_available_outlined,
                   title: loc.t('noTherapyTitle'),
                   message: loc.t('noTherapyBody'),
+                  actionLabel: loc.t('addTherapy'),
+                  onAction: () => _addTherapy(context),
                 )
               : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
@@ -240,6 +242,12 @@ class _TherapyCard extends StatelessWidget {
             children: [
               Switch(
                 value: entry.isActive,
+                // "Active" refers to a saved plan, not a guarantee that
+                // Android granted permission to show notifications.
+                thumbIcon: WidgetStateProperty.resolveWith((states) =>
+                    Icon(states.contains(WidgetState.selected)
+                        ? Icons.check_rounded
+                        : Icons.pause_rounded)),
                 onChanged: (nextValue) async {
                   if (nextValue && !entry.isActive) {
                     final allowed =

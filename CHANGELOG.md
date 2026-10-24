@@ -36,6 +36,20 @@
 
 # Changelog
 
+## [1.0.2] – 2026-10-25
+
+### Prolaz kroz ekrane, pristupačnost i Android ikonicu
+- standardizirane dodirne površine interaktivnih kartica i gumba favorita te dodana semantička oznaka gumba za čitače zaslona
+- povećana čitljivost početnih kartica i brzih alata uz dinamičke visine rešetki na povećanom Android tekstu
+- trake brzih i odabranih filtara sada se povećavaju zajedno s tekstom; tipka za pretragu na tipkovnici zatvara tipkovnicu
+- prazan plan terapije ima jasan gumb za dodavanje, uz zadržavanje postojećeg FAB gumba
+- prilagođen prikaz regulatornih podataka lijeka uskim ekranima
+- uvodni ekran može se pomicati i skalira ilustraciju, bez preklapanja s gumbima pri velikom tekstu
+- vektorski foreground/monochrome slojevi Android adaptive ikonice smješteni su u sigurnu zonu za kružno izrezivanje
+- sačuvani izvorni nazivi lijekova, potpuni podaci, hrvatski jezik, brend Brendigo i brendigo.com
+
+
+
 Sve značajne promjene MediX projekta dokumentiraju se u ovoj datoteci.
 
 ## [0.3.19] - 2026-10-18

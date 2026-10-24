@@ -205,6 +205,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   controller: controller,
                   onChanged: (_) => setState(() {}),
                   textInputAction: TextInputAction.search,
+                  onSubmitted: (_) => FocusScope.of(context).unfocus(),
                   decoration: InputDecoration(
                     hintText: loc.t('searchHint'),
                     prefixIcon: const Icon(Icons.search_rounded),
@@ -222,7 +223,9 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
               SizedBox(
-                height: 46,
+                height: 46 +
+                    (MediaQuery.textScalerOf(context).scale(1) - 1)
+                        .clamp(0.0, 1.7) * 22,
                 child: ListView(
                   key: const Key('medicationQuickFilters'),
                   scrollDirection: Axis.horizontal,
@@ -312,7 +315,9 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
               if (query.hasFilters)
                 SizedBox(
-                  height: 43,
+                  height: 43 +
+                      (MediaQuery.textScalerOf(context).scale(1) - 1)
+                          .clamp(0.0, 1.7) * 22,
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 16),

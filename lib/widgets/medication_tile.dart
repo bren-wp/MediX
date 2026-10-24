@@ -125,25 +125,19 @@ class MedicationTile extends StatelessWidget {
                         if (medication.marketState ==
                             MedicationMarketState.temporaryInterruption)
                           _InfoChip(
-                            label: Localizations.localeOf(context).languageCode == 'hr'
-                                ? 'Prekid opskrbe'
-                                : 'Supply interruption',
+                            label: 'Prekid opskrbe',
                             icon: Icons.pause_circle_outline_rounded,
                           )
                         else if (medication.marketState ==
                             MedicationMarketState.notMarketed)
                           _InfoChip(
-                            label: Localizations.localeOf(context).languageCode == 'hr'
-                                ? 'Nije u prometu'
-                                : 'Not marketed',
+                            label: 'Nije u prometu',
                             icon: Icons.remove_circle_outline_rounded,
                           ),
                         if (medication.shortageState ==
                             MedicationShortageState.reported)
                           _InfoChip(
-                            label: Localizations.localeOf(context).languageCode == 'hr'
-                                ? 'Nestašica'
-                                : 'Shortage',
+                            label: 'Nestašica',
                             icon: Icons.warning_amber_rounded,
                           ),
                       ],
@@ -153,13 +147,9 @@ class MedicationTile extends StatelessWidget {
               ),
               IconButton(
                 tooltip: isFavorite
-                    ? (Localizations.localeOf(context).languageCode == 'hr'
-                        ? 'Ukloni iz favorita'
-                        : 'Remove from favorites')
-                    : (Localizations.localeOf(context).languageCode == 'hr'
-                        ? 'Dodaj u favorite'
-                        : 'Add to favorites'),
-                visualDensity: VisualDensity.compact,
+                    ? 'Ukloni iz favorita'
+                    : 'Dodaj u favorite',
+                // Keep the Android minimum 48dp tap area for favorites.
                 onPressed: onFavorite,
                 icon: Icon(
                   isFavorite ? Icons.favorite : Icons.favorite_border,
