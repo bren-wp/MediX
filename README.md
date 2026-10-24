@@ -43,7 +43,7 @@ Izdanje **1.0.0** prikazuje korisničko sučelje, obavijesti i PDF izvještaje n
 - Katalog lijekova radi izvanmrežno; nema obvezne registracije, oglasa ni sustava praćenja.
 - Terapija i favoriti ostaju lokalno, u privatnom prostoru aplikacije. **Zasebna enkripcija terapije nije implementirana.**
 - Automatski Android backup za podatke aplikacije je isključen.
-- Podsjetnici zadržavaju **naziv lijeka**, ali ne prikazuju dozu. Korisnik može sakriti sadržaj obavijesti na zaključanom zaslonu kroz Android postavke; posebno dopuštenje za točne alarme nije potrebno.
+- Podsjetnici prikazuju samo neutralnu poruku bez naziva lijeka i doze. Androidova oznaka privatnosti skriva sadržaj na sigurnom zaključanom zaslonu; posebno dopuštenje za točne alarme nije potrebno.
 - Izvoz podataka korisnik pokreće samostalno, a ZIP sadrži PDF dokumente na hrvatskom jeziku.
 
 ## Performanse i provjere

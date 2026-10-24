@@ -27,6 +27,11 @@ class MedixNotificationService implements TherapyReminderScheduler {
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
 
+  /// Namjerno nema naziva lijeka, doze ni drugih zdravstvenih podataka. 
+  /// Podsjetnik smije biti vidljiv na zaključanom zaslonu ili satu.
+  static const reminderTitle = 'Vrijeme za terapiju';
+  static const reminderBody = 'Otvorite MediX za pojedinosti terapije.';
+
   bool _initialized = false;
 
   @override
@@ -138,12 +143,9 @@ class MedixNotificationService implements TherapyReminderScheduler {
 
           await _plugin.zonedSchedule(
             id: id,
-            title: 'Vrijeme za terapiju',
-            // The medicine name remains useful in the reminder, as in the
-            // original app; dose instructions are kept inside MediX.
-            // Users can hide notification content on the lock screen
-            // through their Android notification settings.
-            body: '${medication.name} · Pojedinosti terapije u aplikaciji MediX.',
+            title: reminderTitle,
+            // Privatni podaci dostupni su tek nakon otvaranja aplikacije.
+            body: reminderBody,
             scheduledDate: scheduled,
             notificationDetails: const NotificationDetails(
               android: AndroidNotificationDetails(
@@ -152,6 +154,7 @@ class MedixNotificationService implements TherapyReminderScheduler {
                 channelDescription: _channelDescription,
                 importance: Importance.high,
                 priority: Priority.high,
+                visibility: NotificationVisibility.private,
                 icon: 'ic_stat_medix',
                 category: AndroidNotificationCategory.reminder,
               ),

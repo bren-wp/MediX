@@ -1,7 +1,7 @@
-# MediX 1.0.0 — kontrolni popis za Google Play
+# MediX 1.0.3 — kontrolni popis za Google Play
 
 **Android paket:** `com.brendigo.medix`  
-**Verzija:** `1.0.0` · **versionCode:** `23`
+**Verzija:** `1.0.3` · **versionCode:** `26`
 
 ## Automatski provjerljivo
 
@@ -10,7 +10,7 @@
 - [x] Nema posebne dozvole za točne alarme; lokalni podsjetnici koriste manje invazivno zakazivanje.
 - [x] Hrvatski je jedini jezik aplikacije; pravni dokumenti i medicinsko upozorenje dostupni su na hrvatskom.
 - [x] Nisu prikazane vanjske poveznice na službene izvore lijekova u kliničkim ekranima.
-- [ ] Potvrditi završne testove, Flutter analizu, audit i APK/AAB release artefakte za verziju 1.0.0 na točnom commitu.
+- [ ] Potvrditi završne testove, Flutter analizu, audit i APK/AAB release artefakte za verziju 1.0.3 na točnom commitu.
 - [ ] Testirati pokretanje, terapiju, izvoz, 320 px i veliki font na fizičkim Android uređajima.
 
 ## Potpisivanje
@@ -39,10 +39,10 @@ Workflow `.github/workflows/play-production-build.yml` zahtijeva privatne GitHub
 
 ## Prikaz i objava
 
-- [ ] Pripremiti stvarne snimke zaslona iz izdanja 1.0.0, ne ilustracije.
+- [ ] Pripremiti stvarne snimke zaslona iz izdanja 1.0.3, ne ilustracije.
 - [ ] Provjeriti 16 KB poravnanje i izvješće Play pre-launch testova.
 - [ ] Provjeriti tablet, pejzažni prikaz, povećane fontove, pristupačnost i otvorene izbornike.
-- [ ] Provjeriti da se `versionCode=23` još nije koristio na toj istoj Play Console aplikaciji.
+- [ ] Provjeriti da se `versionCode=26` još nije koristio na toj istoj Play Console aplikaciji.
 - [ ] Pokrenuti testno izdanje prije produkcijske distribucije.
 
 **Završna objava dopuštena je tek nakon svih neoznačenih stavki.**

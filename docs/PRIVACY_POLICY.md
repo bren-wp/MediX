@@ -1,6 +1,6 @@
 # Politika privatnosti aplikacije MediX
 
-**Datum primjene:** 18. listopada 2026.  
+**Datum primjene:** 25. listopada 2026.  
 **Aplikacija:** MediX za Android (`com.brendigo.medix`)  
 **Razvojni programer:** Brendigo, Rijeka, Hrvatska  
 **Kontakt za privatnost:** info@brendigo.com
@@ -21,7 +21,7 @@ Poveznice na službene mrežne izvore lijekova nisu prikazane u korisničkom su�
 
 ## Obavijesti
 
-Dozvola za obavijesti traži se samo kada korisnik uključi podsjetnike. MediX ne zahtijeva posebnu Android dozvolu za točne alarme. Podsjetnici se obrađuju lokalno i mogu kasniti ovisno o Android sustavu, bateriji i postavkama uređaja. Tekst podsjetnika prikazuje **naziv lijeka**, ali ne i opis doze. Naziv lijeka može biti vidljiv na zaključanom zaslonu, ovisno o Android postavkama obavijesti. Korisnik može uključiti skrivanje osjetljivog sadržaja obavijesti u postavkama uređaja.
+Dozvola za obavijesti traži se samo kada korisnik uključi podsjetnike. MediX ne zahtijeva posebnu Android dozvolu za točne alarme. Podsjetnici se obrađuju lokalno i mogu kasniti ovisno o Android sustavu, bateriji i postavkama uređaja. Tekst podsjetnika ne sadrži naziv lijeka, opis doze ni druge osobne zdravstvene podatke. Podsjetnici imaju oznaku **privatno** (Android VISIBILITY_PRIVATE), pa sustav skriva osjetljiv sadržaj na sigurnom zaključanom zaslonu. Sama neutralna obavijest o vremenu terapije može biti vidljiva; ponašanje ovisi o uređaju i Androidovim postavkama.
 
 ## Izvoz i dijeljenje
 

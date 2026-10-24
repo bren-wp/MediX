@@ -1,6 +1,6 @@
 abstract final class MedixAppInfo {
-  static const version = '1.0.2';
-  static const displayVersion = '1.0.2+25';
+  static const version = '1.0.3';
+  static const displayVersion = '1.0.3+26';
   static const developerWebsiteUrl = 'https://brendigo.com';
 
   static const privacyPolicyUrl =
