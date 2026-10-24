@@ -171,7 +171,7 @@ class MedixLocalizations {
       'privacyTitle': 'Sigurnost i privatnost', 'privacyNoAccount': 'Bez obveznog računa',
       'privacyNoAccountBody': 'Ključne MediX funkcije rade bez registracije ili prijave.',
       'privacyLocal': 'Privatni lokalni podaci', 'privacyLocalBody': 'Favoriti, nedavni lijekovi, terapija i jezične postavke čuvaju se na uređaju.',
-      'privacyReminders': 'Namjenski podsjetnici', 'privacyRemindersBody': 'Dozvole za obavijesti i alarme koriste se samo za podsjetnike terapije koje sami uključite.',
+      'privacyReminders': 'Namjenski podsjetnici', 'privacyRemindersBody': 'Podsjetnici prikazuju neutralan tekst bez naziva lijeka ili doze. Detalji ostaju u aplikaciji, a osjetljiv sadržaj skriva se na sigurnom zaključanom zaslonu.',
       'privacyMedical': 'Zdravstveni podaci', 'privacyMedicalBody': 'Za pregled baze nije potreban unos dijagnoze. Unosi terapije ostaju na uređaju.',
       'privacyPermissions': 'Minimalne dozvole', 'privacyPermissionsBody': 'MediX traži samo dozvole potrebne funkciji koju aktivno koristite.',
       'aboutTitle': 'O aplikaciji MediX', 'aboutTagline': 'Profesionalna baza i alati za jasan rad s provjerenim podacima o lijekovima.',

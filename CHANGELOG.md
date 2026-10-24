@@ -1,5 +1,14 @@
 # Dnevnik promjena MediX
 
+## [1.0.3] – 2026-10-25
+
+### Privatnost podsjetnika i sigurniji oporavak terapije
+- Lokalni podsjetnici više ne sadrže naziv lijeka ili dozu: detalji ostaju u aplikaciji.
+- Android obavijesti imaju privatnu vidljivost na sigurnom zaključanom zaslonu.
+- Oštećeni zapisi s izričito nevaljanim danima terapije više se ne pretvaraju u svakodnevne podsjetnike.
+- Stari zapisi terapije bez polja za dane i dalje zadržavaju izvorno svakodnevno ponavljanje.
+- Dodani regresijski testovi privatnosti podsjetnika i oporavka rasporeda te usklađeni pravni dokumenti.
+
 ## [1.0.1] – 2026-10-18
 
 ### Jednostavnija i sigurnija terapija

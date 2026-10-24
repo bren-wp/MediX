@@ -82,6 +82,7 @@ class MedixPreferences implements MedixPersistence {
                   medicationId.isEmpty ||
                   dose.isEmpty ||
                   times.isEmpty ||
+                  weekdays.isEmpty ||
                   !restoredIds.add(id)) {
                 continue;
               }
@@ -92,9 +93,7 @@ class MedixPreferences implements MedixPersistence {
                   medicationId: medicationId,
                   doseDescription: dose,
                   times: times,
-                  weekdays: weekdays.isEmpty
-                      ? const [1, 2, 3, 4, 5, 6, 7]
-                      : weekdays,
+                  weekdays: weekdays,
                   isActive: map['active'] != false,
                 ),
               );

@@ -84,4 +84,53 @@ void main() {
     expect(restored.therapy.single.times, const ['08:00', '23:59']);
     expect(restored.therapy.single.weekdays, const [1, 3, 5]);
   });
+
+  test('nevaljani izričito spremljeni dani ne postaju svaki dan', () async {
+    SharedPreferences.setMockInitialValues({
+      'medix.therapy.v1': jsonEncode([
+        {
+          'id': 'corrupt-days',
+          'medication_id': 'paracetamol-500',
+          'dose': '1 tableta',
+          'times': ['08:00'],
+          'weekdays': [0, 8, 99],
+        },
+        {
+          'id': 'empty-days',
+          'medication_id': 'paracetamol-500',
+          'dose': '1 tableta',
+          'times': ['09:00'],
+          'weekdays': [],
+        },
+        {
+          'id': 'valid-days',
+          'medication_id': 'paracetamol-500',
+          'dose': '1 tableta',
+          'times': ['10:00'],
+          'weekdays': [1, 3],
+        },
+      ]),
+    });
+
+    final restored = await MedixPreferences().load();
+    expect(restored.therapy.map((entry) => entry.id), ['valid-days']);
+    expect(restored.therapy.single.weekdays, [1, 3]);
+  });
+
+  test('stariji zapisi bez polja weekdays ostaju svakodnevna terapija', () async {
+    SharedPreferences.setMockInitialValues({
+      'medix.therapy.v1': jsonEncode([
+        {
+          'id': 'legacy',
+          'medication_id': 'paracetamol-500',
+          'dose': '1 tableta',
+          'times': ['08:00'],
+        },
+      ]),
+    });
+
+    final restored = await MedixPreferences().load();
+    expect(restored.therapy, hasLength(1));
+    expect(restored.therapy.single.repeatsEveryDay, isTrue);
+  });
 }
