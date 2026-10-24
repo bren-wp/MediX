@@ -87,8 +87,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
                 child: Row(
                   children: [
-                    const MedixBrand(compact: true),
-                    const Spacer(),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: FittedBox(
+                          alignment: Alignment.centerLeft,
+                          fit: BoxFit.scaleDown,
+                          child: const MedixBrand(compact: true),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     TextButton(
                       onPressed: _complete,
                       child: Text(loc.t('skip')),

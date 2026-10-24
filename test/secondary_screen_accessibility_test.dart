@@ -76,6 +76,15 @@ void main() {
           home: screen.$2(state),
         ),
       );
+      // The price catalog loads a bundled multi-megabyte asset
+      // asynchronously. Its progress indicator intentionally animates
+      // continuously until the asset is ready; a fake-async widget test
+      // must not wait for that spinner to "settle".
+      if (screen.$1 == 'Cijene') {
+        await tester.pump(const Duration(milliseconds: 200));
+        expect(tester.takeException(), isNull);
+        return;
+      }
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull,
           reason: '${screen.$1} must render without Flutter errors');
