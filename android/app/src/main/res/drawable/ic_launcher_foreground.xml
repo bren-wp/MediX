@@ -6,7 +6,7 @@
     <!-- Android adaptive-icon safe zone: keep the complete MediX pill and
          medical cross inside the central 66dp diameter for circle/squircle crops. -->
     <group android:pivotX="54" android:pivotY="54"
-        android:scaleX="0.70" android:scaleY="0.70">
+        android:scaleX="0.80" android:scaleY="0.80">
     <group
         android:pivotX="54"
         android:pivotY="46"
