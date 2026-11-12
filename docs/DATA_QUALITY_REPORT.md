@@ -2,7 +2,7 @@
 
 Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 
-- HALMED generirano: 2026-11-11T11:51:12.266326+00:00
+- HALMED generirano: 2026-11-12T12:39:15.650789+00:00
 - Prihvaćeni HALMED zapisi: 4492
 - Jedinstveni nazivi: 4491
 - Jedinstvene djelatne tvari: 1045
@@ -20,7 +20,7 @@ Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 - Bez ATK: 1
 - Bez pakiranja: 0
 - Odbačeni HALMED zapisi: 1878
-- HZZO enrichment zapisi: 3790
+- HZZO enrichment zapisi: 3788
 - Cjenovni zapisi: 5341
 
 ## Razlozi odbacivanja
