@@ -1,26 +1,26 @@
 {
   "schema_version": 3,
-  "generated_at": "2026-11-12T12:39:15.650789+00:00",
+  "generated_at": "2026-11-13T12:09:02.544225+00:00",
   "source": {
     "name": "HALMED Baza lijekova",
     "url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
     "search_action": "https://www.halmed.hr/Lijekovi/Baza-lijekova/",
-    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16af5b36d48b08.xlsx",
+    "export_url": "https://www.halmed.hr/hr/Download/xls/lijekovi/Halmed_Lijekovi_16af6fdd924f93.xlsx",
     "scope": "public_human_medicine_search_results",
     "medicine_name_field": "Naziv",
     "medicine_name_policy": "copied from the HALMED Naziv column; whitespace normalized only"
   },
   "quality": {
-    "accepted_records": 4492,
-    "rejected_records": 1878,
+    "accepted_records": 4490,
+    "rejected_records": 1880,
     "rejected_reasons": {
       "legal_entity_as_name": 26,
       "missing_authorization_number": 1606,
       "missing_name": 1,
-      "revoked_authorization": 245
+      "revoked_authorization": 247
     }
   },
-  "record_count": 4492,
+  "record_count": 4490,
   "records": [
     {
       "id": "halmed-49ce253d899c5e90f7ec6628",
@@ -87201,32 +87201,6 @@
       "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Reglinid-2-mg-tablete/12800/"
     },
     {
-      "id": "halmed-868c88f3fad0395623343503",
-      "name": "Relenza 5 mg/dozi, prašak inhalata, dozirani",
-      "previous_name": "",
-      "authorization_number": "HR-H-442926310",
-      "active_ingredient": "zanamivir",
-      "composition": "svaka odmjerena doza praška inhalata (jedan mjehurić) sadrži 5 mg zanamivira, što odgovara isporučenoj dozi (preko nastavka za usta diskhalera) od 4,0 mg zanamivira",
-      "form": "prašak inhalata, dozirani",
-      "strength": "5 mg",
-      "package": "HR-H-442926310-01 | 20 doza praška u blisteru i 1 diskhaler inhalator, u kutiji | nije stavljeno u promet | -",
-      "manufacturer": "Glaxo Wellcome Production, Evreux, Francuska",
-      "holder": "GlaxoSmithKline Trading Services Limited, 12 Riverwalk, Citywest Business Campus, Dublin 24, Irska",
-      "decision_date": "20.08.2021.",
-      "authorization_expiry": "neograničen",
-      "class": "UP/I-530-09/16-02/514",
-      "urbroj": "381-12-01/70-21-37",
-      "rx_status": "na recept",
-      "prescribing_mode": "neponovljivi recept",
-      "dispensing_place": "u ljekarni",
-      "advertising": "zabranjeno",
-      "atc_code": "J05AH01",
-      "category": "Antiinfektivni lijekovi",
-      "market_status": "nije stavljeno u promet",
-      "shortage_status": "",
-      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Relenza-5-mg-dozi-prasak-inhalata-dozirani/14257/"
-    },
-    {
       "id": "halmed-d62aad177cfc3f4aaa9a12c3",
       "name": "Relfydess 100 jedinica/ml otopina za injekciju",
       "previous_name": "",
@@ -98698,7 +98672,7 @@
       "previous_name": "Strepsils Plus pastile",
       "authorization_number": "HR-H-924504952",
       "active_ingredient": "amilmetakrezol; 2,4-diklorbenzilni alkohol; lidokainklorid hidrat",
-      "composition": "jedna pastila sadrži 0,6 mg amilmetakrezola, 1,2 mg 2,4-diklorbenzilnog alkohola i 10,0 mg lidokainklorida hidarta",
+      "composition": "jedna pastila sadrži 0,6 mg amilmetakrezola, 1,2 mg 2,4-diklorbenzilnog alkohola i 10,0 mg lidokainklorid hidrata",
       "form": "pastila",
       "strength": "0,6 mg",
       "package": "HR-H-924504952-01 | 24 pastile u blisteru, u kutiji | stavljeno u promet | nema nestašice",
@@ -105399,32 +105373,6 @@
       "market_status": "nije stavljeno u promet",
       "shortage_status": "",
       "official_record_url": null
-    },
-    {
-      "id": "halmed-cc60be1681a5763bc1cf02d2",
-      "name": "Totylem 60 mg/0,4 mg filmom obložena tableta",
-      "previous_name": "",
-      "authorization_number": "HR-H-847694995",
-      "active_ingredient": "željezov(II) glukonat hidrat; folatna kiselina hidrat",
-      "composition": "jedna filmom obložena tableta sadrži 60 mg željeza u obliku željezovog(II) glukonat hidrata i 0,4 mg folatne kiseline u obliku folatne kiseline hidrata",
-      "form": "Filmom obložena tableta",
-      "strength": "60 mg",
-      "package": "HR-H-847694995-01 | 30 tableta u blisteru, u kutiji | nije stavljeno u promet | -",
-      "manufacturer": "Innothera Chouzy, Valloire-sur-Cisse, Francuska",
-      "holder": "Laboratoire Innotech International S.A.S., 22 Avenue Aristide Briand, Arcueil, Francuska",
-      "decision_date": "24.08.2023.",
-      "authorization_expiry": "24.08.2028.",
-      "class": "UP/I-530-09/19-01/137",
-      "urbroj": "381-12-01/171-23-07",
-      "rx_status": "na recept",
-      "prescribing_mode": "ponovljivi recept",
-      "dispensing_place": "u ljekarni",
-      "advertising": "zabranjeno",
-      "atc_code": "B03AE02",
-      "category": "Krv i krvotvorni organi",
-      "market_status": "nije stavljeno u promet",
-      "shortage_status": "",
-      "official_record_url": "https://www.halmed.hr/Lijekovi/Baza-lijekova/Totylem-60-mg-04-mg-filmom-oblozena-tableta/16999/"
     },
     {
       "id": "halmed-f2dbb905078a0cba1c7bb1ea",

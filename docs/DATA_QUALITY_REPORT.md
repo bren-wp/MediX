@@ -2,25 +2,25 @@
 
 Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 
-- HALMED generirano: 2026-11-12T12:39:15.650789+00:00
-- Prihvaćeni HALMED zapisi: 4492
-- Jedinstveni nazivi: 4491
-- Jedinstvene djelatne tvari: 1045
-- Jedinstvene ATK šifre: 880
-- Na recept: 4043
+- HALMED generirano: 2026-11-13T12:09:02.544225+00:00
+- Prihvaćeni HALMED zapisi: 4490
+- Jedinstveni nazivi: 4489
+- Jedinstvene djelatne tvari: 1043
+- Jedinstvene ATK šifre: 878
+- Na recept: 4041
 - Bez recepta (OTC): 449
 - Bez poznatog režima izdavanja: 0
 - Stavljeno u promet: 3050
-- Nije stavljeno u promet: 1080
+- Nije stavljeno u promet: 1078
 - Privremeni prekid opskrbe: 66
 - Bez poznatog tržišnog statusa: 296
 - Prijavljena nestašica: 0
 - Bez evidentirane nestašice: 2870
-- Bez poznatog statusa nestašice: 1622
+- Bez poznatog statusa nestašice: 1620
 - Bez ATK: 1
 - Bez pakiranja: 0
-- Odbačeni HALMED zapisi: 1878
-- HZZO enrichment zapisi: 3788
+- Odbačeni HALMED zapisi: 1880
+- HZZO enrichment zapisi: 4043
 - Cjenovni zapisi: 5341
 
 ## Razlozi odbacivanja
@@ -28,7 +28,7 @@ Tehnički izvještaj generiran iz službenih podatkovnih sinkronizacija.
 - `legal_entity_as_name`: 26
 - `missing_authorization_number`: 1606
 - `missing_name`: 1
-- `revoked_authorization`: 245
+- `revoked_authorization`: 247
 
 ## Aktivne zaštite
 
